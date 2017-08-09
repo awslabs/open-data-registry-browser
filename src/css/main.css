@@ -1,0 +1,12 @@
+.tag {
+  margin-right: 5px;
+}
+
+.overview .tag {
+  cursor: pointer;
+}
+
+
+#aws_header_logo {
+  max-width: 100px;
+}
