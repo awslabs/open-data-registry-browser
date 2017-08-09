@@ -34,7 +34,7 @@ gulp.task('clean', function () {
 
 // Convert YAML to JSON
 gulp.task('yaml', ['clean'], function () {
-  return gulp.src('./Odar/**/*.yaml')
+  return gulp.src('./open-data-registry/**/*.yaml')
     .pipe(yaml())
     .pipe(gulp.dest('./dist/data/'));
 });

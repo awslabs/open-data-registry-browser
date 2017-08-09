@@ -4,7 +4,9 @@
   "description": "Browser for https://github.com/awslabs/open-data-registry.",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "copy-data": "git clone git@github.com:awslabs/open-data-registry.git",
+    "build": "./node_modules/gulp-cli/bin/gulp.js"
   },
   "author": "Joe Flasher",
   "license": "Apache-2.0",
