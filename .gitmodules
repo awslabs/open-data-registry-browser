@@ -1,0 +1,3 @@
+[submodule "open-data-registry"]
+	path = open-data-registry
+	url = git@github.com:awslabs/open-data-registry.git
