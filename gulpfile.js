@@ -21,6 +21,13 @@ var rename = require('gulp-rename');
 var flatmap = require('gulp-flatmap');
 var requireDir = require('require-dir');
 var path = require('path');
+var marked = require('marked');
+var renderer = new marked.Renderer();
+
+// Overriding MD renderer to remove outside <p> tags
+renderer.paragraph = function (text, level) {
+  return text;
+};
 
 // Helper function to grab datasets from JSON files
 var getDatasets = function () {
@@ -104,7 +111,12 @@ gulp.task('html:detail', ['yaml'], function () {
       var templateData = JSON.parse(file.contents.toString('utf8'));
       var slug = generateSlug(file.path);
       const options = {
-        batch: ['./src/partials']
+        batch: ['./src/partials'],
+        helpers: {
+          md: function (str) {
+            return marked(str, {renderer: renderer});
+          }
+        }
       };
 
       return gulp.src('./src/detail.hbs')

@@ -20,6 +20,7 @@
     "gulp-flatmap": "^1.0.0",
     "gulp-rename": "^1.2.2",
     "gulp-yaml": "^1.0.1",
+    "marked": "^0.3.6",
     "require-dir": "^0.3.2"
   }
 }
