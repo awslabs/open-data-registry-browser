@@ -31,7 +31,7 @@ renderer.paragraph = function (text, level) {
 
 // Helper function to grab datasets from JSON files
 var getDatasets = function () {
-  var datasets = requireDir('./dist/data/datasets');
+  var datasets = requireDir('./tmp/data/datasets');
   var arr = [];
   for (var k in datasets) {
     var dataset = datasets[k];
@@ -49,14 +49,14 @@ var generateSlug = function (file) {
 
 // Clean dist directory
 gulp.task('clean', function () {
-  return del('./dist/**/*');
+  return del(['./dist/**/*', './tmp/**/*']);
 });
 
 // Convert YAML to JSON
 gulp.task('yaml', ['clean'], function () {
   return gulp.src('./open-data-registry/**/*.yaml')
     .pipe(yaml())
-    .pipe(gulp.dest('./dist/data/'));
+    .pipe(gulp.dest('./tmp/data/'));
 });
 
 // Copy CSS files to dist
@@ -106,7 +106,7 @@ gulp.task('html:overview', ['yaml'], function () {
 
 // Compile detail pages and move to dist
 gulp.task('html:detail', ['yaml'], function () {
-  return gulp.src('./dist/data/datasets/*.json')
+  return gulp.src('./tmp/data/datasets/*.json')
     .pipe(flatmap(function (stream, file) {
       var templateData = JSON.parse(file.contents.toString('utf8'));
       var slug = generateSlug(file.path);
