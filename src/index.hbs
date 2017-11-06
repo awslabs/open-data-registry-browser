@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
   {{> header}}
-    <div class="container overview">
-      <h2>Open Data on AWS Registry</h2>
-      <input type="search" id="search-box" placeholder="Feed Me" autocomplete="on"></input>
+    <div class="row overview">
+      <h1>Registry of Open Data on AWS</h1>
+      <input type="search" id="search-box" placeholder="Search Datasets" autocomplete="on"></input>
       {{#each datasets}}
-        <div id="{{Slug}}" class="dataset">
-          <h3><a href="{{Slug}}.html">{{Name}}</a></h3>
-          <p>{{Description}}</p>
-          <p>{{#each Tags}}<span class="label label-info tag">{{.}}</span>{{/each}}
-        </div>
+    </div>
+    <div class="row">
+      <div id="{{Slug}}" class="dataset">
+        <h3><a href="{{Slug}}.html">{{Name}}</a></h3>
+        <p>{{Description}}</p>
+        <p>{{#each Tags}}<span class="label label-info tag">{{.}}</span>{{/each}}
+      </div>
       {{/each}}
     </div>
 
