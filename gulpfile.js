@@ -23,6 +23,8 @@ var requireDir = require('require-dir');
 var path = require('path');
 var marked = require('marked');
 var renderer = new marked.Renderer();
+var browserSync = require('browser-sync');
+var reload = browserSync.reload;
 
 // Overriding MD renderer to remove outside <p> tags
 renderer.paragraph = function (text, level) {
@@ -124,6 +126,29 @@ gulp.task('html:detail', ['yaml'], function () {
           .pipe(rename(`${slug}.html`))
           .pipe(gulp.dest('./dist/'));
     }));
+});
+
+// Server with live reload
+gulp.task('serve', ['clean', 'css', 'img', 'yaml', 'html:overview', 'html:detail', 'html:sitemap'], function () {
+  browserSync({
+    port: 3000,
+    server: {
+      baseDir: ['dist']
+    }
+  });
+
+  // watch for changes and add a debounce for dist changes
+  var timer;
+  gulp.watch([
+    'dist/**/*'
+  ]).on('change', function () {
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      reload();
+    }, 500);
+  });
+
+  gulp.watch('src/**/*', ['default']);
 });
 
 gulp.task('default', ['clean', 'css', 'img', 'yaml', 'html:overview', 'html:detail', 'html:sitemap']);
