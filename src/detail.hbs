@@ -26,16 +26,16 @@
     <div class="col-md-5 col-md-offset-1">
     <h3>Resources on AWS</h3>
     {{#each Resources}}
-    <dl>
+    <dl class="resource-list">
+      <dt>Resource type</dt>
+      <dd>{{Type}}</dd>
       <dt>Description</dt>
       <dd>{{Description}}</dd>
       <dt>Amazon Resource Name (ARN)</dt>
       <dd><code>{{ARN}}</code></dd>
       <dt>AWS Region</dt>
       <dd><code>{{Region}}</code></dd>
-      <dt>Resource type</dt>
-      <dd>{{Type}}</dd>
-    </tr>
+    </dl>
     {{/each}}
   </div>
   </div>

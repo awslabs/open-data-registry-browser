@@ -11,7 +11,7 @@ body { padding-top: 70px; }
   margin-right: .8em;
 }
 
-.overview .tag {
+.link-tag {
   cursor: pointer;
 }
 
@@ -31,6 +31,18 @@ body { padding-top: 70px; }
   background-color: #545b64;
 }
 
+.label-info {
+  background-color: #007dbc;
+}
+
+dl.resource-list {
+  margin-bottom: 2em;
+}
+
 dt {
+  margin-top: .6em;
+}
+
+dd code {
   margin-top: 1em;
 }
