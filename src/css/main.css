@@ -20,7 +20,7 @@ body { padding-top: 70px; }
 }
 
 .navbar-header h2 a {
-  color:#333;
+  color:#007dbc;
 }
 
 #aws_header_logo {
@@ -29,4 +29,8 @@ body { padding-top: 70px; }
 
 .label-default {
   background-color: #545b64;
+}
+
+dt {
+  margin-top: 1em;
 }
