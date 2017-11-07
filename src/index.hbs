@@ -5,18 +5,18 @@
     <div class="row">
       <div class="col-md-6">
         {{#each datasets}}
-        <div id="{{Slug}}" class="dataset">
+        <div id="{{Slug}}" class="dataset row">
           <h3><a href="{{Slug}}.html">{{Name}}</a></h3>
-          <p>{{Description}}</p>
           <p>{{#each Tags}}<span class="label label-default tag">{{.}}</span>{{/each}}</p>
+          <p>{{Description}}</p>
+          <p><a href="{{Slug}}.html">Details &rarr;</a></p>
         </div>
         {{/each}}
       </div>
       {{> about}}
     </div>
-  </div>
   {{> footer}}
-
+  </div>
     <script>
       // Get datasets object
       var datasets = {{toJSON datasets}};
