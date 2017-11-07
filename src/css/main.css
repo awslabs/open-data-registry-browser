@@ -1,12 +1,32 @@
+a { color:#007dbc; }
+
+a:hover {
+  text-decoration: underline;
+  color: #eb5f07;
+}
+
+body { padding-top: 70px; }
+
 .tag {
-  margin-right: 5px;
+  margin-right: .8em;
 }
 
 .overview .tag {
   cursor: pointer;
 }
 
+.navbar-header h1, .navbar-header h2 {
+  font-size: 24px;
+}
+
+.navbar-header h2 a {
+  color:#333;
+}
 
 #aws_header_logo {
-  max-width: 100px;
+  max-width: 50px;
+}
+
+.label-default {
+  background-color: #545b64;
 }
