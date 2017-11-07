@@ -31,8 +31,14 @@
       <dd class="{{{toType Type}}}">{{Type}}</dd>
       <dt>Description</dt>
       <dd>{{Description}}</dd>
-      <dt>Amazon Resource Name (ARN)</dt>
-      <dd><code>{{ARN}}</code></dd>
+      {{#if ARN}}
+        <dt>Amazon Resource Name (ARN)</dt>
+        <dd><code>{{ARN}}</code></dd>
+      {{/if}}
+      {{#if Host}}
+        <dt>Hostname</dt>
+        <dd><code>{{Host}}</code></dd>
+      {{/if}}
       <dt>AWS Region</dt>
       <dd><code>{{Region}}</code></dd>
     </dl>
