@@ -35,6 +35,10 @@ body { padding-top: 70px; }
   background-color: #007dbc;
 }
 
+.resource-list:nth-child(odd) {
+  background-color: #E5FFFF;
+}
+
 dl.resource-list {
   margin-bottom: 2em;
 }

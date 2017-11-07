@@ -28,7 +28,7 @@
     {{#each Resources}}
     <dl class="resource-list">
       <dt>Resource type</dt>
-      <dd>{{Type}}</dd>
+      <dd class="{{{toType Type}}}">{{Type}}</dd>
       <dt>Description</dt>
       <dd>{{Description}}</dd>
       <dt>Amazon Resource Name (ARN)</dt>
@@ -39,5 +39,5 @@
     {{/each}}
   </div>
   </div>
-  
+
 {{> footer isDetail=true}}

@@ -117,6 +117,9 @@ gulp.task('html:detail', ['yaml'], function () {
         helpers: {
           md: function (str) {
             return marked(str, {renderer: renderer});
+          },
+          toType: function (str) {
+            return str ? str.toLowerCase().replace(/\s/g, '-') : str;
           }
         }
       };
