@@ -1,3 +1,24 @@
+@font-face {
+    font-family: 'AmazonEmberLight';
+    src: url('/fonts/amazon-ember/AmazonEmber_W_Lt.woff2') format('woff2'), url('/fonts/amazon-ember/AmazonEmber_W_Lt.woff') format('woff');
+    font-weight: normal;
+    font-style: normal
+}
+
+@font-face {
+    font-family: 'AmazonEmber';
+    src: url('/fonts/amazon-ember/AmazonEmber_W_Rg.woff2') format('woff2'), url('/fonts/amazon-ember/AmazonEmber_W_Rg.woff') format('woff');
+    font-weight: normal;
+    font-style: normal
+}
+
+@font-face {
+    font-family: 'AmazonEmberBold';
+    src: url('/fonts/amazon-ember/AmazonEmber_W_Bd.woff2') format('woff2'), url('/fonts/amazon-ember/AmazonEmber_W_Bd.woff') format('woff');
+    font-weight: normal;
+    font-style: normal
+}
+
 a { color:#007dbc; }
 
 a:hover {
@@ -5,7 +26,9 @@ a:hover {
   color: #eb5f07;
 }
 
-body { padding-top: 70px; }
+body { padding-top: 70px; 
+  font-family: AmazonEmber, Helvetica Neue, Helvetica, Arial, sans-serif;
+}
 
 .tag {
   margin-right: .8em;
@@ -24,6 +47,15 @@ body { padding-top: 70px; }
   color: #FFF;
 }
 
+h1, h2, h3, h4, .dataset h3 a {
+  font-family: AmazonEmberBold, Helvetica Neue Bold, Helvetica Neue, Helvetica, Arial, sans-serif;
+  color:#232F3E;
+}
+
+.dataset h3 a:hover {
+  color:#eb5f07;
+}
+
 #aws_header_logo {
   max-width: 50px;
 }
@@ -33,21 +65,28 @@ body { padding-top: 70px; }
 }
 
 .label-info {
-  background-color: #007dbc;
+  background-color: #ec7211;
 }
 
-.resource-list:nth-child(odd) {
+.label-info:hover {
+  background-color: #eb5f07;
+}
+
+/*.resource-list:nth-child(odd) {
   background-color: #E5FFFF;
+}*/
+
+ul.resource-list {
+  padding: 0;  
+  list-style-type: none;
 }
 
-dl.resource-list {
-  margin-bottom: 2em;
+ul.resource-list li {
+  margin: 0 0 2em 0;
+  border-bottom: 1px solid #d5dbdb;
 }
 
 dt {
   margin-top: .6em;
 }
 
-dd code {
-  margin-top: 1em;
-}

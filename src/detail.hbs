@@ -9,7 +9,7 @@
   <div class="row">
     <div class="col-md-6">
       <div class="row">
-        <dl>
+        <dl class="dataset-description">
           <dt>Description</dt>
           <dd>{{Description}}</dd>
           <dt>Update Frequency</dt>
@@ -25,24 +25,29 @@
     </div>
     <div class="col-md-5 col-md-offset-1">
     <h3>Resources on AWS</h3>
+    
+    <ul class="resource-list">
     {{#each Resources}}
-    <dl class="resource-list">
-      <dt>Resource type</dt>
-      <dd class="{{{toType Type}}}">{{Type}}</dd>
-      <dt>Description</dt>
-      <dd>{{Description}}</dd>
-      {{#if ARN}}
-        <dt>Amazon Resource Name (ARN)</dt>
-        <dd><code>{{ARN}}</code></dd>
-      {{/if}}
-      {{#if Host}}
-        <dt>Hostname</dt>
-        <dd><code>{{Host}}</code></dd>
-      {{/if}}
-      <dt>AWS Region</dt>
-      <dd><code>{{Region}}</code></dd>
-    </dl>
+      <li>
+        <dl class="resource-list">
+          <dt class="resource-description">Description</dt>
+          <dd class="resource-description">{{Description}}</dd>
+          <dt class="resource-type">Resource type</dt>
+          <dd class="resource-type {{{toType Type}}}">{{Type}}</dd>
+          {{#if ARN}}
+          <dt class="resource-arn">Amazon Resource Name (ARN)</dt>
+          <dd><code>{{ARN}}</code></dd>
+          {{/if}}
+          {{#if Host}}
+          <dt class="resource-host">Hostname</dt>
+          <dd><code>{{Host}}</code></dd>
+          {{/if}}
+          <dt class="resource-region">AWS Region</dt>
+          <dd><code>{{Region}}</code></dd>
+        </dl>
+      </li>
     {{/each}}
+    </ul>
   </div>
   </div>
 
