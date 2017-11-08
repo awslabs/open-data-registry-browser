@@ -67,6 +67,12 @@ gulp.task('css', ['clean'], function () {
     .pipe(gulp.dest('./dist/css/'));
 });
 
+// Copy font files to dist
+gulp.task('fonts', ['clean'], function () {
+  return gulp.src('./src/fonts/**/*')
+    .pipe(gulp.dest('./dist/fonts/'));
+});
+
 // Copy images to dist
 gulp.task('img', ['clean'], function () {
   return gulp.src('./src/img/**/*')
@@ -132,7 +138,7 @@ gulp.task('html:detail', ['yaml'], function () {
 });
 
 // Server with live reload
-gulp.task('serve', ['clean', 'css', 'img', 'yaml', 'html:overview', 'html:detail', 'html:sitemap'], function () {
+gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml', 'html:overview', 'html:detail', 'html:sitemap'], function () {
   browserSync({
     port: 3000,
     server: {
@@ -154,4 +160,4 @@ gulp.task('serve', ['clean', 'css', 'img', 'yaml', 'html:overview', 'html:detail
   gulp.watch('src/**/*', ['default']);
 });
 
-gulp.task('default', ['clean', 'css', 'img', 'yaml', 'html:overview', 'html:detail', 'html:sitemap']);
+gulp.task('default', ['clean', 'css', 'fonts', 'img', 'yaml', 'html:overview', 'html:detail', 'html:sitemap']);
