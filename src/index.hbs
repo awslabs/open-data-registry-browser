@@ -71,6 +71,7 @@
 
       // Listen for clicks on the tags and fill in search box if clicked
       $('.tag').click(function () {
+        $("#search-box").focus();
         $("#search-box").val($(this).text());
         $('#search-box').trigger('input');
       });
