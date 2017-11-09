@@ -56,8 +56,19 @@ h1, h2, h3, h4, .dataset h3 a {
   color:#eb5f07;
 }
 
+.lede {
+  font-family: AmazonEmberLight, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-size: 1.28em;
+  font-weight: 200;
+  line-height: 1.6em;
+}
+
 #aws_header_logo {
   max-width: 50px;
+}
+
+.label {
+  font-weight: 400;
 }
 
 .label-default {
@@ -65,7 +76,7 @@ h1, h2, h3, h4, .dataset h3 a {
 }
 
 .label-info {
-  background-color: #ec7211;
+  background-color: #007dbc;
 }
 
 .label-info:hover {
