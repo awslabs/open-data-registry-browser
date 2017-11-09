@@ -3,7 +3,7 @@
   <div class="row">
     <h1>{{Name}}</h1>
     <p>{{#each Tags}}
-    <span class="label label-default tag">{{.}}</span>
+    <span class="label label-info tag link-tag">{{.}}</span>
   {{/each}}</p>
   </div>
   <div class="row">
@@ -25,7 +25,7 @@
     </div>
     <div class="col-md-5 col-md-offset-1">
     <h3>Resources on AWS</h3>
-    
+
     <ul class="resource-list">
     {{#each Resources}}
       <li>
@@ -52,3 +52,10 @@
   </div>
 
 {{> footer isDetail=true}}
+
+<script>
+  // Listen for clicks on the tags and send to main page if clicked
+  $('.tag').click(function () {
+    window.location.href = "/?search=" + $(this).text();
+  });
+</script>

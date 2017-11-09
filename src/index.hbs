@@ -69,13 +69,22 @@
         return false;
       };
 
+      var triggerInput = function (text) {
+        $("#search-box").focus();
+        $("#search-box").val(text);
+        $('#search-box').trigger('input');
+      }
+
       // Listen for clicks on the tags and fill in search box if clicked
       $('.tag').click(function () {
-        $("#search-box").focus();
-        $("#search-box").val($(this).text());
-        $('#search-box').trigger('input');
+        triggerInput($(this).text());
       });
 
+      // Handle query passed in url via ?search=foo
+      var search = /search=(.*)/.exec(window.location.search);
+      if (search) {
+        triggerInput(decodeURIComponent(search[1]));
+      }
     </script>
   </body>
 </html>
