@@ -6,10 +6,10 @@
       <div class="col-md-6">
         {{#each datasets}}
         <div id="{{Slug}}" class="dataset row">
-          <h3><a href="{{Slug}}.html">{{Name}}</a></h3>
+          <h3><a href="{{Slug}}/">{{Name}}</a></h3>
           <p>{{#each Tags}}<span class="label label-info tag link-tag">{{.}}</span>{{/each}}</p>
           <p>{{Description}}</p>
-          <p><a href="{{Slug}}.html">Details &rarr;</a></p>
+          <p><a href="{{Slug}}/">Details &rarr;</a></p>
         </div>
         {{/each}}
       </div>

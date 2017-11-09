@@ -132,7 +132,7 @@ gulp.task('html:detail', ['yaml'], function () {
 
       return gulp.src('./src/detail.hbs')
           .pipe(handlebars(templateData, options))
-          .pipe(rename(`${slug}.html`))
+          .pipe(rename(`${slug}/index.html`))
           .pipe(gulp.dest('./dist/'));
     }));
 });
