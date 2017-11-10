@@ -18,18 +18,12 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
-      <div class="row">
-        <div class="navbar-header">
-          {{#if isHome}}<h1>Registry of Open Data on AWS</h1>{{/if}}
-          {{#if isDetail}}<h2><a href="/" alt="Home">Registry of Open Data on AWS</a></h2>{{/if}}
-        </div>
-        <ul class="nav navbar-nav pull-right">
-          <li>
-            <a href="http://aws.amazon.com/what-is-cloud-computing" class="nav navbar-nav navbar-right">
-              <img src="img/AWS-Logo_White-Color_300x180.png" alt="Powered by AWS Cloud Computing" class="pull-right" id="aws_header_logo">
-            </a>
-          </li>
-        </ul>
-      </div>
+      <div class="roda-header">
+        <a href="http://aws.amazon.com/what-is-cloud-computing">
+          <img src="img/AWS-Logo_White-Color_300x180.png" alt="Powered by AWS Cloud Computing" id="aws_header_logo">
+        </a>
+        {{#if isHome}}<h1>Registry of Open Data on AWS</h1>{{/if}}
+        {{#if isDetail}}<h2><a href="/" alt="Home">Registry of Open Data on AWS</a></h2>{{/if}}
+      </div>  
     </div>
-  </nav>
+  </nav>        

@@ -2,8 +2,9 @@
 <html lang="en">
   {{> header isHome=true}}
   <div class="container">
-    <div class="row">
-      <div class="col-md-6">
+    
+      {{> about}}
+      <div class="col-md-6 col-md-offset-1">
         {{#each datasets}}
         <div id="{{Slug}}" class="dataset row">
           <h3><a href="{{Slug}}/">{{Name}}</a></h3>
@@ -13,8 +14,8 @@
         </div>
         {{/each}}
       </div>
-      {{> about}}
-    </div>
+      
+    
   {{> footer}}
   </div>
     <script>
