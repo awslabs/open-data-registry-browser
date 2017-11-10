@@ -1,30 +1,61 @@
-{{> header showHome=true}}
-<div class="container">
-  <h2>{{Name}}</h2>
-  <p>{{#each Tags}}
-    <span class="label label-info tag">{{.}}</span>
-  {{/each}}</p>
-  <p><strong>{{Description}}</strong></p>
-  <p><span class="glyphicon glyphicon-time" aria-hidden="true"></span> <em>{{UpdateFrequency}}</em></p>
-  <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{{md License}}}</p>
-  <p><span class="glyphicon glyphicon-book" aria-hidden="true"></span> <a href="{{Documentation}}" target="_none">{{Documentation}}</a>
-  <p><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> <a href="{{Contact}}" target="_none">{{Contact}}</a>
-  <h3>Resources</h3>
-  <table class="table table-bordered">
-    <tr>
-      <th>Description</td>
-      <th>ARN</td>
-      <th>Region</td>
-      <th>Type</td>
-    </tr>
-    {{#each Resources}}
-    <tr>
-      <td>{{Description}}</td>
-      <td>{{ARN}}</td>
-      <td>{{Region}}</td>
-      <td>{{Type}}</td>
-    </tr>
-    {{/each}}
-  </table>
-</div>
-{{> footer}}
+<!DOCTYPE html>
+<html lang="en">
+  {{> header isDetail=true}}
+
+    <h1>{{Name}}</h1>
+    <p>{{#each Tags}}
+      <span class="label label-info tag link-tag">{{.}}</span>
+  {{/each}}
+    </p>
+    <div class="row">  
+      <div class="col-md-6">
+      <h3>Description</h3>
+      <p>{{Description}}</p>
+        
+      <h4>Update Frequency</h4>
+      <p>{{UpdateFrequency}}</p>
+      
+      <h4>License</h4>
+      <p>{{{md License}}}</p>
+      
+      <h4>Documentation</h4>
+      <p><a href="{{Documentation}}" target="_none">{{Documentation}}</a></p>
+      
+      <h4>Contact</h4>
+      <p><a href="{{Contact}}" target="_none">{{Contact}}</a></p>
+    </div>
+    <div class="col-md-5 col-md-offset-1">
+      <h3>Resources on AWS</h3>
+      <ul class="resource-list">
+        {{#each Resources}}
+        <li>
+          <dl class="resource-list">
+            <dt class="resource-description">Description</dt>
+            <dd class="resource-description">{{Description}}</dd>
+            <dt class="resource-type">Resource type</dt>
+            <dd class="resource-type {{{toType Type}}}">{{Type}}</dd>
+            {{#if ARN}}
+            <dt class="resource-arn">Amazon Resource Name (ARN)</dt>
+            <dd><code>{{ARN}}</code></dd>
+            {{/if}}
+            {{#if Host}}
+            <dt class="resource-host">Hostname</dt>
+            <dd><code>{{Host}}</code></dd>
+            {{/if}}
+            <dt class="resource-region">AWS Region</dt>
+            <dd><code>{{Region}}</code></dd>
+          </dl>
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+  </div>
+
+  {{> footer isDetail=true}}
+
+<script>
+  // Listen for clicks on the tags and send to main page if clicked
+  $('.tag').click(function () {
+    window.location.href = "/?search=" + $(this).text();
+  });
+</script>

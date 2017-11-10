@@ -1,12 +1,138 @@
-.tag {
-  margin-right: 5px;
+@font-face {
+    font-family: 'AmazonEmberLight';
+    src: url('/fonts/amazon-ember/AmazonEmber_W_Lt.woff2') format('woff2'), url('/fonts/amazon-ember/AmazonEmber_W_Lt.woff') format('woff');
+    font-weight: normal;
+    font-style: normal
 }
 
-.overview .tag {
+@font-face {
+    font-family: 'AmazonEmber';
+    src: url('/fonts/amazon-ember/AmazonEmber_W_Rg.woff2') format('woff2'), url('/fonts/amazon-ember/AmazonEmber_W_Rg.woff') format('woff');
+    font-weight: normal;
+    font-style: normal
+}
+
+@font-face {
+    font-family: 'AmazonEmberBold';
+    src: url('/fonts/amazon-ember/AmazonEmber_W_Bd.woff2') format('woff2'), url('/fonts/amazon-ember/AmazonEmber_W_Bd.woff') format('woff');
+    font-weight: normal;
+    font-style: normal
+}
+
+a { color:#007dbc; }
+
+a:hover {
+  text-decoration: underline;
+  color: #eb5f07;
+}
+
+body { padding-top: 70px;
+  font-family: AmazonEmber, Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+
+.tag {
+  margin-right: .8em;
+}
+
+.link-tag {
   cursor: pointer;
 }
 
+.navbar-default {
+  background-color: #232F3E;
+}
+
+.roda-header h1, .roda-header h2 {
+  font-size: 24px;
+  color: #FFF;
+  float:left;
+  margin: 20px 0 10px 0;
+}
+
+.roda-header h2 a {
+  color:#FFF;
+}
+
+h1, h2, h3, h4, .dataset h3 a {
+  font-family: AmazonEmberBold, Helvetica Neue Bold, Helvetica Neue, Helvetica, Arial, sans-serif;
+  color:#232F3E;
+}
+
+.dataset h3 a:hover {
+  color:#eb5f07;
+}
+
+.datasets {
+  padding-bottom: 30px;
+}
+
+.lede {
+  font-family: AmazonEmberLight, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-size: 1.28em;
+  font-weight: 200;
+  line-height: 1.6em;
+}
 
 #aws_header_logo {
-  max-width: 100px;
+  max-width: 59px;
+  float:right;
+  padding:16px 0 16px 0 ;
+}
+
+.label {
+  font-weight: 400;
+}
+
+.label-info {
+  background-color: #007dbc;
+}
+
+.label-info:hover {
+  background-color: #eb5f07;
+}
+
+/*.resource-list:nth-child(odd) {
+  background-color: #E5FFFF;
+}*/
+
+ul.resource-list {
+  padding: 0;
+  list-style-type: none;
+}
+
+ul.resource-list li {
+  margin: 0 0 2em 0;
+  border-bottom: 1px solid #d5dbdb;
+}
+
+ul.resource-list li:only-of-type {
+  border-bottom:none;
+}
+
+dt {
+  margin-top: .6em;
+}
+
+/*@media (min-width:768px) {
+ .aboutbox {
+    position:fixed;
+    z-index: 2;
+    max-width: 320px;
+  }
+}
+*/
+@media (min-width:992px) {
+ .aboutbox {
+    position:fixed;
+    z-index: 2;
+    max-width: 392px;
+  }
+}
+
+@media (min-width:1200px) {
+ .aboutbox {
+    position:fixed;
+    z-index: 2;
+    max-width: 490px;
+  }
 }
