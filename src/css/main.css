@@ -26,7 +26,7 @@ a:hover {
   color: #eb5f07;
 }
 
-body { padding-top: 70px; 
+body { padding-top: 70px;
   font-family: AmazonEmber, Helvetica Neue, Helvetica, Arial, sans-serif;
 }
 
@@ -76,10 +76,6 @@ h1, h2, h3, h4, .dataset h3 a {
   font-weight: 400;
 }
 
-.label-default {
-  background-color: #545b64;
-}
-
 .label-info {
   background-color: #007dbc;
 }
@@ -93,7 +89,7 @@ h1, h2, h3, h4, .dataset h3 a {
 }*/
 
 ul.resource-list {
-  padding: 0;  
+  padding: 0;
   list-style-type: none;
 }
 
