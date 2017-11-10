@@ -83,7 +83,7 @@ gulp.task('img', ['clean'], function () {
 gulp.task('html:sitemap', ['yaml'], function () {
   var templateData = {
     datasets: getDatasets(),
-    baseURL: 'http://foo.com'
+    baseURL: process.env.BASE_URL
   };
 
   return gulp.src('./src/sitemap.hbs')
