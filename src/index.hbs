@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
   {{> header isHome=true}}
-  <div class="container">
-    
-      {{> about}}
-      <div class="col-md-6 col-md-offset-1">
-        {{#each datasets}}
-        <div id="{{Slug}}" class="dataset row">
+  
+    {{> about}}
+    <div class="col-md-6 col-md-offset-1 datasets">
+      <div class="row">
+      {{#each datasets}}
+        <div id="{{Slug}}" class="dataset">
           <h3><a href="{{Slug}}/">{{Name}}</a></h3>
           <p>{{#each Tags}}<span class="label label-info tag link-tag">{{.}}</span>{{/each}}</p>
           <p>{{Description}}</p>
@@ -14,10 +14,10 @@
         </div>
         {{/each}}
       </div>
+    </div>
       
     
   {{> footer}}
-  </div>
     <script>
       // Get datasets object
       var datasets = {{toJSON datasets}};
