@@ -113,14 +113,20 @@ dt {
   margin-top: .6em;
 }
 
-/*@media (min-width:768px) {
- .aboutbox {
-    position:fixed;
-    z-index: 2;
-    max-width: 320px;
+@media (max-width:768px) {
+  .roda-header h1, .roda-header h2 {
+    font-size: 18px;
+    color: #FFF;
+    float:left;
+    margin: 20px 0 20px 0;
+  }
+  #aws_header_logo {
+    max-width: 40px;
+    float:right;
+    padding:16px 0 16px 0 ;
   }
 }
-*/
+
 @media (min-width:992px) {
  .aboutbox {
     position:fixed;
