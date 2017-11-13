@@ -120,6 +120,11 @@ dt {
     float:left;
     margin: 20px 0 20px 0;
   }
+  #aws_header_logo {
+    max-width: 40px;
+    float:right;
+    padding:16px 0 16px 0 ;
+  }
 }
 
 @media (min-width:992px) {
