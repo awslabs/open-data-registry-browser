@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   {{> header isHome=true}}
-  
+
     {{> about}}
     <div class="col-md-6 col-md-offset-1 datasets">
       <div class="row">
@@ -15,8 +15,8 @@
         {{/each}}
       </div>
     </div>
-      
-    
+
+
   {{> footer}}
     <script>
       // Get datasets object
@@ -108,6 +108,9 @@
       if (search) {
         triggerInput(decodeURIComponent(search[1]));
       }
+
+      // Load page with search box in focus
+      $("#search-box").focus();
     </script>
   </body>
 </html>
