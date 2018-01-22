@@ -25,6 +25,8 @@ var marked = require('marked');
 var renderer = new marked.Renderer();
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
+var fs = require('fs');
+var _ = require('lodash');
 
 // Overriding MD renderer to remove outside <p> tags
 renderer.paragraph = function (text, level) {
@@ -56,9 +58,62 @@ gulp.task('clean', function () {
 
 // Convert YAML to JSON
 gulp.task('yaml:convert', ['clean'], function () {
-  return gulp.src('./open-data-registry/**/*.yaml')
+  return gulp.src('./data-sources/**/*.yaml')
     .pipe(yaml())
-    .pipe(gulp.dest('./tmp/data/'));
+    .pipe(gulp.dest('./tmp/data/unmerged/'));
+});
+
+// Merge JSON
+gulp.task('json:merge', ['yaml:convert'], function (cb) {
+  // Make sure destination parent directory exists
+  if (!fs.existsSync('./tmp/data/datasets/')) {
+    fs.mkdirSync('./tmp/data/datasets/');
+  }
+
+  // Look for repos to use based on RODA_SOURCES env var, default to
+  // public repo
+  var repos = process.env.RODA_SOURCES;
+  if (repos) {
+    repos = repos.split(',');
+  } else {
+    repos = ['git@github.com:awslabs/open-data-registry.git'];
+  }
+
+  // Loop over datasets and conflate Metadata
+  let top = {};
+  repos.forEach(function (repo) {
+    // Pretty dir name for finding datasets
+    const prettyDir = repo.split(':')[1].replace('/', '-').replace('.git', '');
+    var datasets = requireDir(`./tmp/data/unmerged/${prettyDir}/datasets`);
+    for (var k in datasets) {
+      var dataset = datasets[k];
+      const slug = generateSlug(k);
+      dataset.Slug = slug;
+      // If dataset (slug) already exists, only thing we're
+      // copying over is Metadata
+      if (top[slug]) {
+        if (top[slug]['Metadata']) {
+          for (var l in dataset.Metadata) {
+            top[slug]['Metadata'][l] = dataset.Metadata[l];
+          }
+        } else {
+          top[slug]['Metadata'] = dataset.Metadata;
+        }
+        top[slug]['Sources'].push(prettyDir);
+      } else {
+        top[slug] = dataset;
+        top[slug]['Sources'] = [prettyDir];
+      }
+    }
+  });
+
+  // Loop over datasets and write out
+  for (var k in top) {
+    const dataset = top[k];
+    fs.writeFileSync(`./tmp/data/datasets/${dataset.Slug}.json`, JSON.stringify(dataset));
+  }
+
+  return cb();
 });
 
 // Copy CSS files to dist
@@ -69,7 +124,7 @@ gulp.task('css', ['clean'], function () {
 
 // Copy the datasets yaml files to dist
 gulp.task('yaml:copy', ['clean'], function () {
-  return gulp.src('./open-data-registry/datasets/**/*.yaml')
+  return gulp.src('./data-sources/**/*.yaml')
     .pipe(gulp.dest('./dist/datasets/'));
 });
 
@@ -157,7 +212,7 @@ gulp.task('html:detail', ['yaml:convert'], function () {
 });
 
 // Server with live reload
-gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'yaml:copy', 'html:overview', 'html:detail', 'html:sitemap'], function () {
+gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'html:overview', 'html:detail', 'html:sitemap'], function () {
   browserSync({
     port: 3000,
     server: {
@@ -179,4 +234,4 @@ gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'yaml:copy',
   gulp.watch('src/**/*', ['default']);
 });
 
-gulp.task('default', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'yaml:copy', 'yaml:overview', 'html:overview', 'html:detail', 'html:sitemap']);
+gulp.task('default', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'html:overview', 'html:detail', 'html:sitemap']);

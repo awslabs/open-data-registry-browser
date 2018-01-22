@@ -34,6 +34,17 @@
         {{/each}}
       </ul>
       {{/if}}
+
+      {{#if Metadata}}
+      <h4>More Information</h4>
+      <ul class="dataatwork-list">
+        {{#each Metadata as |value key|}}
+        <li>
+          {{key}}: {{value}}
+        </li>
+        {{/each}}
+      </ul>
+      {{/if}}
     </div>
     <div class="col-md-5 col-md-offset-1">
       <h3>Resources on AWS</h3>
