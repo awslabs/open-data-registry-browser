@@ -6,7 +6,7 @@ This browser can be used to view a single data repository or multiple data repos
 - `/` - Main datasets listing page, provides search mechanism.
 - `ex: /1000-genomes` - Individual detail pages for each dataset, contains details, license, contact, documentation and example usage links and AWS resources available.
 - `datasets.yaml` - YAML formatted listing of each individual YAML file for provided datasets.
-- `ex: datasets/awslabs-open-data-registry/datasets/1000-genomes.yaml` - YAML for individual dataset, used to create the HTML pages.
+- `ex: data-sources/awslabs-open-data-registry/datasets/1000-genomes.yaml` - YAML for individual dataset, used to create the HTML pages.
 - `sitemap.txt` - Sitemap listing all the HTML pages.
 
 ## Building

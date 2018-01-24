@@ -37,13 +37,14 @@
 
       {{#if Metadata}}
       <h4>More Information</h4>
-      <ul class="dataatwork-list">
+      <table class="table table-condensed table-bordered table-hover">
         {{#each Metadata as |value key|}}
-        <li>
-          {{key}}: {{value}}
-        </li>
+        <tr>
+          <th>{{key}}</th>
+          <td>{{value}}</td>
+        </tr>
         {{/each}}
-      </ul>
+      </table>
       {{/if}}
     </div>
     <div class="col-md-5 col-md-offset-1">
