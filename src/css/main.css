@@ -1,22 +1,16 @@
 @font-face {
     font-family: 'AmazonEmberLight';
-    src: url('/fonts/amazon-ember/AmazonEmber_W_Lt.woff2') format('woff2'), url('/fonts/amazon-ember/AmazonEmber_W_Lt.woff') format('woff');
-    font-weight: normal;
-    font-style: normal
+    src: url('https://a0.awsstatic.com/main/fonts/amazon-ember/AmazonEmber_Lt.woff2') format('woff2'), url('https://a0.awsstatic.com/main/fonts/amazon-ember/AmazonEmber_Lt.woff') format('woff');
 }
 
 @font-face {
     font-family: 'AmazonEmber';
-    src: url('/fonts/amazon-ember/AmazonEmber_W_Rg.woff2') format('woff2'), url('/fonts/amazon-ember/AmazonEmber_W_Rg.woff') format('woff');
-    font-weight: normal;
-    font-style: normal
+    src: url('https://a0.awsstatic.com/main/fonts/amazon-ember/AmazonEmber_Rg.woff2') format('woff2'), url('https://a0.awsstatic.com/main/fonts/amazon-ember/AmazonEmber_Rg.woff') format('woff');
 }
 
 @font-face {
     font-family: 'AmazonEmberBold';
-    src: url('/fonts/amazon-ember/AmazonEmber_W_Bd.woff2') format('woff2'), url('/fonts/amazon-ember/AmazonEmber_W_Bd.woff') format('woff');
-    font-weight: normal;
-    font-style: normal
+    src: url('https://a0.awsstatic.com/main/fonts/amazon-ember/AmazonEmber_Bd.woff2') format('woff2'), url('https://a0.awsstatic.com/main/fonts/amazon-ember/AmazonEmber_Bd.woff') format('woff');
 }
 
 a { color:#007dbc; }
