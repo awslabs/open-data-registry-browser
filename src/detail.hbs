@@ -29,7 +29,7 @@
       <ul class="dataatwork-list">
         {{#each DataAtWork}}
         <li>
-          <a href="{{URL}}" target="_none">{{Description}}</a> by {{#if AuthorURL}}<a href="{{AuthorURL}}" target="_none">{{AuthorName}}</a>{{else}}{{AuthorName}}{{/if}}</li></a>
+          <a href="{{URL}}" target="_none">{{Title}}</a> by {{#if AuthorURL}}<a href="{{AuthorURL}}" target="_none">{{AuthorName}}</a>{{else}}{{AuthorName}}{{/if}}</li></a>
         </li>
         {{/each}}
       </ul>
