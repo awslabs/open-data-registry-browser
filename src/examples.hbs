@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{> header isDetail=true}}
+
+  {{#each datasets}}
+    {{#if DataAtWork}}
+      <div id="{{Slug}}" class="dataset">
+        <h4><a href="../{{Slug}}/">{{Name}}</a></h4>
+        <p>
+          {{#each Tags}}
+            <span class="label label-info tag link-tag">{{.}}</span>
+          {{/each}}
+        </p>
+        <ul class="dataatwork-list">
+        {{#each DataAtWork}}
+          <li>
+            <a href="{{URL}}" target="_none">{{Title}}</a> by {{#if AuthorURL}}<a href="{{AuthorURL}}" target="_none">{{AuthorName}}</a>{{else}}{{AuthorName}}{{/if}}</li></a>
+          </li>
+        {{/each}}
+        </ul>
+      </div>
+    {{/if}}
+  {{/each}}
+  </div>
+
+  {{> footer isDetail=true}}
+
+<script>
+  // Listen for clicks on the tags and send to main page if clicked
+  $('.tag').click(function () {
+    window.location.href = "/?search=" + $(this).text();
+  });
+</script>

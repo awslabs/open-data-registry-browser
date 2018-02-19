@@ -186,6 +186,28 @@ gulp.task('html:overview', ['yaml:convert'], function () {
       .pipe(gulp.dest('./dist/'));
 });
 
+// Compile the usage examples page and move to dist
+gulp.task('html:examples', ['yaml:convert'], function () {
+  let templateData = {
+    datasets: getDatasets()
+  };
+
+  console.log(templateData.datasets);
+  const options = {
+    batch: ['./src/partials'],
+    helpers: {
+      toJSON: function (obj) {
+        return new handlebars.Handlebars.SafeString(JSON.stringify(obj));
+      }
+    }
+  };
+
+  return gulp.src('./src/examples.hbs')
+      .pipe(handlebars(templateData, options))
+      .pipe(rename('index.html'))
+      .pipe(gulp.dest('./dist/usage-examples/'));
+});
+
 // Compile detail pages and move to dist
 gulp.task('html:detail', ['yaml:convert'], function () {
   return gulp.src('./tmp/data/datasets/*.json')
@@ -212,7 +234,7 @@ gulp.task('html:detail', ['yaml:convert'], function () {
 });
 
 // Server with live reload
-gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'html:overview', 'html:detail', 'html:sitemap'], function () {
+gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples'], function () {
   browserSync({
     port: 3000,
     server: {
@@ -234,4 +256,4 @@ gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge'
   gulp.watch('src/**/*', ['default']);
 });
 
-gulp.task('default', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'html:overview', 'html:detail', 'html:sitemap']);
+gulp.task('default', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples']);
