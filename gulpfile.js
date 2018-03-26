@@ -168,6 +168,17 @@ gulp.task('html:sitemap', ['yaml:convert'], function () {
 
 // Compile overview page and move to dist
 gulp.task('html:overview', ['yaml:convert'], function () {
+  const datasets = getDatasets();
+
+  // Do some work to alter the datasets data for display
+  datasets.map((d) => {
+    d.examplesCount = d['DataAtWork'] ? d['DataAtWork'].length : 0;
+    d.examples = d['DataAtWork'] ? d['DataAtWork'].slice(0, 5) : [];
+
+    return d;
+  });
+
+  // HBS templating
   var templateData = {
     datasets: getDatasets()
   };
@@ -176,6 +187,12 @@ gulp.task('html:overview', ['yaml:convert'], function () {
     helpers: {
       toJSON: function (obj) {
         return new handlebars.Handlebars.SafeString(JSON.stringify(obj));
+      },
+      checkLength: function (arr, len, options) {
+        if (arr.length > len) {
+          return options.fn(this);
+        }
+        return options.inverse(this);
       }
     }
   };
@@ -192,7 +209,6 @@ gulp.task('html:examples', ['yaml:convert'], function () {
     datasets: getDatasets()
   };
 
-  console.log(templateData.datasets);
   const options = {
     batch: ['./src/partials'],
     helpers: {
