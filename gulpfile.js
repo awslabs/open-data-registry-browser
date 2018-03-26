@@ -45,6 +45,15 @@ const getDatasets = function () {
 
   arr = rankDatasets(arr);
 
+  // We do not need to show the aws-pds tag in the browser
+  arr = arr.map((d) => {
+    if (d['Tags'].includes('aws-pds')) {
+      delete d['Tags'][d['Tags'].indexOf('aws-pds')];
+    }
+
+    return d;
+  });
+
   return arr;
 };
 
