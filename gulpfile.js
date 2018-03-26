@@ -67,7 +67,7 @@ const rankDatasets = function (datasets) {
   // Calculate rank
   datasets = datasets.map((d) => {
     d.rank = 0;
-    if (d['Tags'].includes('aws-pds')) { d.rank += 5; }
+    if (d['Tags'].includes('aws-pds')) { d.rank += 3; }
     if (d['DataAtWork']) { d.rank += 1 * d['DataAtWork'].length; }
 
     return d;
@@ -85,6 +85,9 @@ const rankDatasets = function (datasets) {
 
   return datasets;
 };
+
+// Top-level loading of datasets
+const allDatasets = getDatasets();
 
 // Clean dist directory
 gulp.task('clean', function () {
@@ -166,7 +169,7 @@ gulp.task('yaml:copy', ['clean'], function () {
 // Compile the top level yaml and move to dist
 gulp.task('yaml:overview', ['clean', 'yaml:convert'], function () {
   var templateData = {
-    datasets: getDatasets(),
+    datasets: allDatasets,
     baseURL: process.env.BASE_URL
   };
 
@@ -191,7 +194,7 @@ gulp.task('img', ['clean'], function () {
 // Compile the sitemap and move to dist
 gulp.task('html:sitemap', ['yaml:convert'], function () {
   var templateData = {
-    datasets: getDatasets(),
+    datasets: allDatasets,
     baseURL: process.env.BASE_URL
   };
 
@@ -203,7 +206,7 @@ gulp.task('html:sitemap', ['yaml:convert'], function () {
 
 // Compile overview page and move to dist
 gulp.task('html:overview', ['yaml:convert'], function () {
-  const datasets = getDatasets();
+  const datasets = allDatasets;
 
   // Do some work to alter the datasets data for display
   datasets.map((d) => {
@@ -215,7 +218,7 @@ gulp.task('html:overview', ['yaml:convert'], function () {
 
   // HBS templating
   var templateData = {
-    datasets: getDatasets()
+    datasets: allDatasets
   };
   const options = {
     batch: ['./src/partials'],
@@ -241,7 +244,7 @@ gulp.task('html:overview', ['yaml:convert'], function () {
 // Compile the usage examples page and move to dist
 gulp.task('html:examples', ['yaml:convert'], function () {
   let templateData = {
-    datasets: getDatasets()
+    datasets: allDatasets
   };
 
   const options = {
