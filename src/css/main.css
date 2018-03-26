@@ -119,6 +119,10 @@ dt {
   margin-top: .6em;
 }
 
+.aws-link {
+  color: #e9903a;
+}
+
 @media (max-width:768px) {
   .roda-header h1, .roda-header h2 {
     font-size: 18px;

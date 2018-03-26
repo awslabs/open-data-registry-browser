@@ -214,6 +214,12 @@ gulp.task('html:examples', ['yaml:convert'], function () {
     helpers: {
       toJSON: function (obj) {
         return new handlebars.Handlebars.SafeString(JSON.stringify(obj));
+      },
+      isAWSURL: function (link, options) {
+        if (/https?:\/\/aws.amazon.com.*/.test(link)) {
+          return options.fn(this);
+        }
+        return options.inverse(this);
       }
     }
   };
