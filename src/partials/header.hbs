@@ -21,10 +21,11 @@
       <div class="roda-header">
         {{#if isHome}}<h1>Registry of Open Data on AWS</h1>{{/if}}
         {{#if isDetail}}<h2><a href="/" alt="Home">Registry of Open Data on AWS</a></h2>{{/if}}
+        {{#if isDataAtWork}}<h2><a href="/" alt="Home">Registry of Open Data on AWS</a></h2>{{/if}}
         <a href="http://aws.amazon.com/what-is-cloud-computing">
           <img src="/img/AWS-Logo_White-Color_300x180.png" alt="Powered by AWS Cloud Computing" id="aws_header_logo">
         </a>
       </div>  
     </div>
   </nav>        
-  <div class="container">
+  <div class="container" {{#if isDataAtWork}}id="dataatwork"{{/if}}>

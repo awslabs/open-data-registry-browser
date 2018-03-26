@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-  {{> header isDetail=true}}
+  {{> header isDataAtWork=true}}
+  <p class="lede">This page shows links to usage examples for all datasets listed in the Registry of Open Data on AWS.</p>
+  <hr>
 
   {{#each datasets}}
     {{#if DataAtWork}}
       <div id="{{Slug}}" class="dataset">
         <h4><a href="../{{Slug}}/">{{Name}}</a></h4>
-        <p>
-          {{#each Tags}}
-            <span class="label label-info tag link-tag">{{.}}</span>
-          {{/each}}
-        </p>
         <ul class="dataatwork-list">
         {{#each DataAtWork}}
           <li>
@@ -21,7 +18,6 @@
       </div>
     {{/if}}
   {{/each}}
-  </div>
 
   {{> footer isDetail=true}}
 
