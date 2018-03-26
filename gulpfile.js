@@ -34,7 +34,7 @@ renderer.paragraph = function (text, level) {
 };
 
 // Helper function to grab datasets from JSON files
-var getDatasets = function () {
+const getDatasets = function () {
   var datasets = requireDir('./tmp/data/datasets');
   var arr = [];
   for (var k in datasets) {
@@ -43,12 +43,38 @@ var getDatasets = function () {
     arr.push(datasets[k]);
   }
 
+  arr = rankDatasets(arr);
+
   return arr;
 };
 
 // Helper function to generate slug from file name
-var generateSlug = function (file) {
+const generateSlug = function (file) {
   return path.basename(file, '.json');
+};
+
+// Helper function to rank the datasets in some order
+const rankDatasets = function (datasets) {
+  // Calculate rank
+  datasets = datasets.map((d) => {
+    d.rank = 0;
+    if (d['Tags'].includes('aws-pds')) { d.rank += 5; }
+    if (d['DataAtWork']) { d.rank += 1 * d['DataAtWork'].length; }
+
+    return d;
+  });
+
+  // Order
+  datasets = _.orderBy(datasets, ['rank', 'Name'], ['desc', 'asc']);
+
+  // Remove rank variable
+  datasets = datasets.map((d) => {
+    delete d.rank;
+
+    return d;
+  });
+
+  return datasets;
 };
 
 // Clean dist directory
@@ -168,6 +194,17 @@ gulp.task('html:sitemap', ['yaml:convert'], function () {
 
 // Compile overview page and move to dist
 gulp.task('html:overview', ['yaml:convert'], function () {
+  const datasets = getDatasets();
+
+  // Do some work to alter the datasets data for display
+  datasets.map((d) => {
+    d.examplesCount = d['DataAtWork'] ? d['DataAtWork'].length : 0;
+    d.examples = d['DataAtWork'] ? d['DataAtWork'].slice(0, 5) : [];
+
+    return d;
+  });
+
+  // HBS templating
   var templateData = {
     datasets: getDatasets()
   };
@@ -176,6 +213,12 @@ gulp.task('html:overview', ['yaml:convert'], function () {
     helpers: {
       toJSON: function (obj) {
         return new handlebars.Handlebars.SafeString(JSON.stringify(obj));
+      },
+      checkLength: function (arr, len, options) {
+        if (arr.length > len) {
+          return options.fn(this);
+        }
+        return options.inverse(this);
       }
     }
   };
@@ -184,6 +227,33 @@ gulp.task('html:overview', ['yaml:convert'], function () {
       .pipe(handlebars(templateData, options))
       .pipe(rename('index.html'))
       .pipe(gulp.dest('./dist/'));
+});
+
+// Compile the usage examples page and move to dist
+gulp.task('html:examples', ['yaml:convert'], function () {
+  let templateData = {
+    datasets: getDatasets()
+  };
+
+  const options = {
+    batch: ['./src/partials'],
+    helpers: {
+      toJSON: function (obj) {
+        return new handlebars.Handlebars.SafeString(JSON.stringify(obj));
+      },
+      isAWSURL: function (link, options) {
+        if (/https?:\/\/aws.amazon.com.*/.test(link)) {
+          return options.fn(this);
+        }
+        return options.inverse(this);
+      }
+    }
+  };
+
+  return gulp.src('./src/examples.hbs')
+      .pipe(handlebars(templateData, options))
+      .pipe(rename('index.html'))
+      .pipe(gulp.dest('./dist/usage-examples/'));
 });
 
 // Compile detail pages and move to dist
@@ -212,7 +282,7 @@ gulp.task('html:detail', ['yaml:convert'], function () {
 });
 
 // Server with live reload
-gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'html:overview', 'html:detail', 'html:sitemap'], function () {
+gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples'], function () {
   browserSync({
     port: 3000,
     server: {
@@ -234,4 +304,4 @@ gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge'
   gulp.watch('src/**/*', ['default']);
 });
 
-gulp.task('default', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'html:overview', 'html:detail', 'html:sitemap']);
+gulp.task('default', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples']);

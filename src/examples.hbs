@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{> header isDataAtWork=true}}
+  <p class="lede">This page shows links to usage examples for all datasets listed in the Registry of Open Data on AWS.</p>
+  <hr>
+
+  {{#each datasets}}
+    {{#if DataAtWork}}
+      <div id="{{Slug}}" class="dataset">
+        <h4><a href="../{{Slug}}/">{{Name}}</a></h4>
+        <ul class="dataatwork-list">
+        {{#each DataAtWork}}
+          <li>
+            <a href="{{URL}}" class="{{#isAWSURL URL}}aws-link{{/isAWSURL}}" target="_none">{{Title}}</a> by {{#if AuthorURL}}<a href="{{AuthorURL}}" target="_none">{{AuthorName}}</a>{{else}}{{AuthorName}}{{/if}}</li></a>
+          </li>
+        {{/each}}
+        </ul>
+      </div>
+    {{/if}}
+  {{/each}}
+
+  {{> footer isDetail=true}}
+
+<script>
+  // Listen for clicks on the tags and send to main page if clicked
+  $('.tag').click(function () {
+    window.location.href = "/?search=" + $(this).text();
+  });
+</script>
