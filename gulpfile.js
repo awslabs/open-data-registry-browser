@@ -34,7 +34,7 @@ renderer.paragraph = function (text, level) {
 };
 
 // Helper function to grab datasets from JSON files
-var getDatasets = function () {
+const getDatasets = function () {
   var datasets = requireDir('./tmp/data/datasets');
   var arr = [];
   for (var k in datasets) {
@@ -43,12 +43,38 @@ var getDatasets = function () {
     arr.push(datasets[k]);
   }
 
+  arr = rankDatasets(arr);
+
   return arr;
 };
 
 // Helper function to generate slug from file name
-var generateSlug = function (file) {
+const generateSlug = function (file) {
   return path.basename(file, '.json');
+};
+
+// Helper function to rank the datasets in some order
+const rankDatasets = function (datasets) {
+  // Calculate rank
+  datasets = datasets.map((d) => {
+    d.rank = 0;
+    if (d['Tags'].includes('aws-pds')) { d.rank += 5; }
+    if (d['DataAtWork']) { d.rank += 1 * d['DataAtWork'].length; }
+
+    return d;
+  });
+
+  // Order
+  datasets = _.orderBy(datasets, ['rank', 'Name'], ['desc', 'asc']);
+
+  // Remove rank variable
+  datasets = datasets.map((d) => {
+    delete d.rank;
+
+    return d;
+  });
+
+  return datasets;
 };
 
 // Clean dist directory
