@@ -43,16 +43,8 @@ const getDatasets = function () {
     arr.push(datasets[k]);
   }
 
+  // Rank the datasets
   arr = rankDatasets(arr);
-
-  // We do not need to show the aws-pds tag in the browser
-  arr = arr.map((d) => {
-    if (d['Tags'].includes('aws-pds')) {
-      delete d['Tags'][d['Tags'].indexOf('aws-pds')];
-    }
-
-    return d;
-  });
 
   return arr;
 };
@@ -88,6 +80,37 @@ const rankDatasets = function (datasets) {
 
 // Top-level loading of datasets
 const allDatasets = getDatasets();
+
+// Handlebars helper functions
+const hbsHelpers = {
+  toJSON: function (obj) {
+    return new handlebars.Handlebars.SafeString(JSON.stringify(obj));
+  },
+  checkLength: function (arr, len, options) {
+    if (arr.length > len) {
+      return options.fn(this);
+    }
+    return options.inverse(this);
+  },
+  isEqual: function (v1, v2, options) {
+    if (v1 === v2) {
+      return options.fn(this);
+    }
+    return options.inverse(this);
+  },
+  isAWSURL: function (link, options) {
+    if (/https?:\/\/aws.amazon.com.*/.test(link)) {
+      return options.fn(this);
+    }
+    return options.inverse(this);
+  },
+  md: function (str) {
+    return marked(str, {renderer: renderer});
+  },
+  toType: function (str) {
+    return str ? str.toLowerCase().replace(/\s/g, '-') : str;
+  }
+};
 
 // Clean dist directory
 gulp.task('clean', function () {
@@ -222,17 +245,7 @@ gulp.task('html:overview', ['yaml:convert'], function () {
   };
   const options = {
     batch: ['./src/partials'],
-    helpers: {
-      toJSON: function (obj) {
-        return new handlebars.Handlebars.SafeString(JSON.stringify(obj));
-      },
-      checkLength: function (arr, len, options) {
-        if (arr.length > len) {
-          return options.fn(this);
-        }
-        return options.inverse(this);
-      }
-    }
+    helpers: hbsHelpers
   };
 
   return gulp.src('./src/index.hbs')
@@ -249,17 +262,7 @@ gulp.task('html:examples', ['yaml:convert'], function () {
 
   const options = {
     batch: ['./src/partials'],
-    helpers: {
-      toJSON: function (obj) {
-        return new handlebars.Handlebars.SafeString(JSON.stringify(obj));
-      },
-      isAWSURL: function (link, options) {
-        if (/https?:\/\/aws.amazon.com.*/.test(link)) {
-          return options.fn(this);
-        }
-        return options.inverse(this);
-      }
-    }
+    helpers: hbsHelpers
   };
 
   return gulp.src('./src/examples.hbs')
@@ -276,14 +279,7 @@ gulp.task('html:detail', ['yaml:convert'], function () {
       var slug = generateSlug(file.path);
       const options = {
         batch: ['./src/partials'],
-        helpers: {
-          md: function (str) {
-            return marked(str, {renderer: renderer});
-          },
-          toType: function (str) {
-            return str ? str.toLowerCase().replace(/\s/g, '-') : str;
-          }
-        }
+        helpers: hbsHelpers
       };
 
       return gulp.src('./src/detail.hbs')

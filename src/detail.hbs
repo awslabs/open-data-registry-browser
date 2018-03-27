@@ -4,7 +4,7 @@
 
     <h1>{{Name}}</h1>
     <p>{{#each Tags}}
-      <span class="label label-info tag link-tag">{{.}}</span>
+      {{#isEqual . 'aws-pds'}}{{else}}<span class="label label-info tag link-tag">{{.}}</span>{{/isEqual}}
   {{/each}}
     </p>
     <div class="row">
