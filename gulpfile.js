@@ -27,6 +27,7 @@ var browserSync = require('browser-sync');
 var reload = browserSync.reload;
 var fs = require('fs');
 var _ = require('lodash');
+let allDatasets;
 
 // Overriding MD renderer to remove outside <p> tags
 renderer.paragraph = function (text, level) {
@@ -35,6 +36,10 @@ renderer.paragraph = function (text, level) {
 
 // Helper function to grab datasets from JSON files
 const getDatasets = function () {
+  if (allDatasets) {
+    return allDatasets;
+  }
+
   var datasets = requireDir('./tmp/data/datasets');
   var arr = [];
   for (var k in datasets) {
@@ -46,6 +51,7 @@ const getDatasets = function () {
   // Rank the datasets
   arr = rankDatasets(arr);
 
+  allDatasets = arr;
   return arr;
 };
 
@@ -77,9 +83,6 @@ const rankDatasets = function (datasets) {
 
   return datasets;
 };
-
-// Top-level loading of datasets
-const allDatasets = getDatasets();
 
 // Handlebars helper functions
 const hbsHelpers = {
@@ -192,7 +195,7 @@ gulp.task('yaml:copy', ['clean'], function () {
 // Compile the top level yaml and move to dist
 gulp.task('yaml:overview', ['clean', 'yaml:convert'], function () {
   var templateData = {
-    datasets: allDatasets,
+    datasets: getDatasets(),
     baseURL: process.env.BASE_URL
   };
 
@@ -217,7 +220,7 @@ gulp.task('img', ['clean'], function () {
 // Compile the sitemap and move to dist
 gulp.task('html:sitemap', ['yaml:convert'], function () {
   var templateData = {
-    datasets: allDatasets,
+    datasets: getDatasets(),
     baseURL: process.env.BASE_URL
   };
 
@@ -229,7 +232,7 @@ gulp.task('html:sitemap', ['yaml:convert'], function () {
 
 // Compile overview page and move to dist
 gulp.task('html:overview', ['yaml:convert'], function () {
-  const datasets = allDatasets;
+  const datasets = getDatasets();
 
   // Do some work to alter the datasets data for display
   datasets.map((d) => {
@@ -241,7 +244,7 @@ gulp.task('html:overview', ['yaml:convert'], function () {
 
   // HBS templating
   var templateData = {
-    datasets: allDatasets
+    datasets: getDatasets()
   };
   const options = {
     batch: ['./src/partials'],
@@ -257,7 +260,7 @@ gulp.task('html:overview', ['yaml:convert'], function () {
 // Compile the usage examples page and move to dist
 gulp.task('html:examples', ['yaml:convert'], function () {
   let templateData = {
-    datasets: allDatasets
+    datasets: getDatasets()
   };
 
   const options = {
