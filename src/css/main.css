@@ -119,8 +119,20 @@ dt {
   margin-top: .6em;
 }
 
-.aws-link {
-  color: #e9903a;
+a.aws-link::before {
+  content: "AWS";
+  display: inline;
+  padding: .1em .4em .2em;
+  margin-right: .3em;
+  font-size: 75%;
+  font-weight: 400;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: .25em;
+  background-color: #eb5f07;
 }
 
 @media (max-width:768px) {
