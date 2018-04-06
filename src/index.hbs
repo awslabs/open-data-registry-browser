@@ -33,18 +33,36 @@
       // Get datasets object
       var datasets = {{toJSON datasets}};
 
+      // Function to set matching count number
+      var setMatchingCount = function (count) {
+        $("#count-matching").text(count);
+        if (count > 1) {
+          $("#count-matching-text").text("datasets");
+        } else {
+          $("#count-matching-text").text("dataset");
+        }
+      }
+
+      // Set initial matching datasets count
+      setMatchingCount(datasets.length);
+
       // Listen for changes in search box and filter based
       // on input
       $("#search-box").on('input', function() {
         var searchText = $(this).val();
         // Loop over each item and hide non-matching
+        let countMatching = 0;
         $(".dataset").each(function() {
           if (isMatch($(this).attr('id'), searchText)) {
+            countMatching++;
             $(this).show();
           } else {
             $(this).hide();
           }
         });
+
+        // Set matching datasets count
+        setMatchingCount(countMatching);
       });
 
       // Helper function to see if dataset has some match
