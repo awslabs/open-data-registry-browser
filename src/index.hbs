@@ -48,7 +48,7 @@
 
       // Listen for changes in search box and filter based
       // on input
-      $("#search-box").on('input', function() {
+      $("#search-box").on('input', function () {
         var searchText = $(this).val();
         // Loop over each item and hide non-matching
         let countMatching = 0;
@@ -63,6 +63,15 @@
 
         // Set matching datasets count
         setMatchingCount(countMatching);
+      });
+
+      // Make sure we're not trying to submit anything if you press
+      // enter in the text box
+      $("#search-box").on("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          return;
+        }
       });
 
       // Helper function to see if dataset has some match
