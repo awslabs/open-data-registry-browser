@@ -200,9 +200,9 @@ gulp.task('yaml:overview', ['clean', 'yaml:convert'], function () {
   };
 
   return gulp.src('./src/datasets.hbs')
-      .pipe(handlebars(templateData))
-      .pipe(rename('datasets.yaml'))
-      .pipe(gulp.dest('./dist/'));
+    .pipe(handlebars(templateData))
+    .pipe(rename('datasets.yaml'))
+    .pipe(gulp.dest('./dist/'));
 });
 
 // Copy font files to dist
@@ -225,9 +225,9 @@ gulp.task('html:sitemap', ['yaml:convert'], function () {
   };
 
   return gulp.src('./src/sitemap.hbs')
-      .pipe(handlebars(templateData))
-      .pipe(rename('sitemap.txt'))
-      .pipe(gulp.dest('./dist/'));
+    .pipe(handlebars(templateData))
+    .pipe(rename('sitemap.txt'))
+    .pipe(gulp.dest('./dist/'));
 });
 
 // Compile JS and move to dist
@@ -259,7 +259,7 @@ gulp.task('html:overview', ['yaml:convert'], function () {
 
   // HBS templating
   var templateData = {
-    datasets: getDatasets()
+    datasets: datasets
   };
   const options = {
     batch: ['./src/partials'],
@@ -267,9 +267,9 @@ gulp.task('html:overview', ['yaml:convert'], function () {
   };
 
   return gulp.src('./src/index.hbs')
-      .pipe(handlebars(templateData, options))
-      .pipe(rename('index.html'))
-      .pipe(gulp.dest('./dist/'));
+    .pipe(handlebars(templateData, options))
+    .pipe(rename('index.html'))
+    .pipe(gulp.dest('./dist/'));
 });
 
 // Compile the usage examples page and move to dist
@@ -284,9 +284,9 @@ gulp.task('html:examples', ['yaml:convert'], function () {
   };
 
   return gulp.src('./src/examples.hbs')
-      .pipe(handlebars(templateData, options))
-      .pipe(rename('index.html'))
-      .pipe(gulp.dest('./dist/usage-examples/'));
+    .pipe(handlebars(templateData, options))
+    .pipe(rename('index.html'))
+    .pipe(gulp.dest('./dist/usage-examples/'));
 });
 
 // Compile detail pages and move to dist
@@ -301,9 +301,9 @@ gulp.task('html:detail', ['yaml:convert'], function () {
       };
 
       return gulp.src('./src/detail.hbs')
-          .pipe(handlebars(templateData, options))
-          .pipe(rename(`${slug}/index.html`))
-          .pipe(gulp.dest('./dist/'));
+        .pipe(handlebars(templateData, options))
+        .pipe(rename(`${slug}/index.html`))
+        .pipe(gulp.dest('./dist/'));
     }));
 });
 
