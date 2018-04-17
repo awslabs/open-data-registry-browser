@@ -1,0 +1,31 @@
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{{#if isDetail}}{{Name}} - {{/if}}Registry of Open Data on AWS</title>
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://assets.opendata.aws/css/bootstrap.min.css">
+
+  <!-- Our local CSS -->
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://assets.opendata.aws/js/jquery/1.12.4/jquery.min.js"></script>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://assets.opendata.aws/js/bootstrap/3.3.7/bootstrap.min.js"></script>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="roda-header">
+        {{#if isHome}}<h1>Registry of Open Data on AWS</h1>{{/if}}
+        {{#if isDetail}}<h2><a href="/" alt="Home">Registry of Open Data on AWS</a></h2>{{/if}}
+        {{#if isDataAtWork}}<h2><a href="/" alt="Home">Registry of Open Data on AWS</a></h2>{{/if}}
+        <a href="http://aws.amazon.com/what-is-cloud-computing">
+          <img src="https://assets.opendata.aws/img/AWS-Logo_White-Color_300x180.png" alt="Powered by AWS Cloud Computing" id="aws_header_logo">
+        </a>
+      </div>
+    </div>
+  </nav>
+  <div class="container" {{#if isDataAtWork}}id="dataatwork"{{/if}}>

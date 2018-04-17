@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{> header isDetail=true}}
+
+    <h1>{{Name}}</h1>
+    <p>{{#each Tags}}
+      {{#isEqual . 'aws-pds'}}{{else}}<span class="label label-info tag link-tag">{{.}}</span>{{/isEqual}}
+  {{/each}}
+    </p>
+    <div class="row">
+      <div class="col-md-6">
+      <h3>Description</h3>
+      <p>{{Description}}</p>
+
+      <h4>Update Frequency</h4>
+      <p>{{UpdateFrequency}}</p>
+
+      <h4>License</h4>
+      <p>{{{md License}}}</p>
+
+      <h4>Documentation</h4>
+      <p><a href="{{Documentation}}" target="_none">{{Documentation}}</a></p>
+
+      <h4>Contact</h4>
+      <p><a href="{{Contact}}" target="_none">{{Contact}}</a></p>
+
+      {{#if DataAtWork}}
+      <h4>Usage Examples</h4>
+      <ul class="dataatwork-list">
+        {{#each DataAtWork}}
+        <li>
+          <a href="{{URL}}" target="_none">{{Title}}</a> by {{#if AuthorURL}}<a href="{{AuthorURL}}" target="_none">{{AuthorName}}</a>{{else}}{{AuthorName}}{{/if}}</li></a>
+        </li>
+        {{/each}}
+      </ul>
+      {{/if}}
+
+      {{#if Metadata}}
+      <h4>More Information</h4>
+      <table class="table table-condensed table-bordered table-hover">
+        {{#each Metadata as |value key|}}
+        <tr>
+          <th>{{key}}</th>
+          <td>{{value}}</td>
+        </tr>
+        {{/each}}
+      </table>
+      {{/if}}
+    </div>
+    <div class="col-md-5 col-md-offset-1">
+      <h3>Resources on AWS</h3>
+      <ul class="resource-list">
+        {{#each Resources}}
+        <li>
+          <dl class="resource-list">
+            <dt class="resource-description">Description</dt>
+            <dd class="resource-description">{{Description}}</dd>
+            <dt class="resource-type">Resource type</dt>
+            <dd class="resource-type {{{toType Type}}}">{{Type}}</dd>
+            {{#if ARN}}
+            <dt class="resource-arn">Amazon Resource Name (ARN)</dt>
+            <dd><code>{{ARN}}</code></dd>
+            {{/if}}
+            {{#if Host}}
+            <dt class="resource-host">Hostname</dt>
+            <dd><code>{{Host}}</code></dd>
+            {{/if}}
+            <dt class="resource-region">AWS Region</dt>
+            <dd><code>{{Region}}</code></dd>
+          </dl>
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+  </div>
+
+  {{> footer isDetail=true}}
+
+  <script src="/js/tags.js"></script>

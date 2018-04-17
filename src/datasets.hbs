@@ -1,0 +1,6 @@
+datasets:
+  {{#each datasets}}
+    {{#each Sources}}
+    - {{../../baseURL}}/datasets/{{.}}/datasets/{{../Slug}}.yaml
+    {{/each}}
+  {{/each}}

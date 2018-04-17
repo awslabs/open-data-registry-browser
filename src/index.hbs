@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{> header isHome=true}}
+
+    {{> about}}
+    <div class="col-md-6 col-md-offset-1 datasets">
+      <div class="row">
+      {{#each datasets}}
+        <div id="{{Slug}}" class="dataset">
+          <h3><a href="{{Slug}}/">{{Name}}</a></h3>
+          <p>{{#each Tags}}{{#isEqual . 'aws-pds'}}{{else}}<span class="label label-info tag link-tag">{{.}}</span>{{/isEqual}}{{/each}}</p>
+          <p>{{Description}}</p>
+          <p><a href="{{Slug}}/">Details &rarr;</a></p>
+          {{#if examples}}
+          <h4>Usage examples</h4>
+          <ul class="dataatwork-list">
+          {{#each examples}}
+          <li>
+            <a href="{{URL}}" target="_none">{{Title}}</a> by {{#if AuthorURL}}<a href="{{AuthorURL}}" target="_none">{{AuthorName}}</a>{{else}}{{AuthorName}}{{/if}}</li></a>
+          </li>
+          {{/each}}
+        </ul>
+        <p><a href="{{Slug}}/">See {{examplesCount}} usage example{{#checkLength DataAtWork 1}}s{{/checkLength}} &rarr;</a></p>
+        {{/if}}
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+
+  {{> footer}}
+  </body>
+  <script src="/js/index.js"></script>
+</html>
