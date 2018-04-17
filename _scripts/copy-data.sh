@@ -14,7 +14,7 @@ rm -rf $DATA_DIR/
 # Loop over each item in RODA_SOURCES env var and git clone them,
 # if none present, default to public source.
 # RODA_SOURCES must be of form RODA_SOURCES=git@github.com:awslabs/repo1.git,git@github.com:awslabs/repo2.git
-if [ -z ${RODA_SOURCES+x} ]; then RODA_SOURCES="git@github.com:awslabs/open-data-registry.git"; fi
+if [ -z ${RODA_SOURCES+x} ]; then RODA_SOURCES="https://github.com/awslabs/open-data-registry-browser.git"; fi
 REPOS=$(echo $RODA_SOURCES | tr "," "\n")
 
 for repo in $REPOS

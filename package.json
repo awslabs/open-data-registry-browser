@@ -4,8 +4,8 @@
   "description": "Browser for https://github.com/awslabs/open-data-registry.",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "copy-data": "./_build/copy-data.sh",
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "copy-data": "./_scripts/copy-data.sh",
     "build": "./node_modules/gulp-cli/bin/gulp.js",
     "serve": "./node_modules/gulp-cli/bin/gulp.js serve"
   },
