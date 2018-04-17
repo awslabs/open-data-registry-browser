@@ -111,7 +111,7 @@ ul.resource-list li {
   border-bottom: 1px solid #d5dbdb;
 }
 
-ul.resource-list li:only-of-type {
+ul.resource-list li:last-child {
   border-bottom:none;
 }
 
