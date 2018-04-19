@@ -9,7 +9,7 @@
         <div id="{{Slug}}" class="dataset">
           <h3><a href="{{Slug}}/">{{Name}}</a></h3>
           <p>{{#each Tags}}{{#isEqual . 'aws-pds'}}{{else}}<span class="label label-info tag link-tag">{{.}}</span>{{/isEqual}}{{/each}}</p>
-          <p>{{Description}}</p>
+          <p>{{{md Description}}}</p>
           <p><a href="{{Slug}}/">Details &rarr;</a></p>
           {{#if examples}}
           <h4>Usage examples</h4>
