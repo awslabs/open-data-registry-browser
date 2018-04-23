@@ -34,6 +34,21 @@ renderer.paragraph = function (text, level) {
   return text;
 };
 
+// Helper function to alpha sort DataAtWork sections
+const sortDataAtWork = function (dataAtWork) {
+  dataAtWork.sort((a, b) => {
+    if (a.Title.toUpperCase() < b.Title.toUpperCase()) {
+      return -1;
+    }
+    if (a.Title.toUpperCase() > b.Title.toUpperCase()) {
+      return 1;
+    }
+    return 0;
+  });
+
+  return dataAtWork;
+};
+
 // Helper function to grab datasets from JSON files
 const getDatasets = function () {
   if (allDatasets) {
@@ -51,8 +66,17 @@ const getDatasets = function () {
   // Rank the datasets
   arr = rankDatasets(arr);
 
-  allDatasets = arr;
-  return arr;
+  // Sort DataAtWork section by alpha
+  arr = arr.map((d) => {
+    if (d.DataAtWork) {
+      d.DataAtWork = sortDataAtWork(d.DataAtWork);
+    }
+
+    return d;
+  });
+
+  allDatasets = arr.slice();
+  return allDatasets;
 };
 
 // Helper function to generate slug from file name
@@ -94,6 +118,22 @@ const hbsHelpers = {
       return options.fn(this);
     }
     return options.inverse(this);
+  },
+  pickRandom: function (arr, len, options) {
+    let ret = '';
+    const shuffle = function (a) {
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    };
+    arr = shuffle(arr.slice());
+    arr = arr.slice(0, len);
+    arr = arr.forEach((a) => {
+      ret += options.fn(a);
+    });
+    return ret;
   },
   isEqual: function (v1, v2, options) {
     if (v1 === v2) {
@@ -252,7 +292,6 @@ gulp.task('html:overview', ['yaml:convert'], function () {
   // Do some work to alter the datasets data for display
   datasets.map((d) => {
     d.examplesCount = d['DataAtWork'] ? d['DataAtWork'].length : 0;
-    d.examples = d['DataAtWork'] ? d['DataAtWork'].slice(0, 5) : [];
 
     return d;
   });
@@ -274,7 +313,7 @@ gulp.task('html:overview', ['yaml:convert'], function () {
 
 // Compile the usage examples page and move to dist
 gulp.task('html:examples', ['yaml:convert'], function () {
-  let templateData = {
+  const templateData = {
     datasets: getDatasets()
   };
 
@@ -294,6 +333,10 @@ gulp.task('html:detail', ['yaml:convert'], function () {
   return gulp.src('./tmp/data/datasets/*.json')
     .pipe(flatmap(function (stream, file) {
       var templateData = JSON.parse(file.contents.toString('utf8'));
+      // Sort DataAtWork entries by alpha
+      if (templateData.DataAtWork) {
+        sortDataAtWork(templateData.DataAtWork);
+      }
       var slug = generateSlug(file.path);
       const options = {
         batch: ['./src/partials'],
