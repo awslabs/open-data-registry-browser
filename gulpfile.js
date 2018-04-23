@@ -95,6 +95,22 @@ const hbsHelpers = {
     }
     return options.inverse(this);
   },
+  pickRandom: function (arr, len, options) {
+    let ret = '';
+    const shuffle = function (a) {
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    };
+    arr = shuffle(arr);
+    arr = arr.slice(0, len);
+    arr = arr.forEach((a) => {
+      ret += options.fn(a);
+    });
+    return ret;
+  },
   isEqual: function (v1, v2, options) {
     if (v1 === v2) {
       return options.fn(this);
@@ -252,7 +268,6 @@ gulp.task('html:overview', ['yaml:convert'], function () {
   // Do some work to alter the datasets data for display
   datasets.map((d) => {
     d.examplesCount = d['DataAtWork'] ? d['DataAtWork'].length : 0;
-    d.examples = d['DataAtWork'] ? d['DataAtWork'].slice(0, 5) : [];
 
     return d;
   });
