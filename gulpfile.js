@@ -245,6 +245,20 @@ gulp.task('yaml:overview', ['clean', 'yaml:convert'], function () {
     .pipe(gulp.dest('./dist/'));
 });
 
+// Compile the RSS feed and move to dist
+gulp.task('rss', ['clean', 'yaml:convert'], function () {
+  var templateData = {
+    datasets: getDatasets(),
+    baseURL: process.env.BASE_URL,
+    buildDate: new Date().toUTCString()
+  };
+
+  return gulp.src('./src/rss.xml.hbs')
+    .pipe(handlebars(templateData))
+    .pipe(rename('rss.xml'))
+    .pipe(gulp.dest('./dist/'));
+});
+
 // Copy font files to dist
 gulp.task('fonts', ['clean'], function () {
   return gulp.src('./src/fonts/**/*')
@@ -351,7 +365,7 @@ gulp.task('html:detail', ['yaml:convert'], function () {
 });
 
 // Server with live reload
-gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'js', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples'], function () {
+gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'js', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples', 'rss'], function () {
   browserSync({
     port: 3000,
     server: {
@@ -373,4 +387,4 @@ gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge'
   gulp.watch('src/**/*', ['default']);
 });
 
-gulp.task('default', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'js', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples']);
+gulp.task('default', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'js', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples', 'rss']);
