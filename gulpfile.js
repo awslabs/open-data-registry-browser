@@ -81,7 +81,7 @@ const getDatasets = function () {
 
 // Helper function to generate slug from file name
 const generateSlug = function (file) {
-  return path.basename(file, '.json');
+  return path.basename(file, '.json').toLowerCase();
 };
 
 // Helper function to rank the datasets in some order
