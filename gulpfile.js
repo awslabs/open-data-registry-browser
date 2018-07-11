@@ -58,6 +58,11 @@ const getDatasets = function () {
   var datasets = requireDir('./tmp/data/datasets');
   var arr = [];
   for (var k in datasets) {
+    // Handle deprecated datasets
+    if (datasets[k].Deprecated) {
+      continue;
+    }
+
     var dataset = datasets[k];
     dataset.Slug = generateSlug(k);
     arr.push(datasets[k]);
