@@ -96,6 +96,17 @@ var isMatch = function(slug, text) {
   }
   if (hasMatch) { return true; }
 
+  // Check resources region
+  hasMatch = false;
+  for (var i = 0; i < dataset.Resources.length; i++) {
+    if (!dataset.Resources[i].Region) { continue; }
+    if (dataset.Resources[i].Region.toLowerCase().indexOf(text) !== -1) {
+      hasMatch = true;
+      break;
+    }
+  }
+  if (hasMatch) { return true; }
+
   // If we're here, no match
   return false;
 };
