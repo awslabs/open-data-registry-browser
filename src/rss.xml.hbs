@@ -1,0 +1,18 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Registry of Open Data on AWS</title>
+    <link>https://registry.opendata.aws</link>
+    <description>Recent datasets listed on the Registry of Open Data on AWS</description>
+    <language>en-us</language>
+    <managingEditor>opendata@amazon.com</managingEditor>
+    <lastBuildDate>{{buildDate}}</lastBuildDate>
+    {{#each datasets}}
+    <item>
+      <title>{{Name}}</title>
+      <link>{{../baseURL}}/{{Slug}}</link>
+      <guid>{{../baseURL}}/{{Slug}}</guid>
+      <description>{{md Description}}</description>
+    </item>
+    {{/each}}
+  </channel>
+</rss>
