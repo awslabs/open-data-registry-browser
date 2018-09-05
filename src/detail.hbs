@@ -21,6 +21,11 @@
       <h4>Documentation</h4>
       <p><a href="{{Documentation}}" target="_none">{{Documentation}}</a></p>
 
+      {{#if ManagedBy}}
+      <h4>Managed By</h4>
+      <p>{{{md ManagedBy}}}</p>
+      {{/if}}
+
       <h4>Contact</h4>
       <p>{{{md Contact}}}</p>
 
