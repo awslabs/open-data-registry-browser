@@ -13,6 +13,7 @@
   <!-- Our local CSS -->
   <link rel="stylesheet" href="/css/main.css">
 
+  {{#if isDetail}}
   <script type="application/ld+json">
   {
     "@context" : "http://schema.org",
@@ -23,6 +24,7 @@
     "sourceOrganization" : "{{{md ManagedBy}}}"{{/if}}
   }
   </script>
+  {{/if}}
 
 </head>
 <body>
