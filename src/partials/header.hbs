@@ -13,17 +13,16 @@
   <!-- Our local CSS -->
   <link rel="stylesheet" href="/css/main.css">
 
-  {{#if isDetail}}{{Name}} - {{/if}}
   <script type="application/ld+json">
   {
     "@context" : "http://schema.org",
     "@type" : "Dataset",
     "name" : "{{Name}}",
-    "description" : "{{Description}}",
-    "license" : "{{License}}"{{#if ManagedBy}},
-    "sourceOrganization" : "{{ManagedBy}}"{{/if}}
+    "description" : "{{{md Description}}}",
+    "license" : "{{{md License}}}"{{#if ManagedBy}},
+    "sourceOrganization" : "{{{md ManagedBy}}}"{{/if}}
   }
-  </script>{{/if}}
+  </script>
 
 </head>
 <body>
