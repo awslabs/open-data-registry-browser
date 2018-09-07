@@ -12,6 +12,19 @@
 
   <!-- Our local CSS -->
   <link rel="stylesheet" href="/css/main.css">
+
+  {{#if isDetail}}{{Name}} - {{/if}}
+  <script type="application/ld+json">
+  {
+    "@context" : "http://schema.org",
+    "@type" : "Dataset",
+    "name" : "{{Name}}",
+    "description" : "{{Description}}",
+    "license" : "{{License}}"{{#if ManagedBy}},
+    "sourceOrganization" : "{{ManagedBy}}"{{/if}}
+  }
+  </script>{{/if}}
+
 </head>
 <body>
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
