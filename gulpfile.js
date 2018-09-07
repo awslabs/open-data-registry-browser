@@ -153,6 +153,10 @@ const hbsHelpers = {
     return options.inverse(this);
   },
   md: function (str) {
+    // Keep from exiting if we have an undefined string
+    if (!str) {
+      return str;
+    }
     return marked(str, {renderer: renderer});
   },
   toType: function (str) {

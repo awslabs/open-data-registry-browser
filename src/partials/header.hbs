@@ -12,6 +12,18 @@
 
   <!-- Our local CSS -->
   <link rel="stylesheet" href="/css/main.css">
+
+  <script type="application/ld+json">
+  {
+    "@context" : "http://schema.org",
+    "@type" : "Dataset",
+    "name" : "{{Name}}",
+    "description" : "{{{md Description}}}",
+    "license" : "{{{md License}}}"{{#if ManagedBy}},
+    "sourceOrganization" : "{{{md ManagedBy}}}"{{/if}}
+  }
+  </script>
+
 </head>
 <body>
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
