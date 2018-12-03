@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-  {{> header isHome=true}}
+  {{> header isHome=isHome}}
 
     {{> about}}
     <div class="col-md-6 col-md-offset-1 datasets">
       <div class="row">
       {{#each datasets}}
         <div id="{{Slug}}" class="dataset">
-          <h3><a href="{{Slug}}/">{{Name}}</a></h3>
+          <h3><a href="/{{Slug}}/">{{Name}}</a></h3>
           <p>{{#each Tags}}{{#isEqual . 'aws-pds'}}{{else}}<span class="label label-info tag link-tag">{{.}}</span>{{/isEqual}}{{/each}}</p>
           <p>{{{md Description}}}</p>
           <p><a href="{{Slug}}/">Details &rarr;</a></p>

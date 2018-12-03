@@ -36,9 +36,7 @@
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
       <div class="roda-header">
-        {{#if isHome}}<h1>Registry of Open Data on AWS</h1>{{/if}}
-        {{#if isDetail}}<h2><a href="/" alt="Home">Registry of Open Data on AWS</a></h2>{{/if}}
-        {{#if isDataAtWork}}<h2><a href="/" alt="Home">Registry of Open Data on AWS</a></h2>{{/if}}
+        {{#if isHome}}<h1>{{else}}<h2><a href="/" alt="Home">{{/if}}Registry of Open Data on AWS{{#if isHome}}</h1>{{else}}</a></h2>{{/if}}
         <a href="http://aws.amazon.com/what-is-cloud-computing">
           <img src="https://assets.opendata.aws/img/AWS-Logo_White-Color_300x180.png" alt="Powered by AWS Cloud Computing" id="aws_header_logo">
         </a>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   {{> header isDataAtWork=true}}
-  <p class="lede">Usage examples for all datasets listed in the <a href="/">Registry of Open Data on AWS</a>.</p>
+  <p class="lede">Usage examples for all datasets listed in the <a href="/">Registry of Open Data on AWS</a>{{#if tag}} tagged with <strong>{{tag}}</strong>{{/if}}.</p>
   <hr>
 
   {{#each datasets}}

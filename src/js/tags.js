@@ -1,6 +1,6 @@
 'use strict';
 
-// Listen for clicks on the tags and send to main page if clicked
+// Listen for clicks on the tags and send to appropriate page if clicked
 $('.tag').click(function () {
-  window.location.href = '/?search=' + $(this).text();
+  window.location.href = '/tag/' + $(this).text().replace(/ /g, '-');
 });

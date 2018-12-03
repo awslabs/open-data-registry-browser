@@ -14,7 +14,7 @@ var setMatchingCount = function (count) {
 }
 
 // Set initial matching datasets count
-setMatchingCount(datasets.length);
+setMatchingCount($(".dataset").length);
 
 // Listen for changes in search box and filter based
 // on input
@@ -117,9 +117,9 @@ var triggerInput = function (text) {
   $('#search-box').trigger('input');
 }
 
-// Listen for clicks on the tags and fill in search box if clicked
+// Listen for clicks on the tags and go to appropriate page
 $('.tag').click(function () {
-  triggerInput($(this).text());
+  window.location.href = '/tag/' + $(this).text().replace(/ /g, '-');
 });
 
 // Handle query passed in url via ?search=foo

@@ -3,7 +3,11 @@
     <h3>About</h3>
     <p>This registry exists to help people discover and share datasets that are available via AWS resources. <a href="https://opendata.aws">Learn more about sharing data on AWS</a>.</p>
 
+    {{#if tag}}
+    <p>See <a href="/tag/{{tagURL}}/usage-examples">all usage examples for datasets listed in this registry</a> tagged with <strong>{{tag}}</strong>.</p>
+    {{else}}
     <p>See <a href="/usage-examples">all usage examples for datasets listed in this registry</a>.</p>
+    {{/if}}
 
     <hr>
 
@@ -13,6 +17,7 @@
         <input type="text" id="search-box" class="form-control" placeholder="Search datasets" spellcheck="false" autocorrect="off">
       </div>
     </form>
+    {{#if tag}}<p>You are currently viewing a subset of data tagged with <strong>{{tag}}</strong>.</p>{{/if}}
 
     <hr>
 
