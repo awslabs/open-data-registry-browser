@@ -422,7 +422,7 @@ gulp.task('html:tag', ['yaml:convert'], function (cb) {
 
     return gulp.src('./src/index.hbs')
       .pipe(handlebars(templateData, options))
-      .pipe(rename(`${t.replace(/ /g, '-')}/index.html`))
+      .pipe(rename(`tag/${t.replace(/ /g, '-')}/index.html`))
       .pipe(gulp.dest('./dist/'));
   });
 
