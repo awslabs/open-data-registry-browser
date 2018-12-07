@@ -165,3 +165,10 @@ a.aws-link::before {
     max-width: 490px;
   }
 }
+
+img.collab-logo {
+  width: 100px;
+  height: 100px;
+  padding: 10px;
+  float: left;
+}

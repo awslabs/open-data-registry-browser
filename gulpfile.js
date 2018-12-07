@@ -313,6 +313,12 @@ gulp.task('html:sitemap', ['yaml:convert'], function () {
     });
   });
 
+  // Collab pages
+  fs.readdirSync('./src/collabs').forEach((c) => {
+    // Strip off the file extension and add to slugs
+    slugs.push(`collab/${path.basename(c, '.yaml')}`);
+  });
+
   var templateData = {
     slugs: slugs,
     baseURL: process.env.BASE_URL
@@ -475,8 +481,43 @@ gulp.task('html:tag', ['yaml:convert'], function (cb) {
   return cb();
 });
 
+// Compile collab pages and move to dist
+gulp.task('html:collab', ['yaml:convert'], function (cb) {
+  const datasets = getDatasets();
+
+  return gulp.src('./src/collabs/*.yaml')
+    .pipe(yaml())
+    .pipe(flatmap(function (stream, file) {
+      const collabData = JSON.parse(file.contents.toString('utf8'));
+      const slug = generateSlug(file.path);
+      const options = {
+        batch: ['./src/partials'],
+        helpers: hbsHelpers
+      };
+
+      // Filter out datasets to only the ones in the collab
+      const filteredDatasets = datasets.filter((d) => {
+        return collabData.Datasets.includes(d.Slug);
+      });
+
+      // HBS templating
+      var templateData = {
+        datasets: filteredDatasets,
+        isHome: false,
+        collabTitle: collabData.Title,
+        collabDescription: collabData.Description,
+        collabLogo: collabData.Logo
+      };
+
+      return gulp.src('./src/index.hbs')
+        .pipe(handlebars(templateData, options))
+        .pipe(rename(`collab/${slug}/index.html`))
+        .pipe(gulp.dest('./dist/'));
+    }));
+});
+
 // Server with live reload
-gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'js', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples', 'html:tag', 'html:tag-usage', 'rss'], function () {
+gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'html:collab', 'js', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples', 'html:tag', 'html:tag-usage', 'rss'], function () {
   browserSync({
     port: 3000,
     server: {
@@ -498,4 +539,4 @@ gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge'
   gulp.watch('src/**/*', ['default']);
 });
 
-gulp.task('default', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'js', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples', 'html:tag', 'html:tag-usage', 'rss']);
+gulp.task('default', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'js', 'html:overview', 'html:collab', 'html:detail', 'html:sitemap', 'html:examples', 'html:tag', 'html:tag-usage', 'rss']);

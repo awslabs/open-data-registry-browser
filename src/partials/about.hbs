@@ -1,12 +1,17 @@
 <div class="about col-md-5">
   <div class="row aboutbox">
-    <h3>About</h3>
-    <p>This registry exists to help people discover and share datasets that are available via AWS resources. <a href="https://opendata.aws">Learn more about sharing data on AWS</a>.</p>
-
-    {{#if tag}}
-    <p>See <a href="/tag/{{tagURL}}/usage-examples">all usage examples for datasets listed in this registry</a> tagged with <strong>{{tag}}</strong>.</p>
+    {{#if collabDescription}}
+        <h3>{{collabTitle}}</h3>
+        <p>{{#if collabLogo}}<img src="/img/logos/{{collabLogo}}" class="collab-logo">{{/if}}{{{md collabDescription}}}</p>
     {{else}}
-    <p>See <a href="/usage-examples">all usage examples for datasets listed in this registry</a>.</p>
+        <h3>About</h3>
+        <p>This registry exists to help people discover and share datasets that are available via AWS resources. <a href="https://opendata.aws">Learn more about sharing data on AWS</a>.</p>
+
+        {{#if tag}}
+        <p>See <a href="/tag/{{tagURL}}/usage-examples">all usage examples for datasets listed in this registry</a> tagged with <strong>{{tag}}</strong>.</p>
+        {{else}}
+        <p>See <a href="/usage-examples">all usage examples for datasets listed in this registry</a>.</p>
+        {{/if}}
     {{/if}}
 
     <hr>
