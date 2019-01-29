@@ -2,6 +2,9 @@ The Registry of Open Data (RODA) Browser acts as a simple, web-based visualizati
 
 This browser can be used to view a single data repository or multiple data repositories, depending on build-time settings. The project builds static HTML files that can be deployed on any compatible web server.
 
+## Logos
+You can add logos to the `src/img/logos` directory for use in the **detail** and **collab** pages. Logos should be square PNGs and are currently sized down to 100px x 100px for display. The name of the logo file that the template looks for is tied to the entry in the `ManagedBy` data field. Spaces are replaced with '-' and special characters are removed. If the `ManagedBy` field is using markdown, the link text field is used, otherwise, the entire string is used to generate the logo path for testing.
+
 ## Endpoints
 - `/` - Main datasets listing page, provides search mechanism.
 - `ex: /1000-genomes` - Individual detail pages for each dataset, contains details, license, contact, documentation and example usage links and AWS resources available.

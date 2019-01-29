@@ -172,3 +172,8 @@ img.collab-logo {
   padding: 10px;
   float: left;
 }
+
+img.managed-by-logo {
+  width: 100px;
+  height: 100px;
+}
