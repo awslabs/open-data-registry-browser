@@ -174,6 +174,30 @@ const hbsHelpers = {
     }
     return marked(str, {renderer: renderer});
   },
+  managedByRenderer: function (str) {
+    // Keep from exiting if we have an undefined string
+    if (!str) {
+      return str;
+    }
+
+    // Check to see if we have a markdown link
+    let logoPath, managedByURL, managedByName;
+    if (/\[(.*)\]\((.*)\)/.test(str)) {
+      managedByName = /\[(.*)\]/.exec(str)[1];
+      logoPath = `/img/logos/${managedByName.toLowerCase().replace(/ /g, '-').replace(/[.,+]/g, '')}-logo.png`;
+      managedByURL = /\((.*)\)/.exec(str)[1];
+    } else {
+      logoPath = `/img/logos/${str.toLowerCase().replace(/ /g, '-').replace(/[.,+]/g, '')}-logo.png`;
+    }
+
+    // Check to see if we have a logo and render that if we do
+    if (fs.existsSync(`src/${logoPath}`)) {
+      return `<a href="${managedByURL}"><img src="${logoPath}" class="managed-by-logo" alt="${managedByName}"></a>`;
+    }
+
+    // No logo if we're here, just render markdown
+    return marked(str, {renderer: renderer});
+  },
   toType: function (str) {
     return str ? str.toLowerCase().replace(/\s/g, '-') : str;
   }
