@@ -57,6 +57,19 @@ var isMatch = function(slug, text) {
     }
   }
 
+  // Short circuit for special case of query like tags:foo,bar
+  var tagsRE = /tags:(.*)/.exec(text);
+  if(tagsRE) {
+    var tags = tagsRE[1].split(',');
+    var hasMatch = false;
+    tags.forEach(function(tag) {
+      if (dataset.Tags.includes(tag.trim())) {
+        hasMatch = true;
+      }
+    });
+    if (hasMatch) { return true; }
+  }
+
   // Check dataset name
   if (dataset.Name.toLowerCase().indexOf(text) !== -1) {
     return true;
