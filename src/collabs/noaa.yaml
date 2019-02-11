@@ -6,7 +6,7 @@ Datasets:
   - noaa-nexrad
   - noaa-goes
   - noaa-gefs
-  - noaa-gfs-pds
+  - noaa-gfs-bdp-pds
   - noaa-ghcn
   - noaa-hrrr-pds
   - nwm-archive
