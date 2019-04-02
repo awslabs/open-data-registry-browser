@@ -293,6 +293,34 @@ gulp.task('yaml:overview', ['clean', 'yaml:convert'], function () {
     .pipe(gulp.dest('./dist/'));
 });
 
+// Compile the tag level yaml and move to dist
+gulp.task('yaml:tag', ['clean', 'yaml:convert'], function (cb) {
+  const datasets = getDatasets();
+
+  // Build up list of unique tags
+  const tags = getUniqueTags(datasets);
+
+  // Loop over each tag and build the page
+  tags.forEach((t) => {
+    // Filter out datasets without a matching tag
+    let filteredDatasets = datasets.filter((d) => {
+      return d.Tags.includes(t);
+    });
+
+    var templateData = {
+      datasets: filteredDatasets,
+      baseURL: process.env.BASE_URL
+    };
+
+    return gulp.src('./src/datasets.hbs')
+      .pipe(handlebars(templateData))
+      .pipe(rename(`tag/${t.replace(/ /g, '-')}/datasets.yaml`))
+      .pipe(gulp.dest('./dist/'));
+  });
+
+  return cb();
+});
+
 // Compile the RSS feed and move to dist
 gulp.task('rss', ['clean', 'yaml:convert'], function () {
   var templateData = {
@@ -541,7 +569,7 @@ gulp.task('html:collab', ['yaml:convert'], function (cb) {
 });
 
 // Server with live reload
-gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'html:collab', 'js', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples', 'html:tag', 'html:tag-usage', 'rss'], function () {
+gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'yaml:tag', 'html:collab', 'js', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples', 'html:tag', 'html:tag-usage', 'rss'], function () {
   browserSync({
     port: 3000,
     server: {
@@ -563,4 +591,4 @@ gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge'
   gulp.watch('src/**/*', ['default']);
 });
 
-gulp.task('default', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'js', 'html:overview', 'html:collab', 'html:detail', 'html:sitemap', 'html:examples', 'html:tag', 'html:tag-usage', 'rss']);
+gulp.task('default', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'yaml:tag', 'js', 'html:overview', 'html:collab', 'html:detail', 'html:sitemap', 'html:examples', 'html:tag', 'html:tag-usage', 'rss']);
