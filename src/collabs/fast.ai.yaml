@@ -1,0 +1,12 @@
+Title: fast.ai
+Description: |
+  Deep learning is transforming the world. fast.ai is
+  making deep learning easier to use and getting more people
+  from all backgrounds involved. The world needs everyone
+  involved with AI, no matter how unlikely your background.
+Logo: fast-ai-logo.png
+Datasets:
+  - fast-ai-coco
+  - fast-ai-imageclas
+  - fast-ai-imagelocal
+  - fast-ai-nlp
