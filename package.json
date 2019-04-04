@@ -24,6 +24,7 @@
     "gulp-yaml": "^1.0.1",
     "lodash": "^4.17.11",
     "marked": "^0.3.19",
-    "require-dir": "^0.3.2"
+    "require-dir": "^0.3.2",
+    "yaml": "^1.4.0"
   }
 }
