@@ -70,6 +70,13 @@ var isMatch = function(slug, text) {
     if (hasMatch) { return true; }
   }
 
+  // Short circuit for special case of query like managedBy:foo
+  var managedByRE = /managedby:(.*)/.exec(text);
+  if(managedByRE && dataset.ManagedBy) {
+    var managedBy = managedByRE[1];
+    return dataset.ManagedBy.toLowerCase().includes(managedBy.trim());
+  }
+
   // Check dataset name
   if (dataset.Name.toLowerCase().indexOf(text) !== -1) {
     return true;

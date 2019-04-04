@@ -15,6 +15,7 @@
 
 var gulp = require('gulp');
 var yaml = require('gulp-yaml');
+var jsyaml = require('yaml');
 var del = require('del');
 var handlebars = require('gulp-compile-handlebars');
 var rename = require('gulp-rename');
@@ -481,11 +482,36 @@ gulp.task('html:detail', ['yaml:convert'], function () {
   return gulp.src('./tmp/data/datasets/*.json')
     .pipe(flatmap(function (stream, file) {
       var templateData = JSON.parse(file.contents.toString('utf8'));
+
       // Sort DataAtWork entries by alpha
       if (templateData.DataAtWork) {
         sortDataAtWork(templateData.DataAtWork);
       }
-      var slug = generateSlug(file.path);
+
+      // Generate slug
+      const slug = generateSlug(file.path);
+
+      // Add link to other datasets managed by dataset owner, default to search
+      if (templateData.ManagedBy) {
+        let managedByName = templateData.ManagedBy;
+        // Check if ManagedBy is using Markdown
+        if (/\[(.*)\]\((.*)\)/.test(templateData.ManagedBy)) {
+          managedByName = /\[(.*)\]/.exec(templateData.ManagedBy)[1];
+        }
+        templateData.managedByLink = `${process.env.BASE_URL}?search=managedBy:${managedByName.toLowerCase()}`;
+        templateData.managedByName = managedByName;
+
+        // Check to see if we have a collab page for this dataset
+        fs.readdirSync('./src/collabs').forEach((c) => {
+          const file = fs.readFileSync(`./src/collabs/${c}`, 'utf8')
+          const json = jsyaml.parse(file);
+          if (json.Datasets.includes(slug)) {
+            templateData.managedByLink = `${process.env.BASE_URL}/collab/${path.basename(c, '.yaml')}`;
+          }
+        });
+      }
+
+      // Render
       const options = {
         batch: ['./src/partials'],
         helpers: hbsHelpers
