@@ -1,0 +1,7 @@
+Title: Space Telescope Science Institute
+Description: |
+  Insightful description goes here.
+Logo: space-telescope-science-institute-logo.png
+Datasets:
+  - hst
+  - tess
