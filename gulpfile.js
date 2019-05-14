@@ -163,9 +163,16 @@ const hbsHelpers = {
     return options.inverse(this);
   },
   isAWSURL: function (link, options) {
+    // AWS blog
     if (/https?:\/\/aws.amazon.com.*/.test(link)) {
       return options.fn(this);
     }
+
+    // AWS GitHub repos
+    if (/https?:\/\/github.com\/(awslabs|aws-samples)\/.*/.test(link)) {
+      return options.fn(this);
+    }
+
     return options.inverse(this);
   },
   md: function (str) {
