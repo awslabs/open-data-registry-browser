@@ -1,0 +1,17 @@
+Title: Space Telescope Science Institute
+Description: |
+    The Space Telescope Science Institute (STScI) is operated by the Association of Universities for Research in Astronomy 
+    (AURA) with the goal of helping humanity explore the universe with advanced space telescopes and ever-growing data 
+    archives. We have performed science operation for the Hubble Space Telescope since its launch in 1990 and we lead the 
+    science and mission operations for the James Webb Space Telescope (JWST), planned to launch in 2021. We will perform 
+    parts of the science operations for the Wide Field Infrared Survey Telescope (WFIRST) and we are partners on several 
+    other NASA missions. We host the Barbara A. Mikulski Archive for Space Telescopes (MAST) which curates and disseminates 
+    data from over 20 astronomical missions; and we bring science to the world through internationally recognized news, 
+    education, and public outreach programs. 
+    
+    With the datasets hosted through the AWS Public Dataset Program we aim to allow the astronomical community to carry out 
+    research to lead to new scientific discoveries.  
+Logo: space-telescope-science-institute-logo.png
+Datasets:
+  - hst
+  - tess
