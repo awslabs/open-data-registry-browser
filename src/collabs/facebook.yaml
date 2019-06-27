@@ -1,0 +1,10 @@
+Title: Facebook Data for Good
+Description: |
+    Facebook's Data for Good program includes tools built from
+    de-identified data on our platform, as well as tools that we
+    develop using satellite imagery and other publicly available
+    sources. When data is shared responsibly with the communities
+    that need it, it can improve wellbeing and save lives.
+Logo: facebook-logo.png
+Datasets:
+  - dataforgood-fb-hrsl
