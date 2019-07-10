@@ -12,3 +12,6 @@ Datasets:
   - nwm-archive
   - noaa-nwm-pds
   - noaa-ofs
+  - noaa-ghcnh
+  - noaa-isd
+  - noaa-ghe
