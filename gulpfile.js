@@ -409,6 +409,17 @@ gulp.task('js', ['clean', 'yaml:convert'], function () {
 gulp.task('html:overview', ['yaml:convert'], function () {
   const datasets = getDatasets();
 
+  // Grab collab data
+  let collabData = [];
+  fs.readdirSync('./src/collabs').forEach((c) => {
+    const file = fs.readFileSync(`./src/collabs/${c}`, 'utf8')
+    const json = jsyaml.parse(file);
+    collabData.push({
+      title: json.Title,
+      slug: path.basename(c, '.yaml')
+    });
+  });
+
   // Do some work to alter the datasets data for display
   datasets.map((d) => {
     d.examplesCount = d['DataAtWork'] ? d['DataAtWork'].length : 0;
@@ -418,6 +429,7 @@ gulp.task('html:overview', ['yaml:convert'], function () {
 
   // HBS templating
   var templateData = {
+    collabData: collabData,
     datasets: datasets,
     isHome: true
   };
