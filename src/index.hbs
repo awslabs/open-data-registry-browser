@@ -8,7 +8,7 @@
       {{#each datasets}}
         <div id="{{Slug}}" class="dataset">
           <h3><a href="/{{Slug}}/">{{Name}}</a></h3>
-          <p>{{#each Tags}}{{#isEqual . 'aws-pds'}}{{else}}<span class="label label-info tag link-tag">{{.}}</span>{{/isEqual}}{{/each}}</p>
+          <p>{{#each Tags}}{{#isEqual . 'aws-pds'}}{{else}}<span class="label label-info{{#isEqual . 'sustainability'}}-sustainability{{else}}{{/isEqual}} tag link-tag">{{.}}</span>{{/isEqual}}{{/each}}</p>
           <p>{{{md Description}}}</p>
           <p><a href="{{Slug}}/">Details &rarr;</a></p>
           {{#if DataAtWork}}
