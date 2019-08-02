@@ -30,3 +30,15 @@ By default, the public data repository at https://github.com/awslabs/open-data-r
 Make sure this variable is set before running `npm run copy-data` and `npm run build` or `npm run serve`. The `copy-data` script runs a `git clone <repo>` command so the machine you're building on needs to have permissions to the repository and the URL provided must be of the form to work with `git clone`.
 
 Subsequent listed repositores will take precendence over data on previous repositories. Datasets are matched across repos by their `Slug`, which is generated from their filename. Currently, only the `Metadata` dictionary is copied over between repositories. If a dataset exists only outside the primary repository, it will be created as normal.
+
+## Running with Docker
+
+Docker can be used to isolate the development environment.
+
+Build the container with:
+
+`docker build -t roda .`
+
+Run the container with:
+
+`docker run --rm -p 3000:3000 -ti roda`

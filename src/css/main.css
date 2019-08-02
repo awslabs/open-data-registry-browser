@@ -98,6 +98,14 @@ h1, h2, h3, h4, .dataset h3 a {
   background-color: #eb5f07;
 }
 
+.label-info-sustainability {
+  background-color: #1e8900;
+}
+
+.label-info-sustainability:hover {
+  background-color: #6aaf35;
+}
+
 /*.resource-list:nth-child(odd) {
   background-color: #E5FFFF;
 }*/

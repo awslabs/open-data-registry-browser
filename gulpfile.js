@@ -81,6 +81,15 @@ const getDatasets = function () {
     return d;
   });
 
+  // Sort the Tags
+  arr = arr.map((d) => {
+    if (d.Tags) {
+      d.Tags = d.Tags.sort((a, b) => a.localeCompare(b));
+    }
+
+    return d;
+  });
+
   allDatasets = arr.slice();
   return allDatasets;
 };
@@ -505,6 +514,11 @@ gulp.task('html:detail', ['yaml:convert'], function () {
       // Sort DataAtWork entries by alpha
       if (templateData.DataAtWork) {
         sortDataAtWork(templateData.DataAtWork);
+      }
+
+      // Sort Tags
+      if (templateData.Tags) {
+        templateData.Tags.sort((a, b) => a.localeCompare(b))
       }
 
       // Generate slug
