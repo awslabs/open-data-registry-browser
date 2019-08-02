@@ -10,7 +10,7 @@
           <h3><a href="/{{Slug}}/">{{Name}}</a></h3>
           <p>{{#each Tags}}{{#isEqual . 'aws-pds'}}{{else}}<span class="label label-info{{#isEqual . 'sustainability'}}-sustainability{{else}}{{/isEqual}} tag link-tag">{{.}}</span>{{/isEqual}}{{/each}}</p>
           <p>{{{md Description}}}</p>
-          <p><a href="{{Slug}}/">Details &rarr;</a></p>
+          <p><a href="/{{Slug}}/">Details &rarr;</a></p>
           {{#if DataAtWork}}
           <h4>Usage examples</h4>
           <ul class="dataatwork-list">
@@ -20,7 +20,7 @@
           </li>
           {{/pickRandom}}
         </ul>
-        <p><a href="{{Slug}}/">See {{examplesCount}} usage example{{#checkLength DataAtWork 1}}s{{/checkLength}} &rarr;</a></p>
+        <p><a href="/{{Slug}}/">See {{examplesCount}} usage example{{#checkLength DataAtWork 1}}s{{/checkLength}} &rarr;</a></p>
         {{/if}}
         </div>
         {{/each}}
