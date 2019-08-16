@@ -38,7 +38,7 @@ renderer.paragraph = function (text, level) {
 // Helper function to alpha sort DataAtWork sections
 const sortDataAtWork = function (dataAtWork) {
   for (var k in dataAtWork) {
-    if (!dataAtWork[k]) { return dataAtWork; }
+    if (!dataAtWork[k]) { return dataAtWork[k]; }
     dataAtWork[k].sort((a, b) => {
       if (a.Title.toUpperCase() < b.Title.toUpperCase()) {
         return -1;
@@ -65,6 +65,18 @@ const getDatasets = function () {
     // Handle deprecated datasets
     if (datasets[k].Deprecated) {
       continue;
+    }
+
+    // If we have no items in a category, remove it
+    for (var category in datasets[k].DataAtWork) {
+      if (!datasets[k].DataAtWork[category] || (datasets[k].DataAtWork[category] && datasets[k].DataAtWork[category] === 0)) {
+        delete datasets[k].DataAtWork[category];
+      }
+    }
+
+    // If we have no items at all, delete DataAtWork
+    if (_.flatMap(datasets[k].DataAtWork).length === 0) {
+      delete datasets[k].DataAtWork;
     }
 
     var dataset = datasets[k];
@@ -123,7 +135,7 @@ const rankDatasets = function (datasets) {
   datasets = datasets.map((d) => {
     d.rank = 0;
     if (d['Tags'].includes('aws-pds')) { d.rank += 3; }
-    if (d['DataAtWork']) { d.rank += 1 * d['DataAtWork'].length; }
+    if (d['DataAtWork']) { d.rank += 1 * _.flatMap(d['DataAtWork']).length; }
 
     return d;
   });
@@ -521,6 +533,11 @@ gulp.task('html:detail', ['yaml:convert'], function () {
   return gulp.src('./tmp/data/datasets/*.json')
     .pipe(flatmap(function (stream, file) {
       var templateData = JSON.parse(file.contents.toString('utf8'));
+
+      // If we have no DataAtWork, remove it
+      if (!templateData.DataAtWork || (templateData.DataAtWork && _.compact(_.flatMap(templateData.DataAtWork)).length === 0)) {
+        delete templateData.DataAtWork;
+      }
 
       // Sort DataAtWork entries by alpha and handle naming
       if (templateData.DataAtWork) {
