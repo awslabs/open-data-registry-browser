@@ -69,6 +69,10 @@ h1, h2, h3, h4, .dataset h3 a {
   color: #232F3E;
 }
 
+.dataatwork-category {
+  font-weight: bold;
+}
+
 .dataset {
   margin-bottom: 2em;
 }

@@ -37,15 +37,18 @@ renderer.paragraph = function (text, level) {
 
 // Helper function to alpha sort DataAtWork sections
 const sortDataAtWork = function (dataAtWork) {
-  dataAtWork.sort((a, b) => {
-    if (a.Title.toUpperCase() < b.Title.toUpperCase()) {
-      return -1;
-    }
-    if (a.Title.toUpperCase() > b.Title.toUpperCase()) {
-      return 1;
-    }
-    return 0;
-  });
+  for (var k in dataAtWork) {
+    if (!dataAtWork[k]) { return dataAtWork[k]; }
+    dataAtWork[k].sort((a, b) => {
+      if (a.Title.toUpperCase() < b.Title.toUpperCase()) {
+        return -1;
+      }
+      if (a.Title.toUpperCase() > b.Title.toUpperCase()) {
+        return 1;
+      }
+      return 0;
+    });
+  }
 
   return dataAtWork;
 };
@@ -62,6 +65,18 @@ const getDatasets = function () {
     // Handle deprecated datasets
     if (datasets[k].Deprecated) {
       continue;
+    }
+
+    // If we have no items in a category, remove it
+    for (var category in datasets[k].DataAtWork) {
+      if (!datasets[k].DataAtWork[category] || (datasets[k].DataAtWork[category] && datasets[k].DataAtWork[category] === 0)) {
+        delete datasets[k].DataAtWork[category];
+      }
+    }
+
+    // If we have no items at all, delete DataAtWork
+    if (_.flatMap(datasets[k].DataAtWork).length === 0) {
+      delete datasets[k].DataAtWork;
     }
 
     var dataset = datasets[k];
@@ -120,7 +135,7 @@ const rankDatasets = function (datasets) {
   datasets = datasets.map((d) => {
     d.rank = 0;
     if (d['Tags'].includes('aws-pds')) { d.rank += 3; }
-    if (d['DataAtWork']) { d.rank += 1 * d['DataAtWork'].length; }
+    if (d['DataAtWork']) { d.rank += 1 * _.flatMap(d['DataAtWork']).length; }
 
     return d;
   });
@@ -143,8 +158,8 @@ const hbsHelpers = {
   toJSON: function (obj) {
     return new handlebars.Handlebars.SafeString(JSON.stringify(obj));
   },
-  checkLength: function (arr, len, options) {
-    if (arr.length > len) {
+  checkLength: function (obj, len, options) {
+    if (_.flatMap(obj).length > len) {
       return options.fn(this);
     }
     return options.inverse(this);
@@ -158,7 +173,7 @@ const hbsHelpers = {
       }
       return a;
     };
-    arr = shuffle(arr.slice());
+    arr = shuffle(_.flatMap(arr));
     arr = arr.slice(0, len);
     arr = arr.forEach((a) => {
       ret += options.fn(a);
@@ -431,7 +446,7 @@ gulp.task('html:overview', ['yaml:convert'], function () {
 
   // Do some work to alter the datasets data for display
   datasets.map((d) => {
-    d.examplesCount = d['DataAtWork'] ? d['DataAtWork'].length : 0;
+    d.examplesCount = d['DataAtWork'] ? _.flatMap(d['DataAtWork']).length : 0;
 
     return d;
   });
@@ -459,6 +474,14 @@ gulp.task('html:examples', ['yaml:convert'], function () {
     datasets: getDatasets(),
     isHome: false
   };
+
+  // Handle pretty name for data at work field
+  templateData.datasets.forEach((d) => {
+    if (d.DataAtWork && d.DataAtWork['Tools & Applications']) {
+      d.DataAtWork.Tools = d.DataAtWork['Tools & Applications'];
+      delete d.DataAtWork['Tools & Applications'];
+    }
+  });
 
   const options = {
     batch: ['./src/partials'],
@@ -511,9 +534,20 @@ gulp.task('html:detail', ['yaml:convert'], function () {
     .pipe(flatmap(function (stream, file) {
       var templateData = JSON.parse(file.contents.toString('utf8'));
 
-      // Sort DataAtWork entries by alpha
+      // If we have no DataAtWork, remove it
+      if (!templateData.DataAtWork || (templateData.DataAtWork && _.compact(_.flatMap(templateData.DataAtWork)).length === 0)) {
+        delete templateData.DataAtWork;
+      }
+
+      // Sort DataAtWork entries by alpha and handle naming
       if (templateData.DataAtWork) {
         sortDataAtWork(templateData.DataAtWork);
+
+        // Handle pretty name for data at work field
+        if (templateData.DataAtWork['Tools & Applications']) {
+          templateData.DataAtWork.Tools = templateData.DataAtWork['Tools & Applications'];
+          delete templateData.DataAtWork['Tools & Applications'];
+        }
       }
 
       // Sort Tags
