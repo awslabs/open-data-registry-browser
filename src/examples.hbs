@@ -8,13 +8,30 @@
     {{#if DataAtWork}}
       <div id="{{Slug}}" class="dataset">
         <h4><a href="../{{Slug}}/">{{Name}}</a></h4>
+        {{#if DataAtWork.Tutorials}}
+        <h5 class="dataatwork-category">Tutorials</h5>
         <ul class="dataatwork-list">
-        {{#each DataAtWork}}
-          <li>
-            <a href="{{URL}}" class="{{#isAWSURL URL}}aws-link{{/isAWSURL}}" target="_none">{{Title}}</a> by {{#if AuthorURL}}<a href="{{AuthorURL}}" target="_none">{{AuthorName}}</a>{{else}}{{AuthorName}}{{/if}}</li></a>
-          </li>
+        {{#each DataAtWork.Tutorials}}
+          {{> detailList URL=URL Title=Title AuthorURL=AuthorURL AuthorName=AuthorName}}
         {{/each}}
         </ul>
+        {{/if}}
+        {{#if DataAtWork.Tools}}
+        <h5 class="dataatwork-category">Tools & Applications</h5>
+        <ul class="dataatwork-list">
+        {{#each DataAtWork.Tools}}
+          {{> detailList URL=URL Title=Title AuthorURL=AuthorURL AuthorName=AuthorName}}
+        {{/each}}
+        </ul>
+        {{/if}}
+        {{#if DataAtWork.Publications}}
+        <h5 class="dataatwork-category">Publications</h5>
+        <ul class="dataatwork-list">
+        {{#each DataAtWork.Publications}}
+          {{> detailList URL=URL Title=Title AuthorURL=AuthorURL AuthorName=AuthorName}}
+        {{/each}}
+        </ul>
+        {{/if}}
       </div>
     {{/if}}
   {{/each}}

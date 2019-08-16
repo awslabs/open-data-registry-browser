@@ -37,15 +37,18 @@ renderer.paragraph = function (text, level) {
 
 // Helper function to alpha sort DataAtWork sections
 const sortDataAtWork = function (dataAtWork) {
-  dataAtWork.sort((a, b) => {
-    if (a.Title.toUpperCase() < b.Title.toUpperCase()) {
-      return -1;
-    }
-    if (a.Title.toUpperCase() > b.Title.toUpperCase()) {
-      return 1;
-    }
-    return 0;
-  });
+  for (var k in dataAtWork) {
+    if (!dataAtWork[k]) { return dataAtWork; }
+    dataAtWork[k].sort((a, b) => {
+      if (a.Title.toUpperCase() < b.Title.toUpperCase()) {
+        return -1;
+      }
+      if (a.Title.toUpperCase() > b.Title.toUpperCase()) {
+        return 1;
+      }
+      return 0;
+    });
+  }
 
   return dataAtWork;
 };
@@ -143,8 +146,8 @@ const hbsHelpers = {
   toJSON: function (obj) {
     return new handlebars.Handlebars.SafeString(JSON.stringify(obj));
   },
-  checkLength: function (arr, len, options) {
-    if (arr.length > len) {
+  checkLength: function (obj, len, options) {
+    if (_.flatMap(obj).length > len) {
       return options.fn(this);
     }
     return options.inverse(this);
@@ -158,7 +161,7 @@ const hbsHelpers = {
       }
       return a;
     };
-    arr = shuffle(arr.slice());
+    arr = shuffle(_.flatMap(arr));
     arr = arr.slice(0, len);
     arr = arr.forEach((a) => {
       ret += options.fn(a);
@@ -431,7 +434,7 @@ gulp.task('html:overview', ['yaml:convert'], function () {
 
   // Do some work to alter the datasets data for display
   datasets.map((d) => {
-    d.examplesCount = d['DataAtWork'] ? d['DataAtWork'].length : 0;
+    d.examplesCount = d['DataAtWork'] ? _.flatMap(d['DataAtWork']).length : 0;
 
     return d;
   });
@@ -459,6 +462,14 @@ gulp.task('html:examples', ['yaml:convert'], function () {
     datasets: getDatasets(),
     isHome: false
   };
+
+  // Handle pretty name for data at work field
+  templateData.datasets.forEach((d) => {
+    if (d.DataAtWork && d.DataAtWork['Tools & Applications']) {
+      d.DataAtWork.Tools = d.DataAtWork['Tools & Applications'];
+      delete d.DataAtWork['Tools & Applications'];
+    }
+  });
 
   const options = {
     batch: ['./src/partials'],
@@ -511,9 +522,15 @@ gulp.task('html:detail', ['yaml:convert'], function () {
     .pipe(flatmap(function (stream, file) {
       var templateData = JSON.parse(file.contents.toString('utf8'));
 
-      // Sort DataAtWork entries by alpha
+      // Sort DataAtWork entries by alpha and handle naming
       if (templateData.DataAtWork) {
         sortDataAtWork(templateData.DataAtWork);
+
+        // Handle pretty name for data at work field
+        if (templateData.DataAtWork['Tools & Applications']) {
+          templateData.DataAtWork.Tools = templateData.DataAtWork['Tools & Applications'];
+          delete templateData.DataAtWork['Tools & Applications'];
+        }
       }
 
       // Sort Tags
