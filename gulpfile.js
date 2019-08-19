@@ -528,6 +528,41 @@ gulp.task('html:tag-usage', ['yaml:convert'], function (cb) {
   return cb();
 });
 
+// Compile tag usage examples pages as resources and move to dist
+gulp.task('html:tag-resources', ['yaml:convert'], function (cb) {
+  const datasets = getDatasets();
+
+  // Build up list of unique tags
+  const tags = getUniqueTags(datasets);
+
+  // Loop over each tag and build the page
+  tags.forEach((t) => {
+    // Filter out datasets without a matching tag
+    let filteredDatasets = datasets.filter((d) => {
+      return d.Tags.includes(t);
+    });
+
+    // HBS templating
+    var templateData = {
+      datasets: filteredDatasets,
+      isHome: false,
+      tag: t
+    };
+    const options = {
+      batch: ['./src/partials'],
+      helpers: hbsHelpers
+    };
+
+    return gulp.src('./src/examples.hbs')
+      .pipe(handlebars(templateData, options))
+      .pipe(rename(`tag/${t.replace(/ /g, '-')}/resources/index.html`))
+      .pipe(gulp.dest('./dist/'));
+  });
+
+  return cb();
+});
+
+
 // Compile detail pages and move to dist
 gulp.task('html:detail', ['yaml:convert'], function () {
   return gulp.src('./tmp/data/datasets/*.json')
@@ -662,7 +697,7 @@ gulp.task('html:collab', ['yaml:convert'], function (cb) {
 });
 
 // Server with live reload
-gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'yaml:tag', 'html:collab', 'js', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples', 'html:tag', 'html:tag-usage', 'rss'], function () {
+gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'yaml:tag', 'html:collab', 'js', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples', 'html:tag', 'html:tag-usage', 'html:tag-resources', 'rss'], function () {
   browserSync({
     port: 3000,
     server: {
