@@ -31,6 +31,9 @@ Make sure this variable is set before running `npm run copy-data` and `npm run b
 
 Subsequent listed repositores will take precendence over data on previous repositories. Datasets are matched across repos by their `Slug`, which is generated from their filename. Currently, only the `Metadata` dictionary is copied over between repositories. If a dataset exists only outside the primary repository, it will be created as normal.
 
+## Redirects
+By using the redirects map in `src/config.yaml` you can set up simple HTML redirects from `source` to `target`. This does not copy any content, simply creates a new HTML page. This function runs after other HTML content is generated so it can be used to create new or overwrite existing HTML pages.
+
 ## Running with Docker
 
 Docker can be used to isolate the development environment.
