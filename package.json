@@ -22,7 +22,7 @@
     "gulp-flatmap": "^1.0.2",
     "gulp-rename": "^1.4.0",
     "gulp-yaml": "^1.0.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "marked": "^0.3.19",
     "require-dir": "^0.3.2",
     "yaml": "^1.4.0"
