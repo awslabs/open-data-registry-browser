@@ -189,3 +189,10 @@ img.managed-by-logo {
   width: 100px;
   height: 100px;
 }
+
+img.providers {
+  width: 200px;
+  height: 200px;
+  padding: 20px;
+  text-align: center;
+}

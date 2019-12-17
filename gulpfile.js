@@ -690,8 +690,30 @@ gulp.task('html:collab', ['yaml:convert'], function (cb) {
     }));
 });
 
+// Compile providers page and move to dist
+gulp.task('html:providers', ['yaml:convert'], function (cb) {
+  const logos = fs.readdirSync('./src/img/logos').map((c) => {
+    return `img/logos/${c}`;
+  });
+
+  // HBS templating
+  const templateData = {
+    Providers: logos
+  };
+
+  const options = {
+    batch: ['./src/partials'],
+    helpers: hbsHelpers
+  };
+
+  return gulp.src('./src/providers.hbs')
+    .pipe(handlebars(templateData, options))
+    .pipe(rename(`/providers.html`))
+    .pipe(gulp.dest('./dist/'));
+});
+
 // Server with live reload
-gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'yaml:tag', 'html:collab', 'js', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples', 'html:tag', 'html:tag-usage', 'html:redirects', 'rss'], function () {
+gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'yaml:tag', 'html:collab', 'js', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples', 'html:tag', 'html:tag-usage', 'html:redirects', 'html:providers', 'rss'], function () {
   browserSync({
     port: 3000,
     server: {
@@ -713,4 +735,4 @@ gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge'
   gulp.watch('src/**/*', ['default']);
 });
 
-gulp.task('default', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'yaml:tag', 'js', 'html:overview', 'html:collab', 'html:detail', 'html:sitemap', 'html:examples', 'html:tag', 'html:tag-usage', 'html:redirects', 'rss']);
+gulp.task('default', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'yaml:tag', 'js', 'html:overview', 'html:collab', 'html:detail', 'html:sitemap', 'html:examples', 'html:tag', 'html:tag-usage', 'html:redirects', 'html:providers', 'rss']);

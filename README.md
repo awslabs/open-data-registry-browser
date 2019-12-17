@@ -15,6 +15,7 @@ You can add logos to the `src/img/logos` directory for use in the **detail** and
 - `ex: /tag/astronomy/datasets.yaml` - YAML for all datasets associated with a tag.
 - `ex: /data-sources/awslabs-open-data-registry/datasets/1000-genomes.yaml` - YAML for individual dataset, used to create the HTML pages.
 - `/sitemap.txt` - Sitemap listing all the HTML pages.
+- `/providers.html` - A simple listing of logos of data providers.
 
 ## Building
 1. Get this repository and the related data files with `git clone git@github.com:awslabs/open-data-registry-browser.git`.
