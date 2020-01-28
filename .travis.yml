@@ -4,11 +4,3 @@ node_js:
 script:
   - "npm run copy-data"
   - "BASE_URL=https://registry.opendata.aws npm run build"
-before_deploy:
-  - "pip install awscli --upgrade --user"
-deploy:
-  provider: script
-  script: bash _scripts/deploy.sh
-  skip_cleanup: true
-  on:
-    branch: master
