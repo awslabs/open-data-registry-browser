@@ -192,6 +192,11 @@ const hbsHelpers = {
       return options.fn(this);
     }
 
+    // Docs site
+    if (/https?:\/\/docs.opendata.aws.*/.test(link)) {
+      return options.fn(this);
+    }
+
     // AWS GitHub repos
     if (/https?:\/\/github.com\/(awslabs|aws-samples)\/.*/.test(link)) {
       return options.fn(this);
