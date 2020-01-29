@@ -232,6 +232,64 @@ const hbsHelpers = {
   },
   toType: function (str) {
     return str ? str.toLowerCase().replace(/\s/g, '-') : str;
+  },
+  trimHTML: function(passedString, length) {
+    // This function will trim an HTML string to a desired length
+    // while keeping links intact.
+    const regexAllTags = /<[^>]*>/;
+    const regexIsTag = /<|>/;
+    const regexOpen = /<[^\/][^>]*>/;
+    const regexClose = /<\/[^>]*>/;
+    const regexAttribute = /<[^ ]*/;
+
+    let necessaryCount = 0;
+    if (passedString.replace(regexAllTags, "").length <= length) {
+        return passedString;
+    }
+
+    const split = passedString.split(regexAllTags);
+    let counter = '';
+
+    split.forEach(item => {
+       if (counter.length < length && counter.length + item.length >= length) {
+           necessaryCount = passedString.indexOf(item, counter.length)
+           + item.substring(0, length - counter.length).length;
+
+           return;
+       }
+
+       counter += item;
+    });
+
+    let x = passedString.match(regexIsTag, necessaryCount);
+    if (x != null && x[0] == ">") {
+        necessaryCount = x.index + 1;
+    }
+    let subs = passedString.substring(0, necessaryCount);
+    let openTags = subs.match(regexOpen) || [];
+    let closeTags = subs.match(regexClose) || [];
+    let OpenTags = [];
+    openTags.forEach(item => {
+      let trans = item.toString().match(regexAttribute)[0];
+      trans = '</' + trans.substring(1, trans.length - 1);
+      if (trans.charAt(trans.length-1) != '>') {
+          trans += '>';
+      }
+
+      OpenTags.push(trans);
+    });
+
+    closeTags.forEach((close, index) => {
+      OpenTags.splice(index, 1);
+    });
+
+    for (var i = OpenTags.length - 1; i >= 0; i--) {
+        subs += OpenTags[i];
+    }
+
+    subs += '...';
+
+    return subs;
   }
 };
 
