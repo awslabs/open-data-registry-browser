@@ -17,7 +17,8 @@ var gulp = require('gulp');
 var yaml = require('gulp-yaml');
 var jsyaml = require('yaml');
 var del = require('del');
-var handlebars = require('gulp-compile-handlebars');
+var handlebars = require('handlebars');
+var hb = require('gulp-hb');
 var rename = require('gulp-rename');
 var flatmap = require('gulp-flatmap');
 var requireDir = require('require-dir');
@@ -156,7 +157,7 @@ const rankDatasets = function (datasets) {
 // Handlebars helper functions
 const hbsHelpers = {
   toJSON: function (obj) {
-    return new handlebars.Handlebars.SafeString(JSON.stringify(obj));
+    return new hb.handlebars.SafeString(JSON.stringify(obj));
   },
   checkLength: function (obj, len, options) {
     if (_.flatMap(obj).length > len) {
@@ -299,19 +300,19 @@ const hbsHelpers = {
 };
 
 // Clean dist directory
-gulp.task('clean', function () {
+function clean () {
   return del(['./dist/**/*', './tmp/**/*']);
-});
+};
 
 // Convert YAML to JSON
-gulp.task('yaml:convert', ['clean'], function () {
+function yamlConvert () {
   return gulp.src('./data-sources/**/*.yaml')
     .pipe(yaml())
     .pipe(gulp.dest('./tmp/data/unmerged/'));
-});
+};
 
 // Merge JSON
-gulp.task('json:merge', ['yaml:convert'], function (cb) {
+function jsonMerge (cb) {
   // Make sure destination parent directory exists
   if (!fs.existsSync('./tmp/data/datasets/')) {
     fs.mkdirSync('./tmp/data/datasets/');
@@ -361,35 +362,35 @@ gulp.task('json:merge', ['yaml:convert'], function (cb) {
   }
 
   return cb();
-});
+};
 
 // Copy CSS files to dist
-gulp.task('css', ['clean'], function () {
+function css () {
   return gulp.src('./src/css/**/*.css')
     .pipe(gulp.dest('./dist/css/'));
-});
+};
 
 // Copy the datasets yaml files to dist
-gulp.task('yaml:copy', ['clean'], function () {
+function yamlCopy () {
   return gulp.src('./data-sources/**/*.yaml')
     .pipe(gulp.dest('./dist/datasets/'));
-});
+};
 
 // Compile the top level yaml and move to dist
-gulp.task('yaml:overview', ['clean', 'yaml:convert'], function () {
+function yamlOverview () {
   var templateData = {
     datasets: getDatasets(),
     baseURL: process.env.BASE_URL
   };
 
   return gulp.src('./src/datasets.hbs')
-    .pipe(handlebars(templateData))
+    .pipe(hb({data: templateData, handlebars: handlebars}))
     .pipe(rename('datasets.yaml'))
     .pipe(gulp.dest('./dist/'));
-});
+};
 
 // Compile the tag level yaml and move to dist
-gulp.task('yaml:tag', ['clean', 'yaml:convert'], function (cb) {
+function yamlTag (cb) {
   const datasets = getDatasets();
 
   // Build up list of unique tags
@@ -408,16 +409,16 @@ gulp.task('yaml:tag', ['clean', 'yaml:convert'], function (cb) {
     };
 
     return gulp.src('./src/datasets.hbs')
-      .pipe(handlebars(templateData))
+      .pipe(hb({data: templateData, handlebars: handlebars}))
       .pipe(rename(`tag/${t.replace(/ /g, '-')}/datasets.yaml`))
       .pipe(gulp.dest('./dist/'));
   });
 
   return cb();
-});
+};
 
 // Compile the RSS feed and move to dist
-gulp.task('rss', ['clean', 'yaml:convert'], function () {
+function rss () {
   var templateData = {
     datasets: getDatasets(),
     baseURL: process.env.BASE_URL,
@@ -425,25 +426,25 @@ gulp.task('rss', ['clean', 'yaml:convert'], function () {
   };
 
   return gulp.src('./src/rss.xml.hbs')
-    .pipe(handlebars(templateData))
+    .pipe(hb({data: templateData, helpers: hbsHelpers, handlebars: handlebars}))
     .pipe(rename('rss.xml'))
     .pipe(gulp.dest('./dist/'));
-});
+};
 
 // Copy font files to dist
-gulp.task('fonts', ['clean'], function () {
+function fonts () {
   return gulp.src('./src/fonts/**/*')
     .pipe(gulp.dest('./dist/fonts/'));
-});
+};
 
 // Copy images to dist
-gulp.task('img', ['clean'], function () {
+function img () {
   return gulp.src('./src/img/**/*')
     .pipe(gulp.dest('./dist/img/'));
-});
+};
 
 // Compile the sitemap and move to dist
-gulp.task('html:sitemap', ['yaml:convert'], function () {
+function htmlSitemap () {
   // Build up sitemap items
   let slugs = [];
   const datasets = getDatasets();
@@ -472,13 +473,13 @@ gulp.task('html:sitemap', ['yaml:convert'], function () {
   };
 
   return gulp.src('./src/sitemap.hbs')
-    .pipe(handlebars(templateData))
+    .pipe(hb({data: templateData, handlebars: handlebars}))
     .pipe(rename('sitemap.txt'))
     .pipe(gulp.dest('./dist/'));
-});
+};
 
 // Compile JS and move to dist
-gulp.task('js', ['clean', 'yaml:convert'], function () {
+function js () {
   // HBS templating
   var templateData = {
     datasets: getDatasets()
@@ -488,12 +489,12 @@ gulp.task('js', ['clean', 'yaml:convert'], function () {
   };
 
   return gulp.src('./src/**/*.js')
-    .pipe(handlebars(templateData, options))
+    .pipe(hb({data: templateData, helpers: hbsHelpers, handlebars: handlebars}))
     .pipe(gulp.dest('./dist/'));
-});
+};
 
 // Compile overview page and move to dist
-gulp.task('html:overview', ['yaml:convert'], function () {
+function htmlOverview () {
   const datasets = getDatasets();
 
   // Grab collab data
@@ -520,19 +521,15 @@ gulp.task('html:overview', ['yaml:convert'], function () {
     datasets: datasets,
     isHome: true
   };
-  const options = {
-    batch: ['./src/partials'],
-    helpers: hbsHelpers
-  };
 
   return gulp.src('./src/index.hbs')
-    .pipe(handlebars(templateData, options))
+    .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
     .pipe(rename('index.html'))
     .pipe(gulp.dest('./dist/'));
-});
+};
 
 // Compile redirect pages and move to dist
-gulp.task('html:redirects', ['html:examples', 'html:detail', 'html:collab'], function (cb) {
+function htmlRedirects (cb) {
   const file = fs.readFileSync('./src/config.yaml', 'utf8');
   const config = jsyaml.parse(file);
   // Exit if we have no redirects
@@ -546,22 +543,18 @@ gulp.task('html:redirects', ['html:examples', 'html:detail', 'html:collab'], fun
     const templateData = {
       target: r.target
     };
-    const options = {
-      batch: ['./src/partials'],
-      helpers: hbsHelpers
-    };
 
     return gulp.src('./src/redirect.hbs')
-      .pipe(handlebars(templateData, options))
+      .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
       .pipe(rename(`${r.source}`))
       .pipe(gulp.dest('./dist/'));
   });
 
   return cb();
-});
+};
 
 // Compile the usage examples page and move to dist
-gulp.task('html:examples', ['yaml:convert'], function () {
+function htmlExamples () {
   const templateData = {
     datasets: getDatasets(),
     isHome: false
@@ -575,19 +568,14 @@ gulp.task('html:examples', ['yaml:convert'], function () {
     }
   });
 
-  const options = {
-    batch: ['./src/partials'],
-    helpers: hbsHelpers
-  };
-
   return gulp.src('./src/examples.hbs')
-    .pipe(handlebars(templateData, options))
+    .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
     .pipe(rename('index.html'))
     .pipe(gulp.dest('./dist/usage-examples/'));
-});
+};
 
 // Compile tag usage examples pages and move to dist
-gulp.task('html:tag-usage', ['yaml:convert'], function (cb) {
+function htmlTagUsage (cb) {
   const datasets = getDatasets();
 
   // Build up list of unique tags
@@ -606,22 +594,18 @@ gulp.task('html:tag-usage', ['yaml:convert'], function (cb) {
       isHome: false,
       tag: t
     };
-    const options = {
-      batch: ['./src/partials'],
-      helpers: hbsHelpers
-    };
 
     return gulp.src('./src/examples.hbs')
-      .pipe(handlebars(templateData, options))
+      .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
       .pipe(rename(`tag/${t.replace(/ /g, '-')}/usage-examples/index.html`))
       .pipe(gulp.dest('./dist/'));
   });
 
   return cb();
-});
+};
 
 // Compile detail pages and move to dist
-gulp.task('html:detail', ['yaml:convert'], function () {
+function htmlDetail () {
   return gulp.src('./tmp/data/datasets/*.json')
     .pipe(flatmap(function (stream, file) {
       var templateData = JSON.parse(file.contents.toString('utf8'));
@@ -671,20 +655,15 @@ gulp.task('html:detail', ['yaml:convert'], function () {
       }
 
       // Render
-      const options = {
-        batch: ['./src/partials'],
-        helpers: hbsHelpers
-      };
-
       return gulp.src('./src/detail.hbs')
-        .pipe(handlebars(templateData, options))
+        .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
         .pipe(rename(`${slug}/index.html`))
         .pipe(gulp.dest('./dist/'));
     }));
-});
+};
 
 // Compile tag pages and move to dist
-gulp.task('html:tag', ['yaml:convert'], function (cb) {
+function htmlTag (cb) {
   const datasets = getDatasets();
 
   // Build up list of unique tags
@@ -704,22 +683,18 @@ gulp.task('html:tag', ['yaml:convert'], function (cb) {
       tag: t,
       tagURL: t.replace(/ /g, '-')
     };
-    const options = {
-      batch: ['./src/partials'],
-      helpers: hbsHelpers
-    };
 
     return gulp.src('./src/index.hbs')
-      .pipe(handlebars(templateData, options))
+      .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
       .pipe(rename(`tag/${t.replace(/ /g, '-')}/index.html`))
       .pipe(gulp.dest('./dist/'));
   });
 
   return cb();
-});
+};
 
 // Compile collab pages and move to dist
-gulp.task('html:collab', ['yaml:convert'], function (cb) {
+function htmlCollab (cb) {
   const datasets = getDatasets();
 
   return gulp.src('./src/collabs/*.yaml')
@@ -727,10 +702,6 @@ gulp.task('html:collab', ['yaml:convert'], function (cb) {
     .pipe(flatmap(function (stream, file) {
       const collabData = JSON.parse(file.contents.toString('utf8'));
       const slug = generateSlug(file.path);
-      const options = {
-        batch: ['./src/partials'],
-        helpers: hbsHelpers
-      };
 
       // Filter out datasets to only the ones in the collab
       const filteredDatasets = datasets.filter((d) => {
@@ -747,14 +718,14 @@ gulp.task('html:collab', ['yaml:convert'], function (cb) {
       };
 
       return gulp.src('./src/index.hbs')
-        .pipe(handlebars(templateData, options))
+        .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
         .pipe(rename(`collab/${slug}/index.html`))
         .pipe(gulp.dest('./dist/'));
     }));
-});
+};
 
 // Server with live reload
-gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'yaml:tag', 'html:collab', 'js', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples', 'html:tag', 'html:tag-usage', 'html:redirects', 'rss'], function () {
+exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, yamlOverview, yamlTag, js, rss, gulp.parallel(htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage), htmlRedirects, function () {
   browserSync({
     port: 3000,
     server: {
@@ -773,7 +744,8 @@ gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge'
     }, 500);
   });
 
-  gulp.watch('src/**/*', ['default']);
+  gulp.watch('src/**/*', gulp.series('default'));
 });
 
-gulp.task('default', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'yaml:tag', 'js', 'html:overview', 'html:collab', 'html:detail', 'html:sitemap', 'html:examples', 'html:tag', 'html:tag-usage', 'html:redirects', 'rss']);
+exports.build = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, yamlOverview, yamlTag, js, rss, gulp.parallel(htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage), htmlRedirects);
+exports.default = exports.build;
