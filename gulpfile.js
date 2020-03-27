@@ -742,10 +742,10 @@ function htmlASDI (cb) {
       const asdiData = JSON.parse(file.contents.toString('utf8'));
 
       var filteredDatasets = {};
-      reduce(asdiData.Tags, function(acc, key) {
+      reduce(asdiData.Collab.Tags, function(acc, key) {
         // Filter out datasets without a matching tag
         acc[key] = datasets.filter((d) => {
-          return d.Tags.includes(key);
+          return d.Collabs && asdiData.Collab.Name in d.Collabs && d.Collabs[asdiData.Collab.Name].Tags && d.Collabs[asdiData.Collab.Name].Tags.includes(key);
         });
         return acc;
       }, filteredDatasets);
@@ -761,7 +761,7 @@ function htmlASDI (cb) {
 
       return gulp.src('./src/asdiindex.hbs')
         .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
-        .pipe(rename(`asdi/index.html`))
+        .pipe(rename(`collab/asdi/index.html`))
         .pipe(gulp.dest('./dist/'));
     }));
 };
