@@ -45,3 +45,7 @@ Build the container with:
 Run the container with:
 
 `docker run --rm -p 3000:3000 -ti roda`
+
+Run the container with a local copy of the registry:
+
+`docker run --rm -p 3000:3000 -v `pwd`/open-data-registry:/app/data-sources/awslabs-open-data-registry -ti roda`
