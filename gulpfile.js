@@ -29,6 +29,7 @@ var browserSync = require('browser-sync');
 var reload = browserSync.reload;
 var fs = require('fs');
 var _ = require('lodash');
+var reduce = require('object.reduce');
 let allDatasets;
 
 // Overriding MD renderer to remove outside <p> tags
@@ -55,8 +56,8 @@ const sortDataAtWork = function (dataAtWork) {
 };
 
 // Helper function to grab datasets from JSON files
-const getDatasets = function () {
-  if (allDatasets) {
+const getDatasets = function (ignoreRank=false) {
+  if (allDatasets && !ignoreRank) {
     return allDatasets;
   }
 
@@ -86,7 +87,7 @@ const getDatasets = function () {
   }
 
   // Rank the datasets
-  arr = rankDatasets(arr);
+  arr = rankDatasets(arr, ignoreRank);
 
   // Sort DataAtWork section by alpha
   arr = arr.map((d) => {
@@ -105,7 +106,10 @@ const getDatasets = function () {
 
     return d;
   });
-
+ 
+  if (ignoreRank) {
+    return arr.slice();
+  }
   allDatasets = arr.slice();
   return allDatasets;
 };
@@ -131,7 +135,7 @@ const generateSlug = function (file) {
 };
 
 // Helper function to rank the datasets in some order
-const rankDatasets = function (datasets) {
+const rankDatasets = function (datasets, ignoreRank) {
   // Calculate rank
   datasets = datasets.map((d) => {
     d.rank = 0;
@@ -142,7 +146,11 @@ const rankDatasets = function (datasets) {
   });
 
   // Order
-  datasets = _.orderBy(datasets, ['rank', 'Name'], ['desc', 'asc']);
+  if (ignoreRank) {
+    datasets = _.orderBy(datasets, ['Name'], ['asc']);
+  } else {
+    datasets = _.orderBy(datasets, ['rank', 'Name'], ['desc', 'asc']);
+  }
 
   // Remove rank variable
   datasets = datasets.map((d) => {
@@ -212,7 +220,7 @@ const hbsHelpers = {
     }
     return marked(str, {renderer: renderer});
   },
-  managedByRenderer: function (str) {
+  managedByRenderer: function (str, wantLogo=true) {
     // Keep from exiting if we have an undefined string
     if (!str) {
       return str;
@@ -229,7 +237,7 @@ const hbsHelpers = {
     }
 
     // Check to see if we have a logo and render that if we do
-    if (fs.existsSync(`src/${logoPath}`)) {
+    if (wantLogo && fs.existsSync(`src/${logoPath}`)) {
       return `<a href="${managedByURL}"><img src="${logoPath}" class="managed-by-logo" alt="${managedByName}"></a>`;
     }
 
@@ -724,8 +732,42 @@ function htmlCollab (cb) {
     }));
 };
 
+// Compile ASDI page and move to dist
+function htmlASDI (cb) {
+  const datasets = getDatasets(true);
+
+  return gulp.src('./src/asdi/*.yaml')
+    .pipe(yaml())
+    .pipe(flatmap(function (stream, file) {
+      const asdiData = JSON.parse(file.contents.toString('utf8'));
+
+      var filteredDatasets = {};
+      reduce(asdiData.Tags, function(acc, key) {
+        // Filter out datasets without a matching tag
+        acc[key] = datasets.filter((d) => {
+          return d.Tags.includes(key);
+        });
+        return acc;
+      }, filteredDatasets);
+
+      // HBS templating
+      var templateData = {
+        datasets: filteredDatasets,
+        isHome: false,
+        collabTitle: asdiData.Title,
+        collabDescription: asdiData.Description,
+        collabLogo: asdiData.Logo
+      };
+
+      return gulp.src('./src/asdiindex.hbs')
+        .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
+        .pipe(rename(`asdi/index.html`))
+        .pipe(gulp.dest('./dist/'));
+    }));
+};
+
 // Server with live reload
-exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, yamlOverview, yamlTag, js, rss, gulp.parallel(htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage), htmlRedirects, function () {
+exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, yamlOverview, yamlTag, js, rss, gulp.parallel(htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage), htmlRedirects, function () {
   browserSync({
     port: 3000,
     server: {
@@ -747,5 +789,5 @@ exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, y
   gulp.watch('src/**/*', gulp.series('default'));
 });
 
-exports.build = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, yamlOverview, yamlTag, js, rss, gulp.parallel(htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage), htmlRedirects);
+exports.build = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, yamlOverview, yamlTag, js, rss, gulp.parallel(htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage), htmlRedirects);
 exports.default = exports.build;
