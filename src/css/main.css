@@ -57,6 +57,10 @@ h1, h2, h3, h4, .dataset h3 a {
   color:#eb5f07;
 }
 
+.datasets h2 {
+  font-variant: small-caps;
+}
+
 .datasets {
   padding-bottom: 30px;
 }
