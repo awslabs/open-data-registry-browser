@@ -56,19 +56,58 @@ const sortDataAtWork = function (dataAtWork) {
   return dataAtWork;
 };
 
+const bucketNameFromARN = function (arn) {
+  if (!arn) return undefined;
+  const match = arn.match(/^arn:aws:s3:::([^/]+).*$/);
+  return match && match[1];
+}
+
+// Add "browse on quilt" links for each of the dataset's buckets to the
+// Tools & Applications section
+const addQuiltLinks = function (dataset) {
+  const buckets = [];
+  (dataset.Resources || []).forEach((r) => {
+    if (r.Type !== 'S3 Bucket' || r.RequesterPays) return;
+    const name = bucketNameFromARN(r.ARN);
+    if (!name) return;
+    if (buckets.includes(name)) return;
+    buckets.push(name);
+  });
+
+  if (!buckets.length) return;
+  if (!dataset.DataAtWork) {
+    dataset.DataAtWork = {};
+  }
+  if (!dataset.DataAtWork['Tools & Applications']) {
+    dataset.DataAtWork['Tools & Applications'] = [];
+  }
+  buckets.forEach((b) => {
+    dataset.DataAtWork['Tools & Applications'].push({
+      URL: `https://open.quiltdata.com/b/${b}/`,
+      Title: `Browse s3://${b} on Quilt`,
+      AuthorName: 'Quilt Data',
+      AuthorURL: 'https://quiltdata.com',
+    });
+  });
+}
+
 // Helper function to grab datasets from JSON files
 const getDatasets = function (ignoreRank=false) {
   if (allDatasets && !ignoreRank) {
     return allDatasets;
   }
 
-  var datasets = requireDir('./tmp/data/datasets');
+  // Required modules are persistent and we're mutating them here, so we should
+  // clone the datasets objects to avoid unwanted side-effects (double processing)
+  var datasets = _.cloneDeep(requireDir('./tmp/data/datasets'));
   var arr = [];
   for (var k in datasets) {
     // Handle deprecated datasets
     if (datasets[k].Deprecated) {
       continue;
     }
+
+    addQuiltLinks(datasets[k])
 
     // If we have no items in a category, remove it
     for (var category in datasets[k].DataAtWork) {
@@ -675,6 +714,8 @@ function htmlDetail () {
   return gulp.src('./tmp/data/datasets/*.json')
     .pipe(flatmap(function (stream, file) {
       var templateData = JSON.parse(file.contents.toString('utf8'));
+
+      addQuiltLinks(templateData)
 
       // If we have no DataAtWork, remove it
       if (!templateData.DataAtWork || (templateData.DataAtWork && _.compact(_.flatMap(templateData.DataAtWork)).length === 0)) {
