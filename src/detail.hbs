@@ -79,7 +79,7 @@
             <dt class="resource-description">Description</dt>
             <dd class="resource-description">{{{md Description}}}</dd>
             <dt class="resource-type">Resource type</dt>
-            <dd class="resource-type {{{toType Type}}}">{{Type}} {{#if RequesterPays}}<span class="label label-info tag link-tag">Requester Pays</span>{{/if}}</dd>
+            <dd class="resource-type {{{toType Type}}}">{{Type}}{{#if RequesterPays}} <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/RequesterPaysBuckets.html"><span class="label label-info tag link-tag">Requester Pays</span></a>{{/if}}{{#if ControlledAccess}} <a href="{{ControlledAccess}}"><span class="label label-info tag link-tag">Controlled Access</span></a>{{/if}}</dd>
             {{#if ARN}}
             <dt class="resource-arn">Amazon Resource Name (ARN)</dt>
             <dd><code>{{ARN}}</code></dd>
