@@ -35,8 +35,6 @@ body { padding: 70px 0 30px 0;
 
 .service-tag {
   background-color: #232F3E !important;
-  /*color: #007dbc;*/
-  /*border-color: #007dbc;*/
   border-width: 1px;
   border-style: solid;
 }
