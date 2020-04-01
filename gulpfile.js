@@ -129,6 +129,21 @@ const getUniqueTags = function (datasets) {
   return tags;
 };
 
+// Helper function to get unique dates
+const getUniqueDates = function (datasets) {
+  // Build up list of unique tags
+  let dates = [];
+  datasets.forEach((d) => {
+    if (dates.includes(d.RegistryEntryAdded) === false) {
+      dates.push(d.RegistryEntryAdded);
+    }
+  });
+  // Sort by descending order
+  dates.sort();
+  dates.reverse();
+  return dates;
+};
+
 // Helper function to generate slug from file name
 const generateSlug = function (file) {
   return path.basename(file, '.json').toLowerCase();
@@ -766,8 +781,36 @@ function htmlASDI (cb) {
     }));
 };
 
+// Compile page for when datasets were added
+function htmlAdditions (cb) {
+  const datasets = getDatasets();
+
+  // Build up list of unique tags
+  const dates = getUniqueDates(datasets);
+
+  var filteredDatasets = {};
+  reduce(dates, function(acc, key) {
+    // Filter out datasets without a matching tag
+    acc[key] = datasets.filter((d) => {
+      return d.RegistryEntryAdded == key;
+    });
+    return acc;
+  }, filteredDatasets);
+
+  // HBS templating
+  var templateData = {
+    datasets: filteredDatasets,
+    isHome: false
+  };
+
+  return gulp.src('./src/changelogindex.hbs')
+    .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
+    .pipe(rename(`change-log/index.html`))
+    .pipe(gulp.dest('./dist/'));
+};
+
 // Server with live reload
-exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, yamlOverview, yamlTag, js, rss, gulp.parallel(htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage), htmlRedirects, function () {
+exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, yamlOverview, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage), htmlRedirects, function () {
   browserSync({
     port: 3000,
     server: {
@@ -789,5 +832,5 @@ exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, y
   gulp.watch('src/**/*', gulp.series('default'));
 });
 
-exports.build = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, yamlOverview, yamlTag, js, rss, gulp.parallel(htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage), htmlRedirects);
+exports.build = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, yamlOverview, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage), htmlRedirects);
 exports.default = exports.build;
