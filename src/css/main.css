@@ -162,6 +162,10 @@ a.aws-link::before {
   background-color: #eb5f07;
 }
 
+.section-row {
+  border-color: #232F3E;
+}
+
 @media (max-width:768px) {
   .roda-header h1, .roda-header h2 {
     font-size: 18px;
@@ -176,7 +180,7 @@ a.aws-link::before {
   }
 }
 
-@media (min-width:992px) {
+@media (min-height: 790px) and (min-width:992px) {
  .aboutbox {
     position:fixed;
     z-index: 2;
@@ -184,7 +188,7 @@ a.aws-link::before {
   }
 }
 
-@media (min-width:1200px) {
+@media (min-height: 790px) and (min-width:1200px) {
  .aboutbox {
     position:fixed;
     z-index: 2;

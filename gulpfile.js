@@ -235,6 +235,13 @@ const hbsHelpers = {
     }
     return marked(str, {renderer: renderer});
   },
+  escapeTag: function (str) {
+    // Keep from exiting if we have an undefined string
+    if (!str) {
+      return str;
+    }
+    return str.replace(/ /g, '-');
+  },
   managedByRenderer: function (str, wantLogo=true) {
     // Keep from exiting if we have an undefined string
     if (!str) {
@@ -773,6 +780,14 @@ function htmlASDI (cb) {
         collabDescription: asdiData.Description,
         collabLogo: asdiData.Logo
       };
+
+      templateData.collabDescription += "\n\n\n Categories: ";
+
+      asdiData.Collab.Tags.forEach((t) => {
+        templateData.collabDescription += "[" + t + "](#" + t.replace(/ /g, '-') + "), ";
+      });
+
+      templateData.collabDescription = templateData.collabDescription.slice(0, -2);
 
       return gulp.src('./src/asdiindex.hbs')
         .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
