@@ -33,6 +33,12 @@ body { padding: 70px 0 30px 0;
   display: inline-block;
 }
 
+.service-tag {
+  background-color: #232F3E !important;
+  border-width: 1px;
+  border-style: solid;
+}
+
 .navbar-default {
   background-color: #232F3E;
 }
@@ -132,6 +138,10 @@ ul.resource-list li:last-child {
   border-bottom:none;
 }
 
+ul.dataatwork-list li {
+  margin: 0 0 10px 0;
+}
+
 dt {
   margin-top: .6em;
 }
@@ -152,6 +162,10 @@ a.aws-link::before {
   background-color: #eb5f07;
 }
 
+.section-row {
+  border-color: #232F3E;
+}
+
 @media (max-width:768px) {
   .roda-header h1, .roda-header h2 {
     font-size: 18px;
@@ -166,7 +180,7 @@ a.aws-link::before {
   }
 }
 
-@media (min-width:992px) {
+@media (min-height: 790px) and (min-width:992px) {
  .aboutbox {
     position:fixed;
     z-index: 2;
@@ -174,7 +188,7 @@ a.aws-link::before {
   }
 }
 
-@media (min-width:1200px) {
+@media (min-height: 790px) and (min-width:1200px) {
  .aboutbox {
     position:fixed;
     z-index: 2;
