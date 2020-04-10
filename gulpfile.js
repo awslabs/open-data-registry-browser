@@ -297,6 +297,10 @@ const hbsHelpers = {
        counter += item;
     });
 
+    if (necessaryCount == 0) {
+      necessaryCount = counter.length;
+    }
+
     let x = passedString.match(regexIsTag, necessaryCount);
     if (x != null && x[0] == ">") {
         necessaryCount = x.index + 1;

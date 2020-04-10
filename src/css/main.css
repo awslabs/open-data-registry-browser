@@ -198,12 +198,10 @@ a.aws-link::before {
 
 img.collab-logo {
   width: 100px;
-  height: 100px;
   padding: 10px;
   float: left;
 }
 
 img.managed-by-logo {
   width: 100px;
-  height: 100px;
 }
