@@ -205,3 +205,8 @@ img.collab-logo {
 img.managed-by-logo {
   width: 100px;
 }
+
+.cat-anchor {
+  position: relative;
+  top: -50px;
+}
