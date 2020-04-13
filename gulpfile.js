@@ -785,7 +785,7 @@ function htmlASDI (cb) {
         collabLogo: asdiData.Logo
       };
 
-      templateData.collabDescription += "\n\n\n Categories: ";
+      templateData.collabDescription += "<br><br> Categories: ";
 
       asdiData.Collab.Tags.forEach((t) => {
         templateData.collabDescription += "[" + t + "](#" + t.replace(/ /g, '-') + "), ";

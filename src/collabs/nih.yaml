@@ -1,8 +1,19 @@
 Title: NIH STRIDES
 Description: |
-  Amazon Web Services has entered into a [research agreement](http://data-alliance.noaa.gov/) with the US National Institutes of Health (NIH) STRIDES (Science and Technology Research Infrastructure for Discovery, Experimentation, and Sustainability) Initiative to foster innovation in biomedical research using technological advancements in the AWS Cloud. 
+  Amazon Web Services is collaborating with the [US National Institutes of Health (NIH) STRIDES (Science and Technology Research Infrastructure for Discovery, Experimentation, and Sustainability) Initiative](https://commonfund.nih.gov/strides) to foster innovation in biomedical research using technological advancements on AWS. 
 Logo: nih-logo.png
 Datasets:
   - hcmi-cmdc
   - fm-ad
   - ctsp-dlbcl
+  - target
+  - ccle
+  - cptac-2
+  - cptac-3
+  - mmrf-commpass
+  - beataml
+  - cgci-blgsp
+  - nciccr-dlbcl
+  - ohsu-cnl
+  - organoid-pancreatic
+  - ncbi-sra

@@ -5,7 +5,7 @@
     {{> about collabTitle=collabTitle collabDescription=collabDescription collabLogo=collabLogo collabData=collabData}}
     <div class="col-md-6 col-md-offset-1 datasets">
       {{#each datasets}}
-      <a name="{{{escapeTag @key}}}"></a>
+      <a class="cat-anchor" name="{{{escapeTag @key}}}"></a>
       <div class="row">
       <h2>{{@key}}</h2>
       <hr class="section-row">
