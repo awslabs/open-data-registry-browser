@@ -228,12 +228,16 @@ const hbsHelpers = {
 
     return options.inverse(this);
   },
-  md: function (str) {
+  md: function (str, escapeStr=false) {
     // Keep from exiting if we have an undefined string
     if (!str) {
       return str;
     }
-    return marked(str, {renderer: renderer});
+    var res = marked(str, {renderer: renderer});
+    if (escapeStr) {
+      res = res.replace(/\"/g, '\\\"');
+    }
+    return res;
   },
   escapeTag: function (str) {
     // Keep from exiting if we have an undefined string
