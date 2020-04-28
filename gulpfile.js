@@ -235,9 +235,9 @@ const hbsHelpers = {
       return str;
     }
     var res = marked(str, {renderer: renderer});
-    if (escapeStr) {
-      res = res.replace(/\"/g, '\\\"');
-    }
+//     if (escapeStr) {
+//       res = res.replace(/\"/g, '\\\"');
+//     }
     return res;
   },
   escapeTag: function (str) {
