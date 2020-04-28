@@ -30,6 +30,7 @@ var reload = browserSync.reload;
 var fs = require('fs');
 var _ = require('lodash');
 var reduce = require('object.reduce');
+var ndjson = require('ndjson');
 let allDatasets;
 
 // Overriding MD renderer to remove outside <p> tags
@@ -402,6 +403,26 @@ function jsonMerge (cb) {
   return cb();
 };
 
+// Compile the top level ndjson and move to dist
+function jsonOverview (cb) {
+  // Loop over each dataset JSON and save to in-memory string
+  const serialize = ndjson.serialize();
+  let json = '';
+  serialize.on('data', function(line) {
+    json += line;
+  });
+  const datasets = requireDir('./tmp/data/datasets');
+  for (var k in datasets) {
+    serialize.write(datasets[k]);
+  }
+  serialize.end();
+
+  // Save string to file
+  fs.writeFileSync('./dist/index.ndjson', json);
+
+  return cb();
+};
+
 // Copy CSS files to dist
 function css () {
   return gulp.src('./src/css/**/*.css')
@@ -425,6 +446,13 @@ function yamlOverview () {
     .pipe(hb({data: templateData, handlebars: handlebars}))
     .pipe(rename('datasets.yaml'))
     .pipe(gulp.dest('./dist/'));
+};
+
+// Copy the overview YAML to a new file
+function yamlOverviewCopy (cb) {
+  fs.createReadStream('./dist/datasets.yaml').pipe(fs.createWriteStream('./dist/index.yaml'));
+
+  return cb();
 };
 
 // Compile the tag level yaml and move to dist
@@ -833,7 +861,7 @@ function htmlAdditions (cb) {
 };
 
 // Server with live reload
-exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, yamlOverview, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage), htmlRedirects, function () {
+exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage), htmlRedirects, function () {
   browserSync({
     port: 3000,
     server: {
@@ -855,5 +883,5 @@ exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, y
   gulp.watch('src/**/*', gulp.series('default'));
 });
 
-exports.build = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, yamlOverview, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage), htmlRedirects);
+exports.build = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage), htmlRedirects);
 exports.default = exports.build;
