@@ -23,6 +23,9 @@ You can add logos to the `src/img/logos` directory for use in the **detail** and
 1. `npm install` to install required Node.js modules.
 1. `npm run serve` to develop the site with live reloading OR `npm run build` to build the site for deployment. See note about using multiple repositories below.
 
+## Testing
+Tests can be run with `npm test`.
+
 ## Using multiple repositories
 By default, the public data repository at https://github.com/awslabs/open-data-registry is used. If you wish to use a different or multiple repositories, you can add them via the `RODA_SOURCES` environment variable like
 

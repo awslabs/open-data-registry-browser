@@ -1,0 +1,2 @@
+datasets:
+    - https://registry.opendata.aws/datasets/awslabs-open-data-registry/datasets/landsat-8.yaml
