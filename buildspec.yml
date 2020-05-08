@@ -9,7 +9,7 @@ phases:
       - npm install
   build:
     commands:
-      - exit 2
+      - exit 3
       - npm run copy-data
       - BASE_URL=https://registry.opendata.aws npm run build
       - bash _scripts/deploy.sh
