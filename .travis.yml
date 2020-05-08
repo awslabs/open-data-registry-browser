@@ -1,6 +1,0 @@
-language: node_js
-node_js:
-  - "7"
-script:
-  - "npm run copy-data"
-  - "BASE_URL=https://registry.opendata.aws npm run build"
