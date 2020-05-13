@@ -11,5 +11,6 @@ phases:
     commands:
       - npm test
       - npm run copy-data
-      - BASE_URL=https://registry.opendata.aws npm run build
+      - if [[ "$CODEBUILD_WEBHOOK_HEAD_REF" == "refs/heads/staging" ]]; then export BASE_URL=https://registry-staging.opendata.aws; else export BASE_URL=https://registry.opendata.aws; fi
+      - npm run build
       - bash _scripts/deploy.sh
