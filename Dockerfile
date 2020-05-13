@@ -11,6 +11,7 @@ RUN npm install
 
 COPY . /app
 
+RUN npm test
 RUN npm run copy-data
 
 CMD BASE_URL=https://registry.opendata.aws npm run serve

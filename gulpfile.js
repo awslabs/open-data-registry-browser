@@ -33,6 +33,9 @@ var reduce = require('object.reduce');
 var ndjson = require('ndjson');
 let allDatasets;
 
+// The directory to look in for datasets, will be overridden for testing purposes
+const dataDirectory = (process.env.NODE_ENV === 'test') ? './tests/test-data-input/**/*.yaml' : './data-sources/**/*.yaml';
+
 // Overriding MD renderer to remove outside <p> tags
 renderer.paragraph = function (text, level) {
   return text;
@@ -107,7 +110,7 @@ const getDatasets = function (ignoreRank=false) {
 
     return d;
   });
- 
+
   if (ignoreRank) {
     return arr.slice();
   }
@@ -337,6 +340,7 @@ const hbsHelpers = {
     return subs;
   }
 };
+exports.hbsHelpers = hbsHelpers; // exporting for testing purposes
 
 // Clean dist directory
 function clean () {
@@ -345,7 +349,7 @@ function clean () {
 
 // Convert YAML to JSON
 function yamlConvert () {
-  return gulp.src('./data-sources/**/*.yaml')
+  return gulp.src(dataDirectory)
     .pipe(yaml())
     .pipe(gulp.dest('./tmp/data/unmerged/'));
 };
@@ -431,7 +435,7 @@ function css () {
 
 // Copy the datasets yaml files to dist
 function yamlCopy () {
-  return gulp.src('./data-sources/**/*.yaml')
+  return gulp.src(dataDirectory)
     .pipe(gulp.dest('./dist/datasets/'));
 };
 
