@@ -578,6 +578,15 @@ function htmlOverview () {
     });
   });
 
+  fs.readdirSync('./src/asdi').forEach((c) => {
+    const file = fs.readFileSync(`./src/asdi/${c}`, 'utf8')
+    const json = jsyaml.parse(file);
+    collabData.push({
+      title: json.Title,
+      slug: path.basename(c, '.yaml')
+    });
+  });
+
   // Do some work to alter the datasets data for display
   datasets.map((d) => {
     d.examplesCount = d['DataAtWork'] ? _.flatMap(d['DataAtWork']).length : 0;
