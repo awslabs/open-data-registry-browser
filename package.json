@@ -24,7 +24,7 @@
     "gulp-yaml": "^2.0.4",
     "handlebars": "^4.3.0",
     "jest": "^25.5.1",
-    "lodash": "^4.17.13",
+    "lodash": "^4.17.19",
     "marked": "^0.8.0",
     "natives": "^1.1.6",
     "require-dir": "^0.3.2",
