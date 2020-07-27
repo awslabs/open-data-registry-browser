@@ -229,6 +229,11 @@ const hbsHelpers = {
     if (/https?:\/\/github.com\/(awslabs|aws-samples)\/.*/.test(link)) {
       return options.fn(this);
     }
+    
+    // go.aws shortener
+    if (/https?:\/\/go.aws.*/.test(link)) {
+      return options.fn(this);
+    }    
 
     return options.inverse(this);
   },
