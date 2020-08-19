@@ -17,3 +17,6 @@ Datasets:
   - ohsu-cnl
   - organoid-pancreatic
   - ncbi-sra
+  - ncbi-covid-19
+  - tcga
+  - kids-first
