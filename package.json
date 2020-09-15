@@ -14,7 +14,7 @@
   "private": false,
   "repository": "https://github.com/awslabs/open-data-registry-browser",
   "devDependencies": {
-    "browser-sync": "^2.26.7",
+    "browser-sync": "^2.26.12",
     "del": "^3.0.0",
     "gulp": "^4.0.0",
     "gulp-cli": "^2.2.0",
