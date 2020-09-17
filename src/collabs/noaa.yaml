@@ -15,3 +15,12 @@ Datasets:
   - noaa-isd
   - noaa-ghe
   - noaa-eri
+  - ncei-wcsd-archive
+  - noaa-himawari
+  - noaa-gefs-reforecast
+  - noaa-wod
+  - noaa-ndfd
+  - odp-noaa-nesdis-ncei-csb
+  - noaa-nbm
+  - noaa-s111
+  - noaa-space-weather
