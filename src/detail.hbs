@@ -90,6 +90,12 @@
             {{/if}}
             <dt class="resource-region">AWS Region</dt>
             <dd><code>{{Region}}</code></dd>
+            {{#isEqual Type 'S3 Bucket'}}
+            {{#unless ControlledAccess}}
+            <dt class="resource-region"><a href="https://aws.amazon.com/cli/">AWS CLI</a> Access{{#unless RequesterPays}} (No AWS account required){{/unless}}</dt>
+            <dd><code>aws s3 ls s3://{{{arnToBucket ARN}}} {{#if RequesterPays}}--request-payer requester{{else}}--no-sign-request{{/if}}</code></dd>
+            {{/unless}}
+            {{/isEqual}}
           </dl>
         </li>
         {{/each}}
