@@ -1,0 +1,18 @@
+Title: Amazon Sustainability Data Initiative
+Description: |
+    The Amazon Sustainability Data Initiative (ASDI) seeks to accelerate sustainability research and innovation by minimizing the cost and time required to acquire and analyze large sustainability datasets. These datasets are publicly available to anyone. In addition, ASDI provides [cloud grants (pdf link)](https://d39w7f4ix9f5s9.cloudfront.net/a9/57/1af708de4b9dac190a64d6b366bc/cloud-credit-for-sustainability-form-june-2020-1.pdf) to those interested in exploring the use of AWS’ technology and scalable infrastructure to solve big, long-term sustainability challenges with this data. The dual-pronged approach allows sustainability researchers to analyze massive amounts of data in mere minutes, regardless of where they are in the world or how much local storage space or computing capacity they can access. [Learn more about ASDI here.](https://sustainability.aboutamazon.com/tech-for-good/asdi)
+Collab:
+    Name: ASDI
+    Tags:
+    - weather
+    - climate
+    - water
+    - agriculture
+    - satellite imagery
+    - elevation
+    - air quality
+    - energy
+    - ecosystems
+    - disaster response
+    - oceans
+

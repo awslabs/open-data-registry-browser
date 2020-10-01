@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{> header isHome=isHome}}
+
+    {{> about collabTitle=collabTitle collabDescription=collabDescription collabLogo=collabLogo collabData=collabData}}
+    <div class="col-md-6 col-md-offset-1 datasets">
+      {{#each datasets}}
+      <a class="cat-anchor" name="{{{escapeTag @key}}}"></a>
+      <div class="row">
+      <h2>{{@key}}</h2>
+      <hr class="section-row">
+      {{#each this}}
+        <div id="{{Slug}}" class="dataset">
+          <h3><a href="/{{Slug}}/">{{Name}}</a></h3>
+          {{#if ManagedBy}}
+            <p>Managed by {{{managedByRenderer ManagedBy false}}}</p>
+          {{/if}}
+          <p>{{{trimHTML (md Description) 600}}}</p>
+        </div>
+        {{/each}}
+      </div>
+      {{/each}}
+    </div>
+
+
+  {{> footer}}
+  </body>
+  <script src="/js/index.js"></script>
+</html>

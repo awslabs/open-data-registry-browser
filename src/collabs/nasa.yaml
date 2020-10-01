@@ -1,0 +1,14 @@
+Title: NASA Space Act Agreement
+Description: |
+  Amazon Web Services and the National Aeronautics and Space Administration (NASA)
+  have entered into a Space Act Agreement to explore best practices around discovery,
+  access, and use of high-value NASA science datasets. Making analytics-optimized data
+  stores available to the science community will minimize the need for data wrangling
+  and preprocessing within the community, leading to a faster time to insight and quicker
+  innovation.
+Logo: nasa-logo.png
+Datasets:
+  - nasanex
+  - terrafusion
+  - mur
+  - omi-no2-nasa

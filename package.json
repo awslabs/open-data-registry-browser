@@ -4,7 +4,7 @@
   "description": "Browser for https://github.com/awslabs/open-data-registry.",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 0",
+    "test": "NODE_ENV=test BASE_URL=https://registry.opendata.aws jest",
     "copy-data": "./_scripts/copy-data.sh",
     "build": "./node_modules/gulp-cli/bin/gulp.js",
     "serve": "./node_modules/gulp-cli/bin/gulp.js serve"
@@ -14,17 +14,23 @@
   "private": false,
   "repository": "https://github.com/awslabs/open-data-registry-browser",
   "devDependencies": {
-    "browser-sync": "^2.26.3",
+    "browser-sync": "^2.26.12",
     "del": "^3.0.0",
-    "gulp": "^3.9.1",
-    "gulp-cli": "^1.4.0",
-    "gulp-compile-handlebars": "^0.6.1",
+    "gulp": "^4.0.0",
+    "gulp-cli": "^2.2.0",
     "gulp-flatmap": "^1.0.2",
+    "gulp-hb": "^8.0.0",
     "gulp-rename": "^1.4.0",
-    "gulp-yaml": "^1.0.1",
-    "lodash": "^4.17.13",
-    "marked": "^0.3.19",
+    "gulp-yaml": "^2.0.4",
+    "handlebars": "^4.3.0",
+    "jest": "^25.5.1",
+    "lodash": "^4.17.19",
+    "marked": "^0.8.0",
+    "natives": "^1.1.6",
     "require-dir": "^0.3.2",
     "yaml": "^1.4.0"
+  },
+  "dependencies": {
+    "ndjson": "^1.5.0"
   }
 }

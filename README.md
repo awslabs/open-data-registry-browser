@@ -9,11 +9,12 @@ You can add logos to the `src/img/logos` directory for use in the **detail** and
 - `/` - Main datasets listing page, provides search mechanism.
 - `ex: /1000-genomes` - Individual detail pages for each dataset, contains details, license, contact, documentation and example usage links and AWS resources available.
 - `/usage-examples/` - Lists all usage examples grouped by dataset.
-- `/datasets.yaml` - YAML formatted listing of each individual YAML file for provided datasets.
+- `/index.yaml` - YAML formatted listing of each individual YAML file for provided datasets. [`datasets.yaml` is created but should be considered deprecated]
+- `/index.ndjson` - NDJSON formatted listing of each individual YAML file for provided datasets.
 - `ex: /tag/earth-observation/` - Tag-subsetted view of the main datasets listing page.
 - `ex: /tag/machine-learning/usage-examples/` - Tag-subsetted list usage examples grouped by dataset.
 - `ex: /tag/astronomy/datasets.yaml` - YAML for all datasets associated with a tag.
-- `ex: /data-sources/awslabs-open-data-registry/datasets/1000-genomes.yaml` - YAML for individual dataset, used to create the HTML pages.
+- `ex: /datasets/awslabs-open-data-registry/datasets/1000-genomes.yaml` - YAML for individual dataset, used to create the HTML pages.
 - `/sitemap.txt` - Sitemap listing all the HTML pages.
 - `/providers.html` - A simple listing of logos of data providers.
 
@@ -22,6 +23,9 @@ You can add logos to the `src/img/logos` directory for use in the **detail** and
 1. `npm run copy-data` to copy data repositories locally, see note about using multiple repositories below.
 1. `npm install` to install required Node.js modules.
 1. `npm run serve` to develop the site with live reloading OR `npm run build` to build the site for deployment. See note about using multiple repositories below.
+
+## Testing
+Tests can be run with `npm test`.
 
 ## Using multiple repositories
 By default, the public data repository at https://github.com/awslabs/open-data-registry is used. If you wish to use a different or multiple repositories, you can add them via the `RODA_SOURCES` environment variable like
@@ -46,3 +50,7 @@ Build the container with:
 Run the container with:
 
 `docker run --rm -p 3000:3000 -ti roda`
+
+Run the container with a local copy of the registry:
+
+`docker run --rm -p 3000:3000 -v `pwd`/open-data-registry:/app/data-sources/awslabs-open-data-registry -ti roda`

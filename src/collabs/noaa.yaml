@@ -1,9 +1,8 @@
-Title: NOAA Big Data Project
+Title: NOAA Big Data Program
 Description: |
   Amazon Web Services has entered into a [research agreement](http://data-alliance.noaa.gov/) with the US National Oceanic and Atmospheric Administration (NOAA) to explore sustainable models to increase the output of open NOAA data. Publicly available NOAA data drives multi-billion dollar industries and critical research efforts. Under this agreement, AWS and its collaborators will look at ways to push more NOAA data to the cloud and build an ecosystem of innovation around it.
 Logo: noaa-logo.png
 Datasets:
-  - noaa-nexrad
   - noaa-goes
   - noaa-gefs
   - noaa-gfs-bdp-pds
@@ -16,3 +15,12 @@ Datasets:
   - noaa-isd
   - noaa-ghe
   - noaa-eri
+  - ncei-wcsd-archive
+  - noaa-himawari
+  - noaa-gefs-reforecast
+  - noaa-wod
+  - noaa-ndfd
+  - odp-noaa-nesdis-ncei-csb
+  - noaa-nbm
+  - noaa-s111
+  - noaa-space-weather

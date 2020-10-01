@@ -1,0 +1,15 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 10
+    commands:
+      - pip install awscli --upgrade
+      - npm install
+  build:
+    commands:
+      - npm test
+      - npm run copy-data
+      - bash _scripts/build.sh
+      - bash _scripts/deploy.sh

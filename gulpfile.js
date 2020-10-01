@@ -17,7 +17,8 @@ var gulp = require('gulp');
 var yaml = require('gulp-yaml');
 var jsyaml = require('yaml');
 var del = require('del');
-var handlebars = require('gulp-compile-handlebars');
+var handlebars = require('handlebars');
+var hb = require('gulp-hb');
 var rename = require('gulp-rename');
 var flatmap = require('gulp-flatmap');
 var requireDir = require('require-dir');
@@ -28,7 +29,12 @@ var browserSync = require('browser-sync');
 var reload = browserSync.reload;
 var fs = require('fs');
 var _ = require('lodash');
+var reduce = require('object.reduce');
+var ndjson = require('ndjson');
 let allDatasets;
+
+// The directory to look in for datasets, will be overridden for testing purposes
+const dataDirectory = (process.env.NODE_ENV === 'test') ? './tests/test-data-input/**/*.yaml' : './data-sources/**/*.yaml';
 
 // Overriding MD renderer to remove outside <p> tags
 renderer.paragraph = function (text, level) {
@@ -54,8 +60,8 @@ const sortDataAtWork = function (dataAtWork) {
 };
 
 // Helper function to grab datasets from JSON files
-const getDatasets = function () {
-  if (allDatasets) {
+const getDatasets = function (ignoreRank=false) {
+  if (allDatasets && !ignoreRank) {
     return allDatasets;
   }
 
@@ -85,7 +91,7 @@ const getDatasets = function () {
   }
 
   // Rank the datasets
-  arr = rankDatasets(arr);
+  arr = rankDatasets(arr, ignoreRank);
 
   // Sort DataAtWork section by alpha
   arr = arr.map((d) => {
@@ -105,6 +111,9 @@ const getDatasets = function () {
     return d;
   });
 
+  if (ignoreRank) {
+    return arr.slice();
+  }
   allDatasets = arr.slice();
   return allDatasets;
 };
@@ -124,13 +133,28 @@ const getUniqueTags = function (datasets) {
   return tags;
 };
 
+// Helper function to get unique dates
+const getUniqueDates = function (datasets) {
+  // Build up list of unique tags
+  let dates = [];
+  datasets.forEach((d) => {
+    if (dates.includes(d.RegistryEntryAdded) === false) {
+      dates.push(d.RegistryEntryAdded);
+    }
+  });
+  // Sort by descending order
+  dates.sort();
+  dates.reverse();
+  return dates;
+};
+
 // Helper function to generate slug from file name
 const generateSlug = function (file) {
   return path.basename(file, '.json').toLowerCase();
 };
 
 // Helper function to rank the datasets in some order
-const rankDatasets = function (datasets) {
+const rankDatasets = function (datasets, ignoreRank) {
   // Calculate rank
   datasets = datasets.map((d) => {
     d.rank = 0;
@@ -141,7 +165,11 @@ const rankDatasets = function (datasets) {
   });
 
   // Order
-  datasets = _.orderBy(datasets, ['rank', 'Name'], ['desc', 'asc']);
+  if (ignoreRank) {
+    datasets = _.orderBy(datasets, ['Name'], ['asc']);
+  } else {
+    datasets = _.orderBy(datasets, ['rank', 'Name'], ['desc', 'asc']);
+  }
 
   // Remove rank variable
   datasets = datasets.map((d) => {
@@ -156,7 +184,7 @@ const rankDatasets = function (datasets) {
 // Handlebars helper functions
 const hbsHelpers = {
   toJSON: function (obj) {
-    return new handlebars.Handlebars.SafeString(JSON.stringify(obj));
+    return new hb.handlebars.SafeString(JSON.stringify(obj));
   },
   checkLength: function (obj, len, options) {
     if (_.flatMap(obj).length > len) {
@@ -192,21 +220,42 @@ const hbsHelpers = {
       return options.fn(this);
     }
 
+    // Docs site
+    if (/https?:\/\/docs.opendata.aws.*/.test(link)) {
+      return options.fn(this);
+    }
+
     // AWS GitHub repos
     if (/https?:\/\/github.com\/(awslabs|aws-samples)\/.*/.test(link)) {
       return options.fn(this);
     }
+    
+    // go.aws shortener
+    if (/https?:\/\/go.aws.*/.test(link)) {
+      return options.fn(this);
+    }    
 
     return options.inverse(this);
   },
-  md: function (str) {
+  md: function (str, escapeStr=false) {
     // Keep from exiting if we have an undefined string
     if (!str) {
       return str;
     }
-    return marked(str, {renderer: renderer});
+    var res = marked(str, {renderer: renderer});
+    if (escapeStr===true) {
+      res = res.replace(/\"/g, '\\\"');
+    }
+    return res;
   },
-  managedByRenderer: function (str) {
+  escapeTag: function (str) {
+    // Keep from exiting if we have an undefined string
+    if (!str) {
+      return str;
+    }
+    return str.replace(/ /g, '-');
+  },
+  managedByRenderer: function (str, wantLogo=true) {
     // Keep from exiting if we have an undefined string
     if (!str) {
       return str;
@@ -223,7 +272,7 @@ const hbsHelpers = {
     }
 
     // Check to see if we have a logo and render that if we do
-    if (fs.existsSync(`src/${logoPath}`)) {
+    if (wantLogo && fs.existsSync(`src/${logoPath}`)) {
       return `<a href="${managedByURL}"><img src="${logoPath}" class="managed-by-logo" alt="${managedByName}"></a>`;
     }
 
@@ -232,23 +281,89 @@ const hbsHelpers = {
   },
   toType: function (str) {
     return str ? str.toLowerCase().replace(/\s/g, '-') : str;
+  },
+  arnToBucket: function (str) {
+    return str ? str.split(":::", 2)[1] + '/' : str;
+  },
+  trimHTML: function(passedString, length) {
+    // This function will trim an HTML string to a desired length
+    // while keeping links intact.
+    const regexAllTags = /<[^>]*>/;
+    const regexIsTag = /<|>/;
+    const regexOpen = /<[^\/][^>]*>/;
+    const regexClose = /<\/[^>]*>/;
+    const regexAttribute = /<[^ ]*/;
+
+    let necessaryCount = 0;
+    if (passedString.replace(regexAllTags, "").length <= length) {
+        return passedString;
+    }
+
+    const split = passedString.split(regexAllTags);
+    let counter = '';
+
+    split.forEach(item => {
+       if (counter.length < length && counter.length + item.length >= length) {
+           necessaryCount = passedString.indexOf(item, counter.length)
+           + item.substring(0, length - counter.length).length;
+
+           return;
+       }
+
+       counter += item;
+    });
+
+    if (necessaryCount == 0) {
+      necessaryCount = counter.length;
+    }
+
+    let x = passedString.match(regexIsTag, necessaryCount);
+    if (x != null && x[0] == ">") {
+        necessaryCount = x.index + 1;
+    }
+    let subs = passedString.substring(0, necessaryCount);
+    let openTags = subs.match(regexOpen) || [];
+    let closeTags = subs.match(regexClose) || [];
+    let OpenTags = [];
+    openTags.forEach(item => {
+      let trans = item.toString().match(regexAttribute)[0];
+      trans = '</' + trans.substring(1, trans.length - 1);
+      if (trans.charAt(trans.length-1) != '>') {
+          trans += '>';
+      }
+
+      OpenTags.push(trans);
+    });
+
+    closeTags.forEach((close, index) => {
+      OpenTags.splice(index, 1);
+    });
+
+    for (var i = OpenTags.length - 1; i >= 0; i--) {
+        subs += OpenTags[i];
+    }
+
+    subs += '...';
+
+    return subs;
   }
 };
+exports.hbsHelpers = hbsHelpers; // exporting for testing purposes
 
 // Clean dist directory
-gulp.task('clean', function () {
+function clean () {
   return del(['./dist/**/*', './tmp/**/*']);
-});
+};
 
 // Convert YAML to JSON
-gulp.task('yaml:convert', ['clean'], function () {
-  return gulp.src('./data-sources/**/*.yaml')
+function yamlConvert () {
+  return gulp.src(dataDirectory)
     .pipe(yaml())
     .pipe(gulp.dest('./tmp/data/unmerged/'));
-});
+};
 
 // Merge JSON
-gulp.task('json:merge', ['yaml:convert'], function (cb) {
+function jsonMerge (cb) {
   // Make sure destination parent directory exists
   if (!fs.existsSync('./tmp/data/datasets/')) {
     fs.mkdirSync('./tmp/data/datasets/');
@@ -298,35 +413,62 @@ gulp.task('json:merge', ['yaml:convert'], function (cb) {
   }
 
   return cb();
-});
+};
+
+// Compile the top level ndjson and move to dist
+function jsonOverview (cb) {
+  // Loop over each dataset JSON and save to in-memory string
+  const serialize = ndjson.serialize();
+  let json = '';
+  serialize.on('data', function(line) {
+    json += line;
+  });
+  const datasets = requireDir('./tmp/data/datasets');
+  for (var k in datasets) {
+    serialize.write(datasets[k]);
+  }
+  serialize.end();
+
+  // Save string to file
+  fs.writeFileSync('./dist/index.ndjson', json);
+
+  return cb();
+};
 
 // Copy CSS files to dist
-gulp.task('css', ['clean'], function () {
+function css () {
   return gulp.src('./src/css/**/*.css')
     .pipe(gulp.dest('./dist/css/'));
-});
+};
 
 // Copy the datasets yaml files to dist
-gulp.task('yaml:copy', ['clean'], function () {
-  return gulp.src('./data-sources/**/*.yaml')
+function yamlCopy () {
+  return gulp.src(dataDirectory)
     .pipe(gulp.dest('./dist/datasets/'));
-});
+};
 
 // Compile the top level yaml and move to dist
-gulp.task('yaml:overview', ['clean', 'yaml:convert'], function () {
+function yamlOverview () {
   var templateData = {
     datasets: getDatasets(),
     baseURL: process.env.BASE_URL
   };
 
   return gulp.src('./src/datasets.hbs')
-    .pipe(handlebars(templateData))
+    .pipe(hb({data: templateData, handlebars: handlebars}))
     .pipe(rename('datasets.yaml'))
     .pipe(gulp.dest('./dist/'));
-});
+};
+
+// Copy the overview YAML to a new file
+function yamlOverviewCopy (cb) {
+  fs.createReadStream('./dist/datasets.yaml').pipe(fs.createWriteStream('./dist/index.yaml'));
+
+  return cb();
+};
 
 // Compile the tag level yaml and move to dist
-gulp.task('yaml:tag', ['clean', 'yaml:convert'], function (cb) {
+function yamlTag (cb) {
   const datasets = getDatasets();
 
   // Build up list of unique tags
@@ -345,16 +487,16 @@ gulp.task('yaml:tag', ['clean', 'yaml:convert'], function (cb) {
     };
 
     return gulp.src('./src/datasets.hbs')
-      .pipe(handlebars(templateData))
+      .pipe(hb({data: templateData, handlebars: handlebars}))
       .pipe(rename(`tag/${t.replace(/ /g, '-')}/datasets.yaml`))
       .pipe(gulp.dest('./dist/'));
   });
 
   return cb();
-});
+};
 
 // Compile the RSS feed and move to dist
-gulp.task('rss', ['clean', 'yaml:convert'], function () {
+function rss () {
   var templateData = {
     datasets: getDatasets(),
     baseURL: process.env.BASE_URL,
@@ -362,25 +504,25 @@ gulp.task('rss', ['clean', 'yaml:convert'], function () {
   };
 
   return gulp.src('./src/rss.xml.hbs')
-    .pipe(handlebars(templateData))
+    .pipe(hb({data: templateData, helpers: hbsHelpers, handlebars: handlebars}))
     .pipe(rename('rss.xml'))
     .pipe(gulp.dest('./dist/'));
-});
+};
 
 // Copy font files to dist
-gulp.task('fonts', ['clean'], function () {
+function fonts () {
   return gulp.src('./src/fonts/**/*')
     .pipe(gulp.dest('./dist/fonts/'));
-});
+};
 
 // Copy images to dist
-gulp.task('img', ['clean'], function () {
+function img () {
   return gulp.src('./src/img/**/*')
     .pipe(gulp.dest('./dist/img/'));
-});
+};
 
 // Compile the sitemap and move to dist
-gulp.task('html:sitemap', ['yaml:convert'], function () {
+function htmlSitemap () {
   // Build up sitemap items
   let slugs = [];
   const datasets = getDatasets();
@@ -409,13 +551,13 @@ gulp.task('html:sitemap', ['yaml:convert'], function () {
   };
 
   return gulp.src('./src/sitemap.hbs')
-    .pipe(handlebars(templateData))
+    .pipe(hb({data: templateData, handlebars: handlebars}))
     .pipe(rename('sitemap.txt'))
     .pipe(gulp.dest('./dist/'));
-});
+};
 
 // Compile JS and move to dist
-gulp.task('js', ['clean', 'yaml:convert'], function () {
+function js () {
   // HBS templating
   var templateData = {
     datasets: getDatasets()
@@ -425,18 +567,27 @@ gulp.task('js', ['clean', 'yaml:convert'], function () {
   };
 
   return gulp.src('./src/**/*.js')
-    .pipe(handlebars(templateData, options))
+    .pipe(hb({data: templateData, helpers: hbsHelpers, handlebars: handlebars}))
     .pipe(gulp.dest('./dist/'));
-});
+};
 
 // Compile overview page and move to dist
-gulp.task('html:overview', ['yaml:convert'], function () {
+function htmlOverview () {
   const datasets = getDatasets();
 
   // Grab collab data
   let collabData = [];
   fs.readdirSync('./src/collabs').forEach((c) => {
     const file = fs.readFileSync(`./src/collabs/${c}`, 'utf8')
+    const json = jsyaml.parse(file);
+    collabData.push({
+      title: json.Title,
+      slug: path.basename(c, '.yaml')
+    });
+  });
+
+  fs.readdirSync('./src/asdi').forEach((c) => {
+    const file = fs.readFileSync(`./src/asdi/${c}`, 'utf8')
     const json = jsyaml.parse(file);
     collabData.push({
       title: json.Title,
@@ -457,19 +608,15 @@ gulp.task('html:overview', ['yaml:convert'], function () {
     datasets: datasets,
     isHome: true
   };
-  const options = {
-    batch: ['./src/partials'],
-    helpers: hbsHelpers
-  };
 
   return gulp.src('./src/index.hbs')
-    .pipe(handlebars(templateData, options))
+    .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
     .pipe(rename('index.html'))
     .pipe(gulp.dest('./dist/'));
-});
+};
 
 // Compile redirect pages and move to dist
-gulp.task('html:redirects', ['html:examples', 'html:detail', 'html:collab'], function (cb) {
+function htmlRedirects (cb) {
   const file = fs.readFileSync('./src/config.yaml', 'utf8');
   const config = jsyaml.parse(file);
   // Exit if we have no redirects
@@ -483,22 +630,18 @@ gulp.task('html:redirects', ['html:examples', 'html:detail', 'html:collab'], fun
     const templateData = {
       target: r.target
     };
-    const options = {
-      batch: ['./src/partials'],
-      helpers: hbsHelpers
-    };
 
     return gulp.src('./src/redirect.hbs')
-      .pipe(handlebars(templateData, options))
+      .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
       .pipe(rename(`${r.source}`))
       .pipe(gulp.dest('./dist/'));
   });
 
   return cb();
-});
+};
 
 // Compile the usage examples page and move to dist
-gulp.task('html:examples', ['yaml:convert'], function () {
+function htmlExamples () {
   const templateData = {
     datasets: getDatasets(),
     isHome: false
@@ -512,19 +655,14 @@ gulp.task('html:examples', ['yaml:convert'], function () {
     }
   });
 
-  const options = {
-    batch: ['./src/partials'],
-    helpers: hbsHelpers
-  };
-
   return gulp.src('./src/examples.hbs')
-    .pipe(handlebars(templateData, options))
+    .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
     .pipe(rename('index.html'))
     .pipe(gulp.dest('./dist/usage-examples/'));
-});
+};
 
 // Compile tag usage examples pages and move to dist
-gulp.task('html:tag-usage', ['yaml:convert'], function (cb) {
+function htmlTagUsage (cb) {
   const datasets = getDatasets();
 
   // Build up list of unique tags
@@ -543,22 +681,18 @@ gulp.task('html:tag-usage', ['yaml:convert'], function (cb) {
       isHome: false,
       tag: t
     };
-    const options = {
-      batch: ['./src/partials'],
-      helpers: hbsHelpers
-    };
 
     return gulp.src('./src/examples.hbs')
-      .pipe(handlebars(templateData, options))
+      .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
       .pipe(rename(`tag/${t.replace(/ /g, '-')}/usage-examples/index.html`))
       .pipe(gulp.dest('./dist/'));
   });
 
   return cb();
-});
+};
 
 // Compile detail pages and move to dist
-gulp.task('html:detail', ['yaml:convert'], function () {
+function htmlDetail () {
   return gulp.src('./tmp/data/datasets/*.json')
     .pipe(flatmap(function (stream, file) {
       var templateData = JSON.parse(file.contents.toString('utf8'));
@@ -608,20 +742,15 @@ gulp.task('html:detail', ['yaml:convert'], function () {
       }
 
       // Render
-      const options = {
-        batch: ['./src/partials'],
-        helpers: hbsHelpers
-      };
-
       return gulp.src('./src/detail.hbs')
-        .pipe(handlebars(templateData, options))
+        .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
         .pipe(rename(`${slug}/index.html`))
         .pipe(gulp.dest('./dist/'));
     }));
-});
+};
 
 // Compile tag pages and move to dist
-gulp.task('html:tag', ['yaml:convert'], function (cb) {
+function htmlTag (cb) {
   const datasets = getDatasets();
 
   // Build up list of unique tags
@@ -641,22 +770,18 @@ gulp.task('html:tag', ['yaml:convert'], function (cb) {
       tag: t,
       tagURL: t.replace(/ /g, '-')
     };
-    const options = {
-      batch: ['./src/partials'],
-      helpers: hbsHelpers
-    };
 
     return gulp.src('./src/index.hbs')
-      .pipe(handlebars(templateData, options))
+      .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
       .pipe(rename(`tag/${t.replace(/ /g, '-')}/index.html`))
       .pipe(gulp.dest('./dist/'));
   });
 
   return cb();
-});
+};
 
 // Compile collab pages and move to dist
-gulp.task('html:collab', ['yaml:convert'], function (cb) {
+function htmlCollab (cb) {
   const datasets = getDatasets();
 
   return gulp.src('./src/collabs/*.yaml')
@@ -664,10 +789,6 @@ gulp.task('html:collab', ['yaml:convert'], function (cb) {
     .pipe(flatmap(function (stream, file) {
       const collabData = JSON.parse(file.contents.toString('utf8'));
       const slug = generateSlug(file.path);
-      const options = {
-        batch: ['./src/partials'],
-        helpers: hbsHelpers
-      };
 
       // Filter out datasets to only the ones in the collab
       const filteredDatasets = datasets.filter((d) => {
@@ -684,14 +805,84 @@ gulp.task('html:collab', ['yaml:convert'], function (cb) {
       };
 
       return gulp.src('./src/index.hbs')
-        .pipe(handlebars(templateData, options))
+        .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
         .pipe(rename(`collab/${slug}/index.html`))
         .pipe(gulp.dest('./dist/'));
     }));
-});
+};
+
+// Compile ASDI page and move to dist
+function htmlASDI (cb) {
+  const datasets = getDatasets(true);
+
+  return gulp.src('./src/asdi/*.yaml')
+    .pipe(yaml())
+    .pipe(flatmap(function (stream, file) {
+      const asdiData = JSON.parse(file.contents.toString('utf8'));
+
+      var filteredDatasets = {};
+      reduce(asdiData.Collab.Tags, function(acc, key) {
+        // Filter out datasets without a matching tag
+        acc[key] = datasets.filter((d) => {
+          return d.Collabs && asdiData.Collab.Name in d.Collabs && d.Collabs[asdiData.Collab.Name].Tags && d.Collabs[asdiData.Collab.Name].Tags.includes(key);
+        });
+        return acc;
+      }, filteredDatasets);
+
+      // HBS templating
+      var templateData = {
+        datasets: filteredDatasets,
+        isHome: false,
+        collabTitle: asdiData.Title,
+        collabDescription: asdiData.Description,
+        collabLogo: asdiData.Logo
+      };
+
+      templateData.collabDescription += "<br><br> Categories: ";
+
+      asdiData.Collab.Tags.forEach((t) => {
+        templateData.collabDescription += "[" + t + "](#" + t.replace(/ /g, '-') + "), ";
+      });
+
+      templateData.collabDescription = templateData.collabDescription.slice(0, -2);
+
+      return gulp.src('./src/asdiindex.hbs')
+        .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
+        .pipe(rename(`collab/asdi/index.html`))
+        .pipe(gulp.dest('./dist/'));
+    }));
+};
+
+// Compile page for when datasets were added
+function htmlAdditions (cb) {
+  const datasets = getDatasets();
+
+  // Build up list of unique tags
+  const dates = getUniqueDates(datasets);
+
+  var filteredDatasets = {};
+  reduce(dates, function(acc, key) {
+    // Filter out datasets without a matching tag
+    acc[key] = datasets.filter((d) => {
+      return d.RegistryEntryAdded == key;
+    });
+    return acc;
+  }, filteredDatasets);
+
+  // HBS templating
+  var templateData = {
+    datasets: filteredDatasets,
+    isHome: false
+  };
+
+  return gulp.src('./src/changelogindex.hbs')
+    .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
+    .pipe(rename(`change-log/index.html`))
+    .pipe(gulp.dest('./dist/'));
+};
 
 // Compile providers page and move to dist
-gulp.task('html:providers', ['yaml:convert'], function (cb) {
+function htmlProviders (cb) {
   const logos = fs.readdirSync('./src/img/logos').map((c) => {
     return `img/logos/${c}`;
   });
@@ -710,10 +901,11 @@ gulp.task('html:providers', ['yaml:convert'], function (cb) {
     .pipe(handlebars(templateData, options))
     .pipe(rename(`/providers.html`))
     .pipe(gulp.dest('./dist/'));
-});
+};
 
 // Server with live reload
-gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'yaml:tag', 'html:collab', 'js', 'html:overview', 'html:detail', 'html:sitemap', 'html:examples', 'html:tag', 'html:tag-usage', 'html:redirects', 'html:providers', 'rss'], function () {
+exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlProviders), htmlRedirects, function () {
+
   browserSync({
     port: 3000,
     server: {
@@ -732,7 +924,9 @@ gulp.task('serve', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge'
     }, 500);
   });
 
-  gulp.watch('src/**/*', ['default']);
+  gulp.watch('src/**/*', gulp.series('default'));
 });
 
-gulp.task('default', ['clean', 'css', 'fonts', 'img', 'yaml:convert', 'json:merge', 'yaml:copy', 'yaml:overview', 'yaml:tag', 'js', 'html:overview', 'html:collab', 'html:detail', 'html:sitemap', 'html:examples', 'html:tag', 'html:tag-usage', 'html:redirects', 'html:providers', 'rss']);
+exports.build = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlProviders), htmlRedirects);
+exports.default = exports.build;
+

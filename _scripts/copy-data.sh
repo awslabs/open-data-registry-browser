@@ -28,4 +28,7 @@ do
       dir="$DATA_DIR/$(cut -d ':' -f2 <<<$repo | tr "/" "-" | cut -d "." -f1)"
     fi
     git clone $repo $dir
+    cd $dir
+    bash _scripts/add_metadata.sh
+    cd ..
 done
