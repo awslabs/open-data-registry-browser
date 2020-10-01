@@ -892,13 +892,8 @@ function htmlProviders (cb) {
     Providers: logos
   };
 
-  const options = {
-    batch: ['./src/partials'],
-    helpers: hbsHelpers
-  };
-
   return gulp.src('./src/providers.hbs')
-    .pipe(handlebars(templateData, options))
+    .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
     .pipe(rename(`/providers.html`))
     .pipe(gulp.dest('./dist/'));
 };

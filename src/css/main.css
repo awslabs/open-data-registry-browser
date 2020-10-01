@@ -213,7 +213,13 @@ img.managed-by-logo {
 
 img.providers {
   width: 200px;
-  height: 200px;
   padding: 20px;
   text-align: center;
+}
+
+.providers-div {
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
