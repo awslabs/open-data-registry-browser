@@ -210,3 +210,16 @@ img.managed-by-logo {
   position: relative;
   top: -50px;
 }
+
+img.providers {
+  width: 200px;
+  padding: 20px;
+  text-align: center;
+}
+
+.providers-div {
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

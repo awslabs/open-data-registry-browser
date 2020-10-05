@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{> header}}
+
+    <h1>Data Providers</h1>
+
+    <div class="row">
+        {{#each Providers}}
+      <div class="col-md-3 providers-div">
+        <img src="/{{.}}"  class="img-responsive providers" />
+      </div>
+        {{/each}}
+    </div>
+
+  {{> footer}}
