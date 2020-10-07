@@ -23,6 +23,14 @@ Resources:
     ARN: arn:aws:s3:::landsat-pds
     Region: us-west-2
     Type: S3 Bucket
+  - Description: Scenes and metadata part1
+    ARN: arn:aws:s3:::landsat-pds/part1
+    Region: us-west-2
+    Type: S3 Bucket
+  - Description: Scenes and metadata part2
+    ARN: arn:aws:s3:::landsat-pds/part2/
+    Region: us-west-2
+    Type: S3 Bucket
   - Description: New scene notifications
     ARN: arn:aws:sns:us-west-2:274514004127:NewSceneHTML
     Region: us-west-2

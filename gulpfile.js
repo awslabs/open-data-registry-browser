@@ -283,7 +283,15 @@ const hbsHelpers = {
     return str ? str.toLowerCase().replace(/\s/g, '-') : str;
   },
   arnToBucket: function (str) {
-    return str ? str.split(":::", 2)[1] + '/' : str;
+    if (str) {
+      let bucket = str.split(":::", 2)[1];
+      if (String(bucket).endsWith('/')) {
+        return bucket;
+      } else {
+        return bucket + '/';
+      }
+    }
+    return str;
   },
   trimHTML: function(passedString, length) {
     // This function will trim an HTML string to a desired length
