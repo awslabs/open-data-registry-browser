@@ -30,5 +30,5 @@ do
     git clone $repo $dir
     cd $dir
     bash _scripts/add_metadata.sh
-    cd ..
+    cd ../..
 done
