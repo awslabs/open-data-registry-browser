@@ -36,6 +36,9 @@ let allDatasets;
 // The directory to look in for datasets, will be overridden for testing purposes
 const dataDirectory = (process.env.NODE_ENV === 'test') ? './tests/test-data-input/**/*.yaml' : './data-sources/**/*.yaml';
 
+// The directory containing all of the data sources
+const dataSourcesDirectory = (process.env.NODE_ENV === 'test') ? './tests/test-data-input/' : './data-sources/';
+
 // Overriding MD renderer to remove outside <p> tags
 renderer.paragraph = function (text, level) {
   return text;
@@ -377,21 +380,15 @@ function jsonMerge (cb) {
     fs.mkdirSync('./tmp/data/datasets/');
   }
 
-  // Look for repos to use based on RODA_SOURCES env var, default to
-  // public repo
-  var repos = process.env.RODA_SOURCES;
-  if (repos) {
-    repos = repos.split(',');
-  } else {
-    repos = ['git@github.com:awslabs/open-data-registry.git'];
-  }
+  let repos = fs.readdirSync(dataSourcesDirectory).filter(function(file) {
+    return fs.statSync(path.join(dataSourcesDirectory, file)).isDirectory();
+  });
 
   // Loop over datasets and conflate Metadata
   let top = {};
   repos.forEach(function (repo) {
     // Pretty dir name for finding datasets
-    const prettyDir = repo.split(':')[1].replace('/', '-').replace('.git', '');
-    var datasets = requireDir(`./tmp/data/unmerged/${prettyDir}/datasets`);
+    var datasets = requireDir(`./tmp/data/unmerged/${repo}/datasets`);
     for (var k in datasets) {
       var dataset = datasets[k];
       const slug = generateSlug(k);
@@ -406,10 +403,10 @@ function jsonMerge (cb) {
         } else {
           top[slug]['Metadata'] = dataset.Metadata;
         }
-        top[slug]['Sources'].push(prettyDir);
+        top[slug]['Sources'].push(repo);
       } else {
         top[slug] = dataset;
-        top[slug]['Sources'] = [prettyDir];
+        top[slug]['Sources'] = [repo];
       }
     }
   });
