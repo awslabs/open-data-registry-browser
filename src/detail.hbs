@@ -96,6 +96,12 @@
             <dd><code>aws s3 ls s3://{{{arnToBucket ARN}}} {{#if RequesterPays}}--request-payer requester{{else}}--no-sign-request{{/if}}</code></dd>
             {{/unless}}
             {{/isEqual}}
+            {{#if Explore}}
+            <dt class="resource-explore">Explore</dt>
+            {{#each Explore}}
+            <dd>{{{md .}}}</dd>
+            {{/each}}
+            {{/if}}
           </dl>
         </li>
         {{/each}}
