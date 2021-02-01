@@ -232,6 +232,11 @@ const hbsHelpers = {
     if (/https?:\/\/github.com\/(awslabs|aws-samples)\/.*/.test(link)) {
       return options.fn(this);
     }
+
+    // AWS GitHub repos viewed through NBViewer
+    if (/https?:\/\/nbviewer.jupyter.org\/github\/(awslabs|aws-samples)\/.*/.test(link)) {
+      return options.fn(this);
+    }
     
     // go.aws shortener
     if (/https?:\/\/go.aws.*/.test(link)) {
