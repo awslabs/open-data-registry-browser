@@ -1,4 +1,4 @@
-The Registry of Open Data (RODA) Browser acts as a simple, web-based visualization of the data in https://github.com/awslabs/open-data-registry.
+The Registry of Open Data (RODA) Browser acts as a simple, web-based visualization of the data in https://github.com/awslabs/open-data-registry. 
 
 This browser can be used to view a single data repository or multiple data repositories, depending on build-time settings. The project builds static HTML files that can be deployed on any compatible web server.
 
