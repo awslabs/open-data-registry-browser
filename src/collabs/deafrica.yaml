@@ -1,0 +1,13 @@
+Title: Digital Earth Africa
+Description: |
+  DE Africa will provide a routine, reliable and operational
+  service, using Earth observations to deliver decision-ready
+  products enabling policy makers, scientists, the private
+  sector and civil society to address social, environmental
+  and economic changes on the continent and develop an ecosystem
+  for innovation across sectors.
+Logo: digital-earth-africa.png
+Datasets:
+  - deafrica-landsat
+  - deafrica-sentinel-1
+  - deafrica-sentinel-2
