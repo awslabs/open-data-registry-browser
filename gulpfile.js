@@ -301,6 +301,22 @@ const hbsHelpers = {
     }
     return str;
   },
+  regionToFlag: function (str) {
+    // This handles the case where you have to specify the region explicitly for non-default regions
+    // Look for opt-in required at https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
+    if (str) {
+      switch (str) {
+        case "af-south-1":
+        case "ap-east-1":
+        case "eu-south-1":
+        case "me-south-1":
+          return "--region " + str + " ";
+        default:
+          return "";
+      }
+    }
+    return str;
+  },
   trimHTML: function(passedString, length) {
     // This function will trim an HTML string to a desired length
     // while keeping links intact.
