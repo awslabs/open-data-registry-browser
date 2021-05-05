@@ -25,8 +25,6 @@ var requireDir = require('require-dir');
 var path = require('path');
 var marked = require('marked');
 var renderer = new marked.Renderer();
-var browserSync = require('browser-sync');
-var reload = browserSync.reload;
 var fs = require('fs');
 var _ = require('lodash');
 var reduce = require('object.reduce');
@@ -926,24 +924,6 @@ function htmlProviders (cb) {
 
 // Server with live reload
 exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlProviders), htmlRedirects, function () {
-
-  browserSync({
-    port: 3000,
-    server: {
-      baseDir: ['dist']
-    }
-  });
-
-  // watch for changes and add a debounce for dist changes
-  var timer;
-  gulp.watch([
-    'dist/**/*'
-  ]).on('change', function () {
-    clearTimeout(timer);
-    timer = setTimeout(function () {
-      reload();
-    }, 500);
-  });
 
   gulp.watch('src/**/*', gulp.series('default'));
 });
