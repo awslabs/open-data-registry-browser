@@ -14,6 +14,7 @@
 'use strict';
 
 var gulp = require('gulp');
+var connect = require('gulp-connect');
 var yaml = require('gulp-yaml');
 var jsyaml = require('yaml');
 var del = require('del');
@@ -924,8 +925,12 @@ function htmlProviders (cb) {
 
 // Server with live reload
 exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlProviders), htmlRedirects, function () {
-
-  gulp.watch('src/**/*', gulp.series('default'));
+  connect.server({
+    root: ['./dist'],
+    port: 3000,
+    host: '0.0.0.0',
+    livereload: true
+  });
 });
 
 exports.build = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlProviders), htmlRedirects);
