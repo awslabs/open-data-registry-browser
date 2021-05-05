@@ -1,4 +1,4 @@
-FROM node:10.16-stretch-slim
+FROM node:14.16-stretch-slim
 
 RUN apt-get update \
     && apt-get install -y curl git openssl \
