@@ -22,6 +22,8 @@ describe('Handlebars helpers', () => {
     expect(gulpfile.hbsHelpers.isAWSURL('https://github.com/aws-samples/foo', hbsOptions)).toBeTruthy();
     expect(gulpfile.hbsHelpers.isAWSURL('https://github.com/foo/bar', hbsOptions)).toBeFalsy();
     expect(gulpfile.hbsHelpers.isAWSURL('https://example.com', hbsOptions)).toBeFalsy();
+    expect(gulpfile.hbsHelpers.isAWSURL('https://www.youtube.com/watch?v=foo&list=RDCMUCd6MoB9NC6uYN2grvUNT-Zg', hbsOptions)).toBeTruthy();
+    expect(gulpfile.hbsHelpers.isAWSURL('https://www.youtube.com/watch?v=foo&list=RDCMUCd6MoB9NC6uYN2grvUNT', hbsOptions)).toBeFalsy();
   });
   test('Tests Type string creation', () => {
     expect(gulpfile.hbsHelpers.toType('TEST CASE')).toBe('test-case');
