@@ -20,3 +20,4 @@ https://registry.opendata.aws/collab/nasa/
 https://registry.opendata.aws/collab/nih/
 https://registry.opendata.aws/collab/noaa/
 https://registry.opendata.aws/collab/stsci/
+https://registry.opendata.aws/collab/ai2/
