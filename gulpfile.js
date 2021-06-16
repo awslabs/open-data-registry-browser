@@ -240,7 +240,12 @@ const hbsHelpers = {
     // go.aws shortener
     if (/https?:\/\/go.aws.*/.test(link)) {
       return options.fn(this);
-    }    
+    }
+
+    // AWS YouTube videos
+    if (/https?:\/\/www.youtube.com\/watch\?v=(.*)&list=RDCMUCd6MoB9NC6uYN2grvUNT-Zg/.test(link)) {
+      return options.fn(this);
+    }
 
     return options.inverse(this);
   },
