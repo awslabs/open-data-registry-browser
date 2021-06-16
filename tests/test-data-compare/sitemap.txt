@@ -14,11 +14,10 @@ https://registry.opendata.aws/tag/satellite-imagery/
 https://registry.opendata.aws/tag/satellite-imagery/usage-examples/
 https://registry.opendata.aws/tag/sustainability/
 https://registry.opendata.aws/tag/sustainability/usage-examples/
+https://registry.opendata.aws/collab/ai2/
 https://registry.opendata.aws/collab/deafrica/
 https://registry.opendata.aws/collab/facebook/
 https://registry.opendata.aws/collab/nasa/
 https://registry.opendata.aws/collab/nih/
 https://registry.opendata.aws/collab/noaa/
 https://registry.opendata.aws/collab/stsci/
-https://registry.opendata.aws/collab/ai2/
-https://registry.opendata.aws/collab/ai2/
