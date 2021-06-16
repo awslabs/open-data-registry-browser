@@ -1,0 +1,17 @@
+Title: Allen Institute for Artificial Intelligence (AI2)
+Description: |
+  Amazon Web Services is collaborating with the [Allen Institute for Artificial Intelligence](https://allenai.org/) to distribute benchmark datasets used for solving the hardest problems in artificial intelligence.
+Logo: allen-institute-for-ai-logo.png
+Datasets:
+  - allenai-arc
+  - allenai-aristo-mini
+  - allenai-diagrams
+  - allenai-drop
+  - allenai-meaningful-citations
+  - allenai-quoref
+  - allenai-ropes
+  - allenai-tablestore-questions
+  - allenai-tablestore
+  - allenai-tqa
+  - allenai-tuple-kb
+  - allenai-zest
