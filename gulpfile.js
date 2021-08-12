@@ -462,6 +462,15 @@ function jsonOverview (cb) {
   // Save string to file
   fs.writeFileSync('./dist/index.ndjson', json);
 
+  // Make sure destination parent directory exists
+  if (!fs.existsSync('./dist/roda/ndjson/')) {
+    fs.mkdirSync('./dist/roda/');
+    fs.mkdirSync('./dist/roda/ndjson/');
+  }
+
+  // Also save to roda/ndjson/
+  fs.writeFileSync('./dist/roda/ndjson/index.ndjson', json);
+
   return cb();
 };
 
