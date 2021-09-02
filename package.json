@@ -27,7 +27,7 @@
     "lodash": "^4.17.19",
     "marked": "^0.8.0",
     "natives": "^1.1.6",
-    "object-path": ">=0.11.5",
+    "object-path": ">=0.11.6",
     "require-dir": "^0.3.2",
     "yaml": "^1.4.0"
   },
