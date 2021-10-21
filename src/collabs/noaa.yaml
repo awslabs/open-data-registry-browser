@@ -3,24 +3,41 @@ Description: |
   Amazon Web Services has entered into a [research agreement](http://data-alliance.noaa.gov/) with the US National Oceanic and Atmospheric Administration (NOAA) to explore sustainable models to increase the output of open NOAA data. Publicly available NOAA data drives multi-billion dollar industries and critical research efforts. Under this agreement, AWS and its collaborators will look at ways to push more NOAA data to the cloud and build an ecosystem of innovation around it.
 Logo: noaa-logo.png
 Datasets:
-  - noaa-goes
+  - noaa-bathymetry
+  - noaa-cdr-atmospheric
+  - noaa-cdr-fundamental
+  - noaa-cdr-oceanic
+  - noaa-cdr-terrestrial
+  - noaa-cfs
+  - noaa-climate-normals
+  - noaa-coastal-lidar
+  - noaa-eri
+  - noaa-gefs-reforecast
   - noaa-gefs
+  - noaa-gestofs
   - noaa-gfs-bdp-pds
   - noaa-ghcn
-  - noaa-hrrr-pds
-  - nwm-archive
-  - noaa-nwm-pds
-  - noaa-ofs
-  - noaa-ghcnh
-  - noaa-isd
   - noaa-ghe
-  - noaa-eri
-  - ncei-wcsd-archive
+  - noaa-gmgsi
+  - noaa-goes
+  - noaa-gsod
   - noaa-himawari
-  - noaa-gefs-reforecast
-  - noaa-wod
-  - noaa-ndfd
-  - odp-noaa-nesdis-ncei-csb
+  - noaa-hrrr-pds
+  - noaa-isd
+  - noaa-nam
   - noaa-nbm
+  - noaa-nclimgrid
+  - noaa-ncn
+  - noaa-ndfd
+  - noaa-nexrad
+  - noaa-nwm-pds
+  - noaa-ocean-climate-stations
+  - noaa-ofs
+  - noaa-rap
+  - noaa-rrfs
   - noaa-s111
   - noaa-space-weather
+  - noaa-swdi
+  - noaa-ufs-s2s
+  - noaa-wod
+  - odp-noaa-nesdis-ncei-csb
