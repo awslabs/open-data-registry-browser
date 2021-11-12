@@ -14,10 +14,10 @@
   "private": false,
   "repository": "https://github.com/awslabs/open-data-registry-browser",
   "devDependencies": {
-    "browser-sync": "^2.26.14",
     "del": "^3.0.0",
     "gulp": "^4.0.0",
     "gulp-cli": "^2.2.0",
+    "gulp-connect": "^5.7.0",
     "gulp-flatmap": "^1.0.2",
     "gulp-hb": "^8.0.0",
     "gulp-rename": "^1.4.0",
@@ -27,7 +27,7 @@
     "lodash": "^4.17.19",
     "marked": "^0.8.0",
     "natives": "^1.1.6",
-    "object-path": ">=0.11.5",
+    "object-path": ">=0.11.8",
     "require-dir": "^0.3.2",
     "yaml": "^1.4.0"
   },

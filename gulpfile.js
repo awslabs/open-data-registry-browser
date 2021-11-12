@@ -14,6 +14,7 @@
 'use strict';
 
 var gulp = require('gulp');
+var connect = require('gulp-connect');
 var yaml = require('gulp-yaml');
 var jsyaml = require('yaml');
 var del = require('del');
@@ -25,8 +26,6 @@ var requireDir = require('require-dir');
 var path = require('path');
 var marked = require('marked');
 var renderer = new marked.Renderer();
-var browserSync = require('browser-sync');
-var reload = browserSync.reload;
 var fs = require('fs');
 var _ = require('lodash');
 var reduce = require('object.reduce');
@@ -241,7 +240,12 @@ const hbsHelpers = {
     // go.aws shortener
     if (/https?:\/\/go.aws.*/.test(link)) {
       return options.fn(this);
-    }    
+    }
+
+    // AWS YouTube videos
+    if (/https?:\/\/www.youtube.com\/watch\?v=(.*)&list=RDCMUCd6MoB9NC6uYN2grvUNT-Zg/.test(link)) {
+      return options.fn(this);
+    }
 
     return options.inverse(this);
   },
@@ -297,6 +301,22 @@ const hbsHelpers = {
         return bucket;
       } else {
         return bucket + '/';
+      }
+    }
+    return str;
+  },
+  regionToFlag: function (str) {
+    // This handles the case where you have to specify the region explicitly for non-default regions
+    // Look for opt-in required at https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
+    if (str) {
+      switch (str) {
+        case "af-south-1":
+        case "ap-east-1":
+        case "eu-south-1":
+        case "me-south-1":
+          return "--region " + str + " ";
+        default:
+          return "";
       }
     }
     return str;
@@ -441,6 +461,15 @@ function jsonOverview (cb) {
 
   // Save string to file
   fs.writeFileSync('./dist/index.ndjson', json);
+
+  // Make sure destination parent directory exists
+  if (!fs.existsSync('./dist/roda/ndjson/')) {
+    fs.mkdirSync('./dist/roda/');
+    fs.mkdirSync('./dist/roda/ndjson/');
+  }
+
+  // Also save to roda/ndjson/
+  fs.writeFileSync('./dist/roda/ndjson/index.ndjson', json);
 
   return cb();
 };
@@ -751,6 +780,9 @@ function htmlDetail () {
         });
       }
 
+      // Add BASE_URL for citation
+      templateData.baseURL = process.env.BASE_URL;
+
       // Render
       return gulp.src('./src/detail.hbs')
         .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
@@ -910,26 +942,12 @@ function htmlProviders (cb) {
 
 // Server with live reload
 exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlProviders), htmlRedirects, function () {
-
-  browserSync({
+  connect.server({
+    root: ['./dist'],
     port: 3000,
-    server: {
-      baseDir: ['dist']
-    }
+    host: '0.0.0.0',
+    livereload: true
   });
-
-  // watch for changes and add a debounce for dist changes
-  var timer;
-  gulp.watch([
-    'dist/**/*'
-  ]).on('change', function () {
-    clearTimeout(timer);
-    timer = setTimeout(function () {
-      reload();
-    }, 500);
-  });
-
-  gulp.watch('src/**/*', gulp.series('default'));
 });
 
 exports.build = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlProviders), htmlRedirects);
