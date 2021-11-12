@@ -780,6 +780,9 @@ function htmlDetail () {
         });
       }
 
+      // Add BASE_URL for citation
+      templateData.baseURL = process.env.BASE_URL;
+
       // Render
       return gulp.src('./src/detail.hbs')
         .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
