@@ -3,3 +3,5 @@ redirects:
     target: /tag/sustainability/usage-examples/index.html
   - source: /usda-naip/index.html
     target: /naip/index.html
+  - source: /landsat-8/index.html
+    target: /usgs-landsat/index.html    
