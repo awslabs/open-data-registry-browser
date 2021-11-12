@@ -1,7 +1,9 @@
 https://registry.opendata.aws
-https://registry.opendata.aws/landsat-8/
-https://registry.opendata.aws/tag/aws-pds/
-https://registry.opendata.aws/tag/aws-pds/usage-examples/
+https://registry.opendata.aws/usgs-landsat/
+https://registry.opendata.aws/tag/agriculture/
+https://registry.opendata.aws/tag/agriculture/usage-examples/
+https://registry.opendata.aws/tag/cog/
+https://registry.opendata.aws/tag/cog/usage-examples/
 https://registry.opendata.aws/tag/disaster-response/
 https://registry.opendata.aws/tag/disaster-response/usage-examples/
 https://registry.opendata.aws/tag/earth-observation/
@@ -12,6 +14,8 @@ https://registry.opendata.aws/tag/natural-resource/
 https://registry.opendata.aws/tag/natural-resource/usage-examples/
 https://registry.opendata.aws/tag/satellite-imagery/
 https://registry.opendata.aws/tag/satellite-imagery/usage-examples/
+https://registry.opendata.aws/tag/stac/
+https://registry.opendata.aws/tag/stac/usage-examples/
 https://registry.opendata.aws/tag/sustainability/
 https://registry.opendata.aws/tag/sustainability/usage-examples/
 https://registry.opendata.aws/collab/ai2/
