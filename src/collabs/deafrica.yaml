@@ -11,3 +11,6 @@ Datasets:
   - deafrica-landsat
   - deafrica-sentinel-1
   - deafrica-sentinel-2
+  - deafrica-geomad
+  - deafrica-wofs
+  - deafrica-alos-jers
