@@ -8,3 +8,4 @@ Description: |
 Logo: facebook-logo.png
 Datasets:
   - dataforgood-fb-hrsl
+  - daylight-osm
