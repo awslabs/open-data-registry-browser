@@ -8,3 +8,4 @@ Description: |
 Logo: meta-logo.png
 Datasets:
   - dataforgood-fb-hrsl
+  - daylight-osm
