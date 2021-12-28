@@ -4,4 +4,6 @@ redirects:
   - source: /usda-naip/index.html
     target: /naip/index.html
   - source: /landsat-8/index.html
-    target: /usgs-landsat/index.html    
+    target: /usgs-landsat/index.html
+  - source: /collab/facebook/index.html
+    target: /collab/meta/index.html    
