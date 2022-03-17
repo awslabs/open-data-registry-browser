@@ -9,6 +9,12 @@
     </p>
     <div class="row">
       <div class="col-md-6">
+      {{#if DeprecatedNotice.length}}
+      <h3>Deprecated</h3>
+      <p>{{{md DeprecatedNotice}}}</p>
+      <hr>
+      {{/if}}
+
       <h3>Description</h3>
       <p>{{{md Description}}}</p>
 
