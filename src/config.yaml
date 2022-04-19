@@ -7,3 +7,5 @@ redirects:
     target: /usgs-landsat/index.html
   - source: /collab/facebook/index.html
     target: /collab/meta/index.html    
+  - source: /noaa-cmip5/index.html
+    target: /noaa-uwpd-cmip5/index.html
