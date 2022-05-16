@@ -87,7 +87,7 @@
             <dt class="resource-description">Description</dt>
             <dd class="resource-description">{{{md Description}}}</dd>
             <dt class="resource-type">Resource type</dt>
-            <dd class="resource-type {{{toType Type}}}">{{Type}}{{#if RequesterPays}} <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/RequesterPaysBuckets.html"><span class="label label-info tag link-tag">Requester Pays</span></a>{{/if}}{{#if ControlledAccess}} <a href="{{ControlledAccess}}"><span class="label label-info tag link-tag">Controlled Access</span></a>{{/if}}</dd>
+            <dd class="resource-type {{{toType Type}}}">{{Type}}{{#if RequesterPays}} <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/RequesterPaysBuckets.html"><span class="label label-info tag link-tag">Requester Pays</span></a>{{else if AccountRequired}} <span class="label label-info">Account Required</span>{{/if}}{{#if ControlledAccess}} <a href="{{ControlledAccess}}"><span class="label label-info tag link-tag">Controlled Access</span></a>{{/if}}</dd>
             {{#if ARN}}
             <dt class="resource-arn">Amazon Resource Name (ARN)</dt>
             <dd><code>{{ARN}}</code></dd>
@@ -100,8 +100,8 @@
             <dd><code>{{Region}}</code></dd>
             {{#isEqual Type 'S3 Bucket'}}
             {{#unless ControlledAccess}}
-            <dt class="resource-region"><a href="https://aws.amazon.com/cli/">AWS CLI</a> Access{{#unless RequesterPays}} (No AWS account required){{/unless}}</dt>
-            <dd><code>aws s3 ls {{{regionToFlag Region}}}{{#if RequesterPays}}--request-payer requester{{else}}--no-sign-request{{/if}} s3://{{{arnToBucket ARN}}}</code></dd>
+            <dt class="resource-region"><a href="https://aws.amazon.com/cli/">AWS CLI</a> Access{{#if RequesterPays}}{{else if AccountRequired}}{{else}} (No AWS account required){{/if}}</dt>
+            <dd><code>aws s3 ls {{{regionToFlag Region}}}{{#if RequesterPays}}--request-payer requester{{else if AccountRequired}}{{else}}--no-sign-request{{/if}} s3://{{{arnToBucket ARN}}}</code></dd>
             {{/unless}}
             {{/isEqual}}
             {{#if Explore}}
