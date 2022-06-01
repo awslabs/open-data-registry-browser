@@ -24,6 +24,7 @@ Datasets:
   - noaa-himawari
   - noaa-hrrr-pds
   - noaa-isd
+  - noaa-jpss
   - noaa-nam
   - noaa-nbm
   - noaa-nclimgrid
@@ -35,9 +36,15 @@ Datasets:
   - noaa-ofs
   - noaa-rap
   - noaa-rrfs
+  - noaa-rtma
   - noaa-s111
   - noaa-space-weather
   - noaa-swdi
+  - noaa-ufs-marinereanalysis
+  - noaa-ufs-regtests
   - noaa-ufs-s2s
+  - noaa-ufs-shortrangeweather
+  - noaa-uwpd-cmip5
+  - noaa-wave-ensemble-reforecast
   - noaa-wod
   - odp-noaa-nesdis-ncei-csb
