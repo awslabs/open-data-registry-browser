@@ -181,18 +181,30 @@ a.aws-link::before {
 }
 
 @media (min-height: 790px) and (min-width:992px) {
- .aboutbox {
+  .aboutbox {
     position:fixed;
     z-index: 2;
     max-width: 392px;
   }
+
 }
 
 @media (min-height: 790px) and (min-width:1200px) {
- .aboutbox {
+  .aboutbox {
     position:fixed;
     z-index: 2;
     max-width: 490px;
+  }
+}
+
+@media (max-width:768px) {
+  #adx-banner {
+    flex-direction: column;
+  }
+}
+@media (min-width:769px) {
+  #adx-banner {
+    flex-direction: row;
   }
 }
 
@@ -222,4 +234,66 @@ img.providers {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+#adx-banner {
+  background-color: #0073bb;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  z-index: 3;
+  position: fixed;
+  margin-top: -5;
+}
+
+#spacer {
+  margin-top: -5;
+  margin-bottom: 15px;
+}
+
+.adx-banner-text {
+  color: #fff;
+  margin-right: 40px;
+  width: 85%;
+}
+
+.adx-banner-button {
+  height: 30px;
+  color: #545b64;
+  border-radius: 2px;
+  border-width: 1px;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 4px 20px 4px 20px;
+  min-width: 200px;
+}
+
+.icon-info {
+  height: 14px;
+  margin-right: 8px;
+  margin-top: 4px;
+}
+
+.icon {
+  height: 14px;
+  margin-right: 5px;
+}
+
+.adx-banner-text a {
+  color: #fff;
+  text-decoration-line: underline;
+}
+
+.adx-banner-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.adx-close-button {
+  color: #fff;
+  margin-left: 30px;
+  margin-right: 5px;
+  cursor: pointer;
+  width: 100%;
+  text-align: right;
 }
