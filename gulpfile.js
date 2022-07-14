@@ -291,6 +291,15 @@ const hbsHelpers = {
     // No logo if we're here, just render markdown
     return marked(str, {renderer: renderer});
   },
+  toSMSL: function (url, services) {
+    // Check if url is a notebook, this not be needed due to schema linting, but never hurts.
+    if (url.substr(-6) === '.ipynb') {
+      let html = `<a href="https://studiolab.sagemaker.aws/import/github/${url}" rel="nofollow" target="_blank"><img src="https://studiolab.sagemaker.aws/studiolab.svg" alt="Open In SageMaker Studio Lab" data-canonical-src="https://studiolab.sagemaker.aws/studiolab.svg" style="max-width: 100%;"></a><br>`;
+      return html;
+    }
+
+    return;
+  },  
   toType: function (str) {
     return str ? str.toLowerCase().replace(/\s/g, '-') : str;
   },
