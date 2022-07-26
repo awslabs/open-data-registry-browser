@@ -607,6 +607,12 @@ function htmlSitemap () {
     });
   });
 
+  // Service pages
+  let services = getUniqueServices(datasets);
+  services.forEach((s) => {
+    slugs.push(`service/${s.toLowerCase().replace(/ /g, '-')}/usage-examples`);
+  });
+
   // Collab pages
   fs.readdirSync('./src/collabs').forEach((c) => {
     // Strip off the file extension and add to slugs
