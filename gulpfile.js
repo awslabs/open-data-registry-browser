@@ -135,6 +135,26 @@ const getUniqueTags = function (datasets) {
   return tags;
 };
 
+// Helper function to get unique services
+const getUniqueServices = function (datasets) {
+  // Build up list of unique services
+  let services = [];
+  datasets.forEach((d) => {
+    if (!d.DataAtWork) { return; }
+    if (!d.DataAtWork.Tutorials) { return; }
+    d.DataAtWork.Tutorials.forEach((t) => {
+      if (!t.Services) { return; }
+      t.Services.forEach((s) => {
+        if (services.includes(s) === false) {
+          services.push(s);
+        }
+      });
+    });
+  });
+
+  return services;
+};
+
 // Helper function to get unique dates
 const getUniqueDates = function (datasets) {
   // Build up list of unique tags
@@ -739,6 +759,43 @@ function htmlTagUsage (cb) {
   return cb();
 };
 
+// Compile service usage examples pages and move to dist
+function htmlServiceUsage (cb) {
+  const datasets = getDatasets();
+
+  // Build up list of unique services
+  const services = getUniqueServices(datasets);
+
+  // Loop over each service and build the page
+  services.forEach((s) => {
+    // Filter out datasets without a tutorial with a matching service
+    let filteredDatasets = datasets.filter((d) => {
+      if (!d.DataAtWork) { return false; }
+      if (!d.DataAtWork.Tutorials) { return false; }
+      let containsService = false;
+      d.DataAtWork.Tutorials.forEach((t) => {
+        if (!t.Services) { return; }
+        containsService = t.Services.includes(s);
+      });
+      return containsService;
+    });
+
+    // HBS templating
+    var templateData = {
+      datasets: filteredDatasets,
+      isHome: false,
+      service: s
+    };
+
+    return gulp.src('./src/examples.hbs')
+      .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
+      .pipe(rename(`service/${s.toLowerCase().replace(/ /g, '-')}/usage-examples/index.html`))
+      .pipe(gulp.dest('./dist/'));
+  });
+
+  return cb();
+};
+
 // Compile detail pages and move to dist
 function htmlDetail () {
   return gulp.src('./tmp/data/datasets/*.json')
@@ -950,7 +1007,7 @@ function htmlProviders (cb) {
 };
 
 // Server with live reload
-exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlProviders), htmlRedirects, function () {
+exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlServiceUsage, htmlProviders), htmlRedirects, function () {
   connect.server({
     root: ['./dist'],
     port: 3000,
@@ -959,6 +1016,6 @@ exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, y
   });
 });
 
-exports.build = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlProviders), htmlRedirects);
+exports.build = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlServiceUsage, htmlProviders), htmlRedirects);
 exports.default = exports.build;
 

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   {{> header isDataAtWork=true}}
-  <p class="lede">Usage examples for all datasets listed in the <a href="/">Registry of Open Data on AWS</a>{{#if tag}} tagged with <strong>{{tag}}</strong>{{/if}}.</p>
+  <p class="lede">Usage examples for all datasets listed in the <a href="/">Registry of Open Data on AWS</a>{{#if tag}} tagged with <strong>{{tag}}</strong>{{else if service}} using <strong>{{service}}{{/if}}.</p>
   <hr>
 
   {{#each datasets}}
     {{#if DataAtWork}}
       <div id="{{Slug}}" class="dataset">
-        <h4><a href="../{{Slug}}/">{{Name}}</a></h4>
+        <h4><a href="/{{Slug}}">{{Name}}</a></h4>
         {{#if DataAtWork.Tutorials}}
         <h5 class="dataatwork-category">Tutorials</h5>
         <ul class="dataatwork-list">
@@ -37,3 +37,5 @@
   {{/each}}
 
   {{> footer isExamples=true}}
+
+  <script src="/js/tags.js"></script>

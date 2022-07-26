@@ -12,8 +12,9 @@ You can add logos to the `src/img/logos` directory for use in the **detail** and
 - `/index.yaml` - YAML formatted listing of each individual YAML file for provided datasets. [`datasets.yaml` is created but should be considered deprecated]
 - `/index.ndjson` - NDJSON formatted listing of each individual YAML file for provided datasets. This same data is available at `/roda/ndjson/index.ndjson` for searching via tools like Amazon Athena.
 - `ex: /tag/earth-observation/` - Tag-subsetted view of the main datasets listing page.
-- `ex: /tag/machine-learning/usage-examples/` - Tag-subsetted list usage examples grouped by dataset.
+- `ex: /tag/machine-learning/usage-examples/` - Tag-subsetted list of usage examples grouped by dataset.
 - `ex: /tag/astronomy/datasets.yaml` - YAML for all datasets associated with a tag.
+- `ex: /service/athena/usage-examples/` - Service-subsetted list of usage examples grouped by dataset.
 - `ex: /datasets/awslabs-open-data-registry/datasets/1000-genomes.yaml` - YAML for individual dataset, used to create the HTML pages.
 - `/sitemap.txt` - Sitemap listing all the HTML pages.
 - `/providers.html` - A simple listing of logos of data providers.
