@@ -44,7 +44,7 @@ describe('Site build', () => {
     expect(fs.readFileSync('./dist/index.ndjson')).toEqual(fs.readFileSync('./tests/test-data-compare/index.ndjson'));
     expect(fs.readFileSync('./dist/index.yaml')).toEqual(fs.readFileSync('./tests/test-data-compare/index.yaml'));
     expect(fs.readFileSync('./dist/sitemap.txt')).toEqual(fs.readFileSync('./tests/test-data-compare/sitemap.txt'));
-    expect(fs.readFileSync('./dist/usgs-landsat/index.html')).toEqual(fs.readFileSync('./tests/test-data-compare/usgs-landsat.html'));
-    expect(fs.readFileSync('./dist/change-log/index.html')).toEqual(fs.readFileSync('./tests/test-data-compare/change-log.html'));
+    expect(fs.readFileSync('./dist/usgs-landsat/index.html')).toEqual(fs.readFileSync('./tests/test-data-compare/usgs-landsat/index.html'));
+    expect(fs.readFileSync('./dist/change-log/index.html')).toEqual(fs.readFileSync('./tests/test-data-compare/change-log/index.html'));
   });
 });

@@ -10,6 +10,7 @@
         {{#if tag}}
         <p>See <a href="/tag/{{tagURL}}/usage-examples">all usage examples for datasets listed in this registry</a> tagged with <strong>{{tag}}</strong>.</p>
         {{else}}
+        <p>Get started using data quickly by viewing <a href="/service/sagemaker-studio-lab/usage-examples">all tutorials with associated SageMaker Studio Lab notebooks</a>.</p>        
         <p>See <a href="/usage-examples">all usage examples for datasets listed in this registry</a>.</p>
         {{#if collabData}}
         <p>See datasets from {{#each collabData}}{{#unless @first}}{{#if @last}}, and {{else}}, {{/if}}{{/unless}}<a href="/collab/{{slug}}/">{{title}}</a>{{/each}}.

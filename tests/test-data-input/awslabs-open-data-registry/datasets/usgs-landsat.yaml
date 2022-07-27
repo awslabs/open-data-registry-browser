@@ -46,6 +46,8 @@ DataAtWork:
       NotebookURL: https://example.com/foo.ipynb
       AuthorName: Planet
       AuthorURL: https://www.planet.com/
+      Services:
+        - Athena
 
 RegistryEntryAdded: "2021-03-25"
 RegistryEntryLastModified: "2021-09-24"
