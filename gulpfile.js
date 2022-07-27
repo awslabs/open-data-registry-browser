@@ -767,7 +767,7 @@ function htmlTagUsage (cb) {
 
 // Compile service usage examples pages and move to dist
 function htmlServiceUsage (cb) {
-  const datasets = getDatasets();
+  const datasets = _.cloneDeep(getDatasets());
 
   // Build up list of unique services
   const services = getUniqueServices(datasets);
@@ -784,6 +784,17 @@ function htmlServiceUsage (cb) {
         containsService = t.Services.includes(s);
       });
       return containsService;
+    });
+
+    // Pass along only the service relevant tutorials with the dataset
+    filteredDatasets.forEach((d) => {
+      if (!d.DataAtWork) { return; }
+      d.DataAtWork.Publications = null;
+      d.DataAtWork.Tools = null;
+      d.DataAtWork.Tutorials = d.DataAtWork.Tutorials.filter((t) => {
+        if (!t.Services) { return false; }
+        return t.Services.includes(s);
+      });
     });
 
     // HBS templating
