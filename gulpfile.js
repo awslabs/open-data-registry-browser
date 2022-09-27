@@ -135,6 +135,26 @@ const getUniqueTags = function (datasets) {
   return tags;
 };
 
+// Helper function to get unique services
+const getUniqueServices = function (datasets) {
+  // Build up list of unique services
+  let services = [];
+  datasets.forEach((d) => {
+    if (!d.DataAtWork) { return; }
+    if (!d.DataAtWork.Tutorials) { return; }
+    d.DataAtWork.Tutorials.forEach((t) => {
+      if (!t.Services) { return; }
+      t.Services.forEach((s) => {
+        if (services.includes(s) === false) {
+          services.push(s);
+        }
+      });
+    });
+  });
+
+  return services;
+};
+
 // Helper function to get unique dates
 const getUniqueDates = function (datasets) {
   // Build up list of unique tags
@@ -291,6 +311,15 @@ const hbsHelpers = {
     // No logo if we're here, just render markdown
     return marked(str, {renderer: renderer});
   },
+  toSMSL: function (url, services) {
+    // Check if url is a notebook, this not be needed due to schema linting, but never hurts.
+    if (url.substr(-6) === '.ipynb') {
+      let html = `<a href="https://studiolab.sagemaker.aws/import/github/${url}" rel="nofollow" target="_blank"><img src="https://studiolab.sagemaker.aws/studiolab.svg" alt="Open In SageMaker Studio Lab" data-canonical-src="https://studiolab.sagemaker.aws/studiolab.svg" style="max-width: 100%;"></a><br>`;
+      return html;
+    }
+
+    return;
+  },  
   toType: function (str) {
     return str ? str.toLowerCase().replace(/\s/g, '-') : str;
   },
@@ -578,6 +607,12 @@ function htmlSitemap () {
     });
   });
 
+  // Service pages
+  let services = getUniqueServices(datasets);
+  services.forEach((s) => {
+    slugs.push(`service/${s.toLowerCase().replace(/ /g, '-')}/usage-examples`);
+  });
+
   // Collab pages
   fs.readdirSync('./src/collabs').forEach((c) => {
     // Strip off the file extension and add to slugs
@@ -724,6 +759,54 @@ function htmlTagUsage (cb) {
     return gulp.src('./src/examples.hbs')
       .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
       .pipe(rename(`tag/${t.replace(/ /g, '-')}/usage-examples/index.html`))
+      .pipe(gulp.dest('./dist/'));
+  });
+
+  return cb();
+};
+
+// Compile service usage examples pages and move to dist
+function htmlServiceUsage (cb) {
+  const datasets = _.cloneDeep(getDatasets());
+
+  // Build up list of unique services
+  const services = getUniqueServices(datasets);
+
+  // Loop over each service and build the page
+  services.forEach((s) => {
+    // Filter out datasets without a tutorial with a matching service
+    let filteredDatasets = datasets.filter((d) => {
+      if (!d.DataAtWork) { return false; }
+      if (!d.DataAtWork.Tutorials) { return false; }
+      let containsService = false;
+      d.DataAtWork.Tutorials.forEach((t) => {
+        if (!t.Services) { return; }
+        containsService = t.Services.includes(s);
+      });
+      return containsService;
+    });
+
+    // Pass along only the service relevant tutorials with the dataset
+    filteredDatasets.forEach((d) => {
+      if (!d.DataAtWork) { return; }
+      d.DataAtWork.Publications = null;
+      d.DataAtWork.Tools = null;
+      d.DataAtWork.Tutorials = d.DataAtWork.Tutorials.filter((t) => {
+        if (!t.Services) { return false; }
+        return t.Services.includes(s);
+      });
+    });
+
+    // HBS templating
+    var templateData = {
+      datasets: filteredDatasets,
+      isHome: false,
+      service: s
+    };
+
+    return gulp.src('./src/examples.hbs')
+      .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
+      .pipe(rename(`service/${s.toLowerCase().replace(/ /g, '-')}/usage-examples/index.html`))
       .pipe(gulp.dest('./dist/'));
   });
 
@@ -941,7 +1024,7 @@ function htmlProviders (cb) {
 };
 
 // Server with live reload
-exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlProviders), htmlRedirects, function () {
+exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlServiceUsage, htmlProviders), htmlRedirects, function () {
   connect.server({
     root: ['./dist'],
     port: 3000,
@@ -950,6 +1033,6 @@ exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, y
   });
 });
 
-exports.build = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlProviders), htmlRedirects);
+exports.build = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlServiceUsage, htmlProviders), htmlRedirects);
 exports.default = exports.build;
 

@@ -1,5 +1,6 @@
 <li>
   <a href="{{URL}}" class="{{#isAWSURL URL}}aws-link{{/isAWSURL}}" target="_none">{{Title}}</a> by {{#if AuthorURL}}<a href="{{AuthorURL}}" target="_none">{{AuthorName}}</a>{{else}}{{AuthorName}}{{/if}}</a>
   <br>
-  {{#each Services}}<span class="label label-info tag service-tag">{{.}}</span>{{/each}}
+  {{#if NotebookURL}}{{{toSMSL NotebookURL Services}}}{{/if}}
+  {{#unless Service}}{{#each Services}}{{#isEqual . 'SageMaker Studio Lab'}}{{else}}<span class="label label-info tag service-tag link-tag">{{.}}</span>{{/isEqual}}{{/each}}{{/unless}}
 </li>
