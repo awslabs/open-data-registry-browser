@@ -14,3 +14,8 @@ Datasets:
   - deafrica-geomad
   - deafrica-wofs
   - deafrica-alos-jers
+  - deafrica-chirps
+  - deafrica-fractional-cover
+  - deafrica-coastlines
+  - deafrica-crop-extent
+  
