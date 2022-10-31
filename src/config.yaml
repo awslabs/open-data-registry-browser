@@ -9,3 +9,7 @@ redirects:
     target: /collab/meta/index.html    
   - source: /noaa-cmip5/index.html
     target: /noaa-uwpd-cmip5/index.html
+  - source: /esa-worldcover/index.html
+    target: /esa-worldcover-vito/index.html
+  - source: /digital-globe-open-data/index.html
+    target: /maxar-open-data/index.html
