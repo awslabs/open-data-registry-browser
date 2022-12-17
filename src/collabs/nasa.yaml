@@ -15,3 +15,6 @@ Datasets:
   - nasa-power
   - nex-gddp-cmip6
   - nasa-usgs-europa-observations
+  - nasa-usgs-europa-mosaics
+  - nasa-soho-comet-challenge-on-aws
+  
