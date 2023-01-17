@@ -31,12 +31,16 @@ Datasets:
   - noaa-ncn
   - noaa-ndfd
   - noaa-nexrad
+  - noaa-nos-stofs3d
   - noaa-nwm-pds
+  - noaa-oar-hourly-gdp
   - noaa-ocean-climate-stations
   - noaa-ofs
   - noaa-rap
   - noaa-rrfs
   - noaa-rtma
+  - noaa-rtofs
+  - noaa-s102  
   - noaa-s111
   - noaa-space-weather
   - noaa-swdi
