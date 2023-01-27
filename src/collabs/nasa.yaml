@@ -17,4 +17,8 @@ Datasets:
   - nasa-usgs-europa-observations
   - nasa-usgs-europa-mosaics
   - nasa-soho-comet-challenge-on-aws
+  - bps_microscopy
+  - bps_rnaseq
+  - nasa-gcms
+  - nasa-ega
   
