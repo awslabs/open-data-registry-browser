@@ -16,9 +16,11 @@ Datasets:
   - nex-gddp-cmip6
   - nasa-usgs-europa-observations
   - nasa-usgs-europa-mosaics
+  - nasa-usgs-themis-mosasics
   - nasa-soho-comet-challenge-on-aws
   - bps_microscopy
   - bps_rnaseq
   - nasa-gcms
   - nasa-ega
+  - nasa-psi
   
