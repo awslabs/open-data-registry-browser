@@ -24,4 +24,26 @@ Datasets:
   - nasa-ega
   - nasa-psi
   - sdoml-fdl
-
+  - nasa-heasarc
+  - nasa-usgs-lunar-orbiter-laser-altimeter
+  - jaxa-usgs-nasa-kaguya-tc-dtms
+  - jaxa-usgs-nasa-kaguya-tc
+  - nasa-usgs-europa-dtms
+  - nasa-usgs-controlled-mro-ctx-dtms
+  - nasa-usgs-mars-hirise-dtms
+  - nasa-usgs-mars-hirise
+  - nasa-lambda
+  - nasa-osdr
+  - apd_galaxysegmentation
+  - black_marble_combustion
+  - wise-cryo-3band
+  - wise-allsky
+  - wise-allwise
+  - apd_galaxymorph
+  - wise-postcryo
+  - wise-neowiser
+  - openuniverse2024
+  - spitzer-seip
+  - wise-unwise
+  - nasa-soteria-data
+  - sbn-css

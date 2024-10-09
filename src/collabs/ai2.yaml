@@ -15,3 +15,4 @@ Datasets:
   - allenai-tqa
   - allenai-tuple-kb
   - allenai-zest
+  - cord-19
