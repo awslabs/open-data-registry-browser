@@ -21,3 +21,6 @@ Datasets:
   - ncbi-covid-19
   - tcga
   - kids-first
+  - nci-imaging-data-commons
+  - mcrpc
+  - pasteur-logan

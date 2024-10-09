@@ -19,4 +19,5 @@ Datasets:
   - deafrica-coastlines
   - deafrica-crop-extent
   - deafrica-mangrove
-  
+  - deafrica-ndvi_anomaly
+  - deafrica-ndvi_climatology_ls
