@@ -21,3 +21,4 @@ Datasets:
   - deafrica-mangrove
   - deafrica-ndvi_anomaly
   - deafrica-ndvi_climatology_ls
+  - deafrica-waterbodies
