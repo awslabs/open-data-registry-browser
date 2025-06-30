@@ -5,6 +5,7 @@ Logo: noaa-logo.png
 Datasets:
   - aiwp
   - ncei-wcsd-archive
+  - noaa-arl-hysplit
   - noaa-bathymetry
   - noaa-cdr-atmospheric
   - noaa-cdr-fundamental
