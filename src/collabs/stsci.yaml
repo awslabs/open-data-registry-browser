@@ -6,6 +6,7 @@ Datasets:
   - hst
   - tess
   - kepler
+  - gaia-dr3
   - galex
   - k2
   - panstarrs
