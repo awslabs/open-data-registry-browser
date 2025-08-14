@@ -10,12 +10,15 @@ Logo: digital-earth-africa-logo.png
 Datasets:
   - deafrica-landsat
   - deafrica-sentinel-1
+  - deafrica-sentinel-1-mosaic
   - deafrica-sentinel-2
+  - deafrica-sentinel-2-c1
   - deafrica-geomad
   - deafrica-wofs
   - deafrica-alos-jers
   - deafrica-chirps
   - deafrica-fractional-cover
+  - deafrica-clgm-lwq
   - deafrica-coastlines
   - deafrica-crop-extent
   - deafrica-mangrove
