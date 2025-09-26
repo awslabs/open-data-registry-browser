@@ -651,8 +651,10 @@ function htmlOverview () {
 
   // Grab collab data
   let collabData = [];
-  fs.readdirSync('./src/collabs').forEach((c) => {
-    const file = fs.readFileSync(`./src/collabs/${c}`, 'utf8')
+
+  // asdi
+  fs.readdirSync('./src/asdi').forEach((c) => {
+    const file = fs.readFileSync(`./src/asdi/${c}`, 'utf8')
     const json = jsyaml.parse(file);
     collabData.push({
       title: json.Title,
@@ -660,8 +662,88 @@ function htmlOverview () {
     });
   });
 
-  fs.readdirSync('./src/asdi').forEach((c) => {
-    const file = fs.readFileSync(`./src/asdi/${c}`, 'utf8')
+    // noaa collab
+  fs.readdirSync('./src/noaa').forEach((c) => {
+    const file = fs.readFileSync(`./src/noaa/${c}`, 'utf8')
+    const json = jsyaml.parse(file);
+    collabData.push({
+      title: json.Title,
+      slug: path.basename(c, '.yaml')
+    });
+  }); 
+
+  // nasa collab
+  fs.readdirSync('./src/nasa').forEach((c) => {
+    const file = fs.readFileSync(`./src/nasa/${c}`, 'utf8')
+    const json = jsyaml.parse(file);
+    collabData.push({
+      title: json.Title,
+      slug: path.basename(c, '.yaml')
+    });
+  }); 
+
+  // stsci collab
+  fs.readdirSync('./src/stsci').forEach((c) => {
+    const file = fs.readFileSync(`./src/stsci/${c}`, 'utf8')
+    const json = jsyaml.parse(file);
+    collabData.push({
+      title: json.Title,
+      slug: path.basename(c, '.yaml')
+    });
+  }); 
+
+  // epa collab
+  fs.readdirSync('./src/epa').forEach((c) => {
+    const file = fs.readFileSync(`./src/epa/${c}`, 'utf8')
+    const json = jsyaml.parse(file);
+    collabData.push({
+      title: json.Title,
+      slug: path.basename(c, '.yaml')
+    });
+  }); 
+
+    // nih collab
+  fs.readdirSync('./src/nih').forEach((c) => {
+    const file = fs.readFileSync(`./src/nih/${c}`, 'utf8')
+    const json = jsyaml.parse(file);
+    collabData.push({
+      title: json.Title,
+      slug: path.basename(c, '.yaml')
+    });
+  }); 
+
+    // ai2 collab
+  fs.readdirSync('./src/ai2').forEach((c) => {
+    const file = fs.readFileSync(`./src/ai2/${c}`, 'utf8')
+    const json = jsyaml.parse(file);
+    collabData.push({
+      title: json.Title,
+      slug: path.basename(c, '.yaml')
+    });
+  }); 
+
+    // deafrica collab
+  fs.readdirSync('./src/deafrica').forEach((c) => {
+    const file = fs.readFileSync(`./src/deafrica/${c}`, 'utf8')
+    const json = jsyaml.parse(file);
+    collabData.push({
+      title: json.Title,
+      slug: path.basename(c, '.yaml')
+    });
+  }); 
+
+    // meta collab
+  fs.readdirSync('./src/meta').forEach((c) => {
+    const file = fs.readFileSync(`./src/meta/${c}`, 'utf8')
+    const json = jsyaml.parse(file);
+    collabData.push({
+      title: json.Title,
+      slug: path.basename(c, '.yaml')
+    });
+  }); 
+
+  fs.readdirSync('./src/collabs').forEach((c) => {
+    const file = fs.readFileSync(`./src/collabs/${c}`, 'utf8')
     const json = jsyaml.parse(file);
     collabData.push({
       title: json.Title,
@@ -855,10 +937,13 @@ function htmlDetail () {
 
         // Check to see if we have a collab page for this dataset
         fs.readdirSync('./src/collabs').forEach((c) => {
-          const file = fs.readFileSync(`./src/collabs/${c}`, 'utf8')
-          const json = jsyaml.parse(file);
-          if (json.Datasets.includes(slug)) {
-            templateData.managedByLink = `${process.env.BASE_URL}/collab/${path.basename(c, '.yaml')}`;
+          if (c!='.DS_Store') { //remove this
+            const file = fs.readFileSync(`./src/collabs/${c}`, 'utf8')
+            const json = jsyaml.parse(file);
+
+            if (json.Datasets.includes(slug)) {
+              templateData.managedByLink = `${process.env.BASE_URL}/collab/${path.basename(c, '.yaml')}`;
+            }
           }
         });
       }
@@ -978,6 +1063,278 @@ function htmlASDI (cb) {
     }));
 };
 
+// Compile NOAA page and move to dist
+function htmlNOAA (cb) {
+  const datasets = getDatasets(true);
+
+  return gulp.src('./src/noaa/*.yaml')
+    .pipe(yaml())
+    .pipe(flatmap(function (stream, file) {
+      const noaaData = JSON.parse(file.contents.toString('utf8'));
+
+      var filteredDatasets = {};
+      reduce(noaaData.Collab, function(acc, key) {
+        // Filter out datasets without NOAA collab (ignoring tags)
+        acc[key] = datasets.filter((d) => {
+          return d.Collabs && noaaData.Collab.Name in d.Collabs;
+        });
+        return acc[key];
+      }, filteredDatasets);
+
+      // HBS templating
+      var templateData = {
+        datasets: filteredDatasets,
+        isHome: false,
+        collabTitle: noaaData.Title,
+        collabDescription: noaaData.Description,
+        collabLogo: noaaData.Logo
+      };
+
+      return gulp.src('./src/noaaindex.hbs')
+        .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
+        .pipe(rename(`collab/noaa/index.html`))
+        .pipe(gulp.dest('./dist/'));
+    }));
+};
+
+// Compile NASA page and move to dist
+function htmlNASA (cb) {
+  const datasets = getDatasets(true);
+
+  return gulp.src('./src/nasa/*.yaml')
+    .pipe(yaml())
+    .pipe(flatmap(function (stream, file) {
+      const nasaData = JSON.parse(file.contents.toString('utf8'));
+
+      var filteredDatasets = {};
+      reduce(nasaData.Collab, function(acc, key) {
+        // Filter out datasets without NASA collab (ignoring tags)
+        acc[key] = datasets.filter((d) => {
+          return d.Collabs && nasaData.Collab.Name in d.Collabs;
+        });
+        return acc[key];
+      }, filteredDatasets);
+
+      // HBS templating
+      var templateData = {
+        datasets: filteredDatasets,
+        isHome: false,
+        collabTitle: nasaData.Title,
+        collabDescription: nasaData.Description,
+        collabLogo: nasaData.Logo
+      };
+
+      return gulp.src('./src/nasaindex.hbs')
+        .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
+        .pipe(rename(`collab/nasa/index.html`))
+        .pipe(gulp.dest('./dist/'));
+    }));
+};
+
+// Compile STSCI page and move to dist
+function htmlSTSCI (cb) {
+  const datasets = getDatasets(true);
+
+  return gulp.src('./src/stsci/*.yaml')
+    .pipe(yaml())
+    .pipe(flatmap(function (stream, file) {
+      const stsciData = JSON.parse(file.contents.toString('utf8'));
+
+      var filteredDatasets = {};
+      reduce(stsciData.Collab, function(acc, key) {
+        // Filter out datasets without NASA collab (ignoring tags)
+        acc[key] = datasets.filter((d) => {
+          return d.Collabs && stsciData.Collab.Name in d.Collabs;
+        });
+        return acc[key];
+      }, filteredDatasets);
+
+      // HBS templating
+      var templateData = {
+        datasets: filteredDatasets,
+        isHome: false,
+        collabTitle: stsciData.Title,
+        collabDescription: stsciData.Description,
+        collabLogo: stsciData.Logo
+      };
+
+      return gulp.src('./src/stsciindex.hbs')
+        .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
+        .pipe(rename(`collab/stsci/index.html`))
+        .pipe(gulp.dest('./dist/'));
+    }));
+};
+
+// Compile EPA page and move to dist
+function htmlEPA (cb) {
+  const datasets = getDatasets(true);
+
+  return gulp.src('./src/epa/*.yaml')
+    .pipe(yaml())
+    .pipe(flatmap(function (stream, file) {
+      const epaData = JSON.parse(file.contents.toString('utf8'));
+
+      var filteredDatasets = {};
+      reduce(epaData.Collab, function(acc, key) {
+        // Filter out datasets without the collab (ignoring tags)
+        acc[key] = datasets.filter((d) => {
+          return d.Collabs && epaData.Collab.Name in d.Collabs;
+        });
+        return acc[key];
+      }, filteredDatasets);
+
+      // HBS templating
+      var templateData = {
+        datasets: filteredDatasets,
+        isHome: false,
+        collabTitle: epaData.Title,
+        collabDescription: epaData.Description,
+        collabLogo: epaData.Logo
+      };
+
+      return gulp.src('./src/epaindex.hbs')
+        .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
+        .pipe(rename(`collab/epa/index.html`))
+        .pipe(gulp.dest('./dist/'));
+    }));
+};
+
+// Compile META page and move to dist
+function htmlMETA (cb) {
+  const datasets = getDatasets(true);
+
+  return gulp.src('./src/meta/*.yaml')
+    .pipe(yaml())
+    .pipe(flatmap(function (stream, file) {
+      const metaFBData = JSON.parse(file.contents.toString('utf8'));
+
+      var filteredDatasets = {};
+      reduce(metaFBData.Collab, function(acc, key) {
+        // Filter out datasets without the collab (ignoring tags)
+        acc[key] = datasets.filter((d) => {
+          return d.Collabs && metaFBData.Collab.Name in d.Collabs;
+        });
+        return acc[key];
+      }, filteredDatasets);
+
+      // HBS templating
+      var templateData = {
+        datasets: filteredDatasets,
+        isHome: false,
+        collabTitle: metaFBData.Title,
+        collabDescription: metaFBData.Description,
+        collabLogo: metaFBData.Logo
+      };
+
+      return gulp.src('./src/metaindex.hbs')
+        .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
+        .pipe(rename(`collab/meta/index.html`))
+        .pipe(gulp.dest('./dist/'));
+    }));
+};
+
+// Compile AI2 page and move to dist
+function htmlAI2 (cb) {
+  const datasets = getDatasets(true);
+
+  return gulp.src('./src/ai2/*.yaml')
+    .pipe(yaml())
+    .pipe(flatmap(function (stream, file) {
+      const ai2Data = JSON.parse(file.contents.toString('utf8'));
+
+      var filteredDatasets = {};
+      reduce(ai2Data.Collab, function(acc, key) {
+        // Filter out datasets without the collab (ignoring tags)
+        acc[key] = datasets.filter((d) => {
+          return d.Collabs && ai2Data.Collab.Name in d.Collabs;
+        });
+        return acc[key];
+      }, filteredDatasets);
+
+      // HBS templating
+      var templateData = {
+        datasets: filteredDatasets,
+        isHome: false,
+        collabTitle: ai2Data.Title,
+        collabDescription: ai2Data.Description,
+        collabLogo: ai2Data.Logo
+      };
+
+      return gulp.src('./src/ai2index.hbs')
+        .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
+        .pipe(rename(`collab/ai2/index.html`))
+        .pipe(gulp.dest('./dist/'));
+    }));
+};
+
+// Compile NIH page and move to dist
+function htmlNIH (cb) {
+  const datasets = getDatasets(true);
+
+  return gulp.src('./src/nih/*.yaml')
+    .pipe(yaml())
+    .pipe(flatmap(function (stream, file) {
+      const nihData = JSON.parse(file.contents.toString('utf8'));
+
+      var filteredDatasets = {};
+      reduce(nihData.Collab, function(acc, key) {
+        // Filter out datasets without the collab (ignoring tags)
+        acc[key] = datasets.filter((d) => {
+          return d.Collabs && nihData.Collab.Name in d.Collabs;
+        });
+        return acc[key];
+      }, filteredDatasets);
+
+      // HBS templating
+      var templateData = {
+        datasets: filteredDatasets,
+        isHome: false,
+        collabTitle: nihData.Title,
+        collabDescription: nihData.Description,
+        collabLogo: nihData.Logo
+      };
+
+      return gulp.src('./src/nihindex.hbs')
+        .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
+        .pipe(rename(`collab/nih/index.html`))
+        .pipe(gulp.dest('./dist/'));
+    }));
+};
+
+// Compile DEAFRICA page and move to dist
+function htmlDEAFRICA (cb) {
+  const datasets = getDatasets(true);
+
+  return gulp.src('./src/deafrica/*.yaml')
+    .pipe(yaml())
+    .pipe(flatmap(function (stream, file) {
+      const deafricaData = JSON.parse(file.contents.toString('utf8'));
+
+      var filteredDatasets = {};
+      reduce(deafricaData.Collab, function(acc, key) {
+        // Filter out datasets without the collab (ignoring tags)
+        acc[key] = datasets.filter((d) => {
+          return d.Collabs && deafricaData.Collab.Name in d.Collabs;
+        });
+        return acc[key];
+      }, filteredDatasets);
+
+      // HBS templating
+      var templateData = {
+        datasets: filteredDatasets,
+        isHome: false,
+        collabTitle: deafricaData.Title,
+        collabDescription: deafricaData.Description,
+        collabLogo: deafricaData.Logo
+      };
+
+      return gulp.src('./src/deafricaindex.hbs')
+        .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
+        .pipe(rename(`collab/deafrica/index.html`))
+        .pipe(gulp.dest('./dist/'));
+    }));
+};
+
 // Compile page for when datasets were added
 function htmlAdditions (cb) {
   const datasets = getDatasets();
@@ -1024,7 +1381,8 @@ function htmlProviders (cb) {
 };
 
 // Server with live reload
-exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlServiceUsage, htmlProviders), htmlRedirects, function () {
+// htmlCollab,
+exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlNOAA, htmlNASA, htmlSTSCI, htmlEPA, htmlMETA, htmlAI2, htmlNIH, htmlDEAFRICA, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlServiceUsage, htmlProviders), htmlRedirects, function () {
   connect.server({
     root: ['./dist'],
     port: 3000,
@@ -1033,6 +1391,7 @@ exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, y
   });
 });
 
-exports.build = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlServiceUsage, htmlProviders), htmlRedirects);
+// htmlCollab,
+exports.build = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlNOAA, htmlNASA, htmlSTSCI, htmlEPA, htmlMETA, htmlAI2, htmlNIH, htmlDEAFRICA, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlServiceUsage, htmlProviders), htmlRedirects);
 exports.default = exports.build;
 
