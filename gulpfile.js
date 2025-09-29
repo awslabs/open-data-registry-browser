@@ -337,12 +337,26 @@ const hbsHelpers = {
   regionToFlag: function (str) {
     // This handles the case where you have to specify the region explicitly for non-default regions
     // Look for opt-in required at https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
+    // this is a better place to check: https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions.html 
     if (str) {
       switch (str) {
         case "af-south-1":
         case "ap-east-1":
+        case "ap-south-2":
+        case "ap-southeast-3":
+        case "ap-southeast-5":
+        case "ap-southeast-4":
+        case "ap-southeast-6":
+        case "ap-east-2":
+        case "ap-southeast-7":          
+        case "ca-west-1":
         case "eu-south-1":
+        case "eu-south-2":
+        case "eu-central-2":
+        case "il-central-1":
+        case "mx-central-1":
         case "me-south-1":
+        case "me-central-1":
           return "--region " + str + " ";
         default:
           return "";
