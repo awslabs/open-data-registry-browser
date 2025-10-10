@@ -491,16 +491,11 @@ function jsonMerge (cb) {
 // Compile the top level ndjson and move to dist
 function jsonOverview (cb) {
   // Loop over each dataset JSON and save to in-memory string
-  const serialize = ndjson.serialize();
   let json = '';
-  serialize.on('data', function(line) {
-    json += line;
-  });
   const datasets = requireDir('./tmp/data/datasets');
   for (var k in datasets) {
-    serialize.write(datasets[k]);
+    json += JSON.stringify(datasets[k]) + '\n';
   }
-  serialize.end();
 
   // Save string to file
   fs.writeFileSync('./dist/index.ndjson', json);
