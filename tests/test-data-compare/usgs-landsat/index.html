@@ -46,38 +46,20 @@
     <script src="https://assets.opendata.aws/js/jquery/3.5.1/jquery.min.js"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://assets.opendata.aws/js/bootstrap/3.4.1/bootstrap.min.js"></script>
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container">
         <div class="roda-header">
-          <h2><a href="/" alt="Home">Registry of Open Data on AWS</a></h2>
-          <a href="http://aws.amazon.com/what-is-cloud-computing">
-            <img src="https://assets.opendata.aws/img/AWS-Logo_White-Color_300x180.png" alt="Powered by AWS Cloud Computing" id="aws_header_logo">
-          </a>
-        </div>
-      </div>
-    </nav>
-    <div id="adx-banner">
-      <div class="adx-banner-container">
-        <img src="/img/info.svg" class="icon-info">
-        <div class="adx-banner-text">
-          <b>The Registry of Open Data on AWS is now available on AWS Data Exchange</b>
-          <div>
-            <span>All datasets on the Registry of Open Data are now discoverable on AWS Data Exchange alongside 3,000+ existing data products from category-leading data providers across industries. Explore the catalog to find open, free, and commercial data sets.</span>
-            <a href="https://docs.aws.amazon.com/data-exchange/" target="_blank">Learn more about AWS Data Exchange <img src="/img/external.svg" class="icon" /></a>
+          <div class="navbar-brand">
+              <h2><a href="/" aria-label="Home">Registry of Open Data on AWS</a></h2>
+          </div>
+          <div class="navbar-nav">
+            <a href="http://aws.amazon.com/what-is-cloud-computing" aria-label="Powered by AWS Cloud Computing">
+              <img src="https://assets.opendata.aws/img/AWS-Logo_White-Color_300x180.png" alt="AWS Logo" id="aws_header_logo">
+            </a>
           </div>
         </div>
       </div>
-      <div class="adx-banner-container">
-        <button class="adx-banner-button">
-          Explore the catalog
-          <img src="/img/external_black.svg" class="icon">
-        </button>
-        <div class="adx-close-button"><img src="/img/close.svg" class="icon"></div>
-      </div>
-    </div>
-    <div id="spacer"></div>
-    <!-- JavaScript for ADX banner -->
-    <script src="/js/banner.js"></script>  
+    </nav>
     <div class="container" >
 
     <h1>USGS Landsat</h1>

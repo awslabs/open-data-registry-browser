@@ -31,71 +31,98 @@
     <script src="https://assets.opendata.aws/js/jquery/3.5.1/jquery.min.js"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://assets.opendata.aws/js/bootstrap/3.4.1/bootstrap.min.js"></script>
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container">
         <div class="roda-header">
-          <h2><a href="/" alt="Home">Registry of Open Data on AWS</a></h2>
-          <a href="http://aws.amazon.com/what-is-cloud-computing">
-            <img src="https://assets.opendata.aws/img/AWS-Logo_White-Color_300x180.png" alt="Powered by AWS Cloud Computing" id="aws_header_logo">
-          </a>
+          <div class="navbar-brand">
+              <h2><a href="/" aria-label="Home">Registry of Open Data on AWS</a></h2>
+          </div>
+          <div class="navbar-nav">
+            <a href="http://aws.amazon.com/what-is-cloud-computing" aria-label="Powered by AWS Cloud Computing">
+              <img src="https://assets.opendata.aws/img/AWS-Logo_White-Color_300x180.png" alt="AWS Logo" id="aws_header_logo">
+            </a>
+          </div>
         </div>
       </div>
     </nav>
-    <div id="adx-banner">
-      <div class="adx-banner-container">
-        <img src="/img/info.svg" class="icon-info">
-        <div class="adx-banner-text">
-          <b>The Registry of Open Data on AWS is now available on AWS Data Exchange</b>
-          <div>
-            <span>All datasets on the Registry of Open Data are now discoverable on AWS Data Exchange alongside 3,000+ existing data products from category-leading data providers across industries. Explore the catalog to find open, free, and commercial data sets.</span>
-            <a href="https://docs.aws.amazon.com/data-exchange/" target="_blank">Learn more about AWS Data Exchange <img src="/img/external.svg" class="icon" /></a>
-          </div>
-        </div>
-      </div>
-      <div class="adx-banner-container">
-        <button class="adx-banner-button">
-          Explore the catalog
-          <img src="/img/external_black.svg" class="icon">
-        </button>
-        <div class="adx-close-button"><img src="/img/close.svg" class="icon"></div>
-      </div>
-    </div>
-    <div id="spacer"></div>
-    <!-- JavaScript for ADX banner -->
-    <script src="/js/banner.js"></script>  
     <div class="container" >
 
-    <div class="about col-md-5">
+    <aside class="about col-md-5" role="complementary">
       <div class="row aboutbox">
-            <h3>About</h3>
-            <p>This registry exists to help people discover and share datasets that are available via AWS resources. See <a href="/change-log">recent additions</a> and <a href="https://opendata.aws">learn more about sharing data on AWS</a>.</p>
+            <h3>About the Registry</h3>
+            <p class="lede">This registry exists to help people discover and share datasets that are available via AWS resources.</p>
+            
+            <div class="quick-links mb-3">
+              <a href="/change-log" class="btn btn-secondary btn-sm">Recent Additions</a>
+              <a href="https://opendata.aws" class="btn btn-secondary btn-sm" target="_blank" rel="noopener">Learn More</a>
+            </div>
     
-            <p>Get started using data quickly by viewing <a href="/service/sagemaker-studio-lab/usage-examples">all tutorials with associated SageMaker Studio Lab notebooks</a>.</p>        
-            <p>See <a href="/usage-examples">all usage examples for datasets listed in this registry</a>.</p>
+            <div class="getting-started mb-3">
+              <p>Get started quickly:</p>
+              <ul class="list-unstyled">
+                <li><a href="/service/sagemaker-studio-lab/usage-examples">SageMaker Studio Lab tutorials</a></li>
+                <li><a href="/usage-examples">All usage examples</a></li>
+              </ul>
+            </div>
     
         <hr>
     
-        <h4>Search datasets (currently <span id="count-matching">13</span> matching <span id="count-matching-text">datasets</span>)</h4>
-        <form>
-          <div class="form-group">
-            <input type="text" id="search-box" class="form-control" placeholder="Search datasets" spellcheck="false" autocorrect="off">
-          </div>
-        </form>
+        <section class="search-section">
+          <h4>
+            <i class="icon-search" aria-hidden="true"></i>
+            Search Datasets
+          </h4>
+          <p class="search-status text-muted">
+            Currently showing <span id="count-matching" class="font-weight-bold">13</span> matching <span id="count-matching-text">datasets</span>
+          </p>
+          <form role="search" aria-label="Search datasets">
+            <div class="form-group">
+              <label for="search-box" class="sr-only">Search datasets</label>
+              <input 
+                type="search" 
+                id="search-box" 
+                class="form-control" 
+                placeholder="Search datasets..." 
+                spellcheck="false" 
+                autocorrect="off"
+                aria-describedby="search-help"
+              >
+              <small id="search-help" class="form-text text-muted">Search by name, description, or tags</small>
+            </div>
+          </form>
+        </section>
+    
+        <hr>
+    
+        <section class="contribute-section">
+          <h4>
+            <i class="icon-plus" aria-hidden="true"></i>
+            Contribute
+          </h4>
+          <p>Want to add a dataset or usage example?</p>
+          <a href="https://github.com/awslabs/open-data-registry/" class="btn btn-primary btn-sm" target="_blank" rel="noopener">
+            View on GitHub
+          </a>
+          <p class="text-sm text-muted mt-2">
+            <strong>Note:</strong> Unless specifically stated in the applicable dataset documentation, datasets available through the Registry of Open Data on AWS are not provided and maintained by AWS. Datasets are provided and maintained by a variety of third parties under a variety of licenses.
+          </p>
+        </section>
         
-    
         <hr>
     
-        <h4>Add to this registry</h4>
-        <p>If you want to add a dataset or example of how to use a dataset to this registry, please follow the instructions on the <a href="https://github.com/awslabs/open-data-registry/">Registry of Open Data on AWS GitHub repository</a>.</p>
-    
-        <p>Unless specifically stated in the applicable dataset documentation, datasets available through the Registry of Open Data on AWS are not provided and maintained by AWS. Datasets are provided and maintained by a variety of third parties under a variety of licenses. Please check dataset licenses and related documentation to determine if a dataset may be used for your application.</p>        
-        
-        <hr>
-    
-        <h4>Tell us about your project</h4>
-        <p>If you have a project using a listed dataset, please <a href="mailto:opendata@amazon.com">tell us about it</a>. We may work with you to feature your project in a <a href="https://opendata.aws/blog" target="_blank">blog post</a>.</p>
+        <section class="contact-section">
+          <h4>
+            <i class="icon-mail" aria-hidden="true"></i>
+            Share Your Project
+          </h4>
+          <p>Using a dataset from this registry in your project?</p>
+          <a href="mailto:opendata@amazon.com" class="btn btn-secondary btn-sm">Tell Us About It</a>
+          <p class="text-sm text-muted mt-2">
+            We may feature your project in our <a href="https://opendata.aws/blog" target="_blank" rel="noopener">blog</a>.
+          </p>
+        </section>
       </div>
-    </div>
+    </aside>
     <div class="col-md-6 col-md-offset-1 datasets">
       <h2>Dataset Additions</h2>
       <div class="row">
