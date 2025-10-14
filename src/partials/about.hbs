@@ -1,44 +1,107 @@
-<div class="about col-md-5">
+<aside class="about col-md-5" role="complementary">
   <div class="row aboutbox">
     {{#if collabDescription}}
         <h3>{{collabTitle}}</h3>
-        <p>{{#if collabLogo}}<img src="/img/logos/{{collabLogo}}" class="collab-logo">{{/if}}{{{md collabDescription}}}</p>
+        <div class="collab-content">
+          {{#if collabLogo}}<img src="/img/logos/{{collabLogo}}" class="collab-logo" alt="{{collabTitle}} logo">{{/if}}
+          <div class="collab-description">{{{md collabDescription}}}</div>
+        </div>
     {{else}}
-        <h3>About</h3>
-        <p>This registry exists to help people discover and share datasets that are available via AWS resources. See <a href="/change-log">recent additions</a> and <a href="https://opendata.aws">learn more about sharing data on AWS</a>.</p>
+        <h3>About the Registry</h3>
+        <p class="lede">This registry exists to help people discover and share datasets that are available via AWS resources.</p>
+        
+        <div class="quick-links mb-3">
+          <a href="/change-log" class="btn btn-secondary btn-sm">Recent Additions</a>
+          <a href="https://opendata.aws" class="btn btn-secondary btn-sm" target="_blank" rel="noopener">Learn More</a>
+        </div>
 
         {{#if tag}}
-        <p>See <a href="/tag/{{tagURL}}/usage-examples">all usage examples for datasets listed in this registry</a> tagged with <strong>{{tag}}</strong>.</p>
+        <div class="alert alert-info">
+          <p class="mb-0">You are viewing datasets tagged with <strong>{{tag}}</strong>. <a href="/tag/{{tagURL}}/usage-examples">View all usage examples</a> for these datasets.</p>
+        </div>
         {{else}}
-        <p>Get started using data quickly by viewing <a href="/service/sagemaker-studio-lab/usage-examples">all tutorials with associated SageMaker Studio Lab notebooks</a>.</p>        
-        <p>See <a href="/usage-examples">all usage examples for datasets listed in this registry</a>.</p>
+        <div class="getting-started mb-3">
+          <p>Get started quickly:</p>
+          <ul class="list-unstyled">
+            <li><a href="/service/sagemaker-studio-lab/usage-examples">SageMaker Studio Lab tutorials</a></li>
+            <li><a href="/usage-examples">All usage examples</a></li>
+          </ul>
+        </div>
         {{#if collabData}}
-        <p>See datasets from <a href="https://registry.opendata.aws/?search=managedBy:u.s.%20environmental%20protection%20agency%20(https://www.epa.gov)">EPA</a>, {{#each collabData}}{{#unless @first}}{{#if @last}}, and {{else}}, {{/if}}{{/unless}}<a href="/collab/{{slug}}/">{{title}}</a>{{/each}}.
-        </p>
+        <div class="featured-collections">
+          <p><strong>Featured Collections:</strong></p>
+          <p>
+            <a href="https://registry.opendata.aws/?search=managedBy:u.s.%20environmental%20protection%20agency%20(https://www.epa.gov)" class="btn btn-outline-secondary btn-sm">EPA</a>
+            {{#each collabData}}
+            <a href="/collab/{{slug}}/" class="btn btn-outline-secondary btn-sm">{{title}}</a>
+            {{/each}}
+          </p>
+        </div>
         {{/if}}
         {{/if}}
     {{/if}}
 
     <hr>
 
-    <h4>Search datasets (currently <span id="count-matching">13</span> matching <span id="count-matching-text">datasets</span>)</h4>
-    <form>
-      <div class="form-group">
-        <input type="text" id="search-box" class="form-control" placeholder="Search datasets" spellcheck="false" autocorrect="off">
+    <section class="search-section">
+      <h4>
+        <i class="icon-search" aria-hidden="true"></i>
+        Search Datasets
+      </h4>
+      <p class="search-status text-muted">
+        Currently showing <span id="count-matching" class="font-weight-bold">13</span> matching <span id="count-matching-text">datasets</span>
+      </p>
+      <form role="search" aria-label="Search datasets">
+        <div class="form-group">
+          <label for="search-box" class="sr-only">Search datasets</label>
+          <input 
+            type="search" 
+            id="search-box" 
+            class="form-control" 
+            placeholder="Search datasets..." 
+            spellcheck="false" 
+            autocorrect="off"
+            aria-describedby="search-help"
+          >
+          <small id="search-help" class="form-text text-muted">Search by name, description, or tags</small>
+        </div>
+      </form>
+      {{#if tag}}
+      <div class="current-filter">
+        <span class="badge badge-info">Filtered by: {{tag}}</span>
+        <a href="/" class="btn btn-link btn-sm">Clear filter</a>
       </div>
-    </form>
-    {{#if tag}}<p>You are currently viewing a subset of data tagged with <strong>{{tag}}</strong>.</p>{{/if}}
+      {{/if}}
+    </section>
 
     <hr>
 
-    <h4>Add to this registry</h4>
-    <p>If you want to add a dataset or example of how to use a dataset to this registry, please follow the instructions on the <a href="https://github.com/awslabs/open-data-registry/">Registry of Open Data on AWS GitHub repository</a>.</p>
-
-    <p>Unless specifically stated in the applicable dataset documentation, datasets available through the Registry of Open Data on AWS are not provided and maintained by AWS. Datasets are provided and maintained by a variety of third parties under a variety of licenses. Please check dataset licenses and related documentation to determine if a dataset may be used for your application.</p>        
+    <section class="contribute-section">
+      <h4>
+        <i class="icon-plus" aria-hidden="true"></i>
+        Contribute
+      </h4>
+      <p>Want to add a dataset or usage example?</p>
+      <a href="https://github.com/awslabs/open-data-registry/" class="btn btn-primary btn-sm" target="_blank" rel="noopener">
+        View on GitHub
+      </a>
+      <p class="text-sm text-muted mt-2">
+        <strong>Note:</strong> Unless specifically stated in the applicable dataset documentation, datasets available through the Registry of Open Data on AWS are not provided and maintained by AWS. Datasets are provided and maintained by a variety of third parties under a variety of licenses.
+      </p>
+    </section>
     
     <hr>
 
-    <h4>Tell us about your project</h4>
-    <p>If you have a project using a listed dataset, please <a href="mailto:opendata@amazon.com">tell us about it</a>. We may work with you to feature your project in a <a href="https://opendata.aws/blog" target="_blank">blog post</a>.</p>
+    <section class="contact-section">
+      <h4>
+        <i class="icon-mail" aria-hidden="true"></i>
+        Share Your Project
+      </h4>
+      <p>Using a dataset from this registry in your project?</p>
+      <a href="mailto:opendata@amazon.com" class="btn btn-secondary btn-sm">Tell Us About It</a>
+      <p class="text-sm text-muted mt-2">
+        We may feature your project in our <a href="https://opendata.aws/blog" target="_blank" rel="noopener">blog</a>.
+      </p>
+    </section>
   </div>
-</div>
+</aside>

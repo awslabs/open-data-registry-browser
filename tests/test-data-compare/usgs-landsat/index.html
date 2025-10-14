@@ -46,13 +46,17 @@
     <script src="https://assets.opendata.aws/js/jquery/3.5.1/jquery.min.js"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://assets.opendata.aws/js/bootstrap/3.4.1/bootstrap.min.js"></script>
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container">
         <div class="roda-header">
-          <h2><a href="/" alt="Home">Registry of Open Data on AWS</a></h2>
-          <a href="http://aws.amazon.com/what-is-cloud-computing">
-            <img src="https://assets.opendata.aws/img/AWS-Logo_White-Color_300x180.png" alt="Powered by AWS Cloud Computing" id="aws_header_logo">
-          </a>
+          <div class="navbar-brand">
+              <h2><a href="/" aria-label="Home">Registry of Open Data on AWS</a></h2>
+          </div>
+          <div class="navbar-nav">
+            <a href="http://aws.amazon.com/what-is-cloud-computing" aria-label="Powered by AWS Cloud Computing">
+              <img src="https://assets.opendata.aws/img/AWS-Logo_White-Color_300x180.png" alt="AWS Logo" id="aws_header_logo">
+            </a>
+          </div>
         </div>
       </div>
     </nav>
