@@ -662,6 +662,17 @@ function htmlOverview () {
     });
   });
 
+  /** do not use old collabs style - make a copy of NOAA or any other above except ASDI
+  fs.readdirSync('./src/collabs').forEach((c) => {
+    const file = fs.readFileSync(`./src/collabs/${c}`, 'utf8')
+    const json = jsyaml.parse(file);
+    collabData.push({
+      title: json.Title,
+      slug: path.basename(c, '.yaml')
+    });
+  });
+  */
+
     // noaa collab
   fs.readdirSync('./src/noaa').forEach((c) => {
     const file = fs.readFileSync(`./src/noaa/${c}`, 'utf8')
@@ -741,15 +752,6 @@ function htmlOverview () {
       slug: path.basename(c, '.yaml')
     });
   }); 
-
-  fs.readdirSync('./src/collabs').forEach((c) => {
-    const file = fs.readFileSync(`./src/collabs/${c}`, 'utf8')
-    const json = jsyaml.parse(file);
-    collabData.push({
-      title: json.Title,
-      slug: path.basename(c, '.yaml')
-    });
-  });
 
   // Do some work to alter the datasets data for display
   datasets.map((d) => {
@@ -1090,7 +1092,7 @@ function htmlNOAA (cb) {
         collabLogo: noaaData.Logo
       };
 
-      return gulp.src('./src/noaaindex.hbs')
+      return gulp.src('./src/collabindex.hbs')
         .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
         .pipe(rename(`collab/noaa/index.html`))
         .pipe(gulp.dest('./dist/'));
@@ -1124,7 +1126,7 @@ function htmlNASA (cb) {
         collabLogo: nasaData.Logo
       };
 
-      return gulp.src('./src/nasaindex.hbs')
+      return gulp.src('./src/collabindex.hbs')
         .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
         .pipe(rename(`collab/nasa/index.html`))
         .pipe(gulp.dest('./dist/'));
@@ -1158,7 +1160,7 @@ function htmlSTSCI (cb) {
         collabLogo: stsciData.Logo
       };
 
-      return gulp.src('./src/stsciindex.hbs')
+      return gulp.src('./src/collabindex.hbs')
         .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
         .pipe(rename(`collab/stsci/index.html`))
         .pipe(gulp.dest('./dist/'));
@@ -1192,7 +1194,7 @@ function htmlEPA (cb) {
         collabLogo: epaData.Logo
       };
 
-      return gulp.src('./src/epaindex.hbs')
+      return gulp.src('./src/collabindex.hbs')
         .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
         .pipe(rename(`collab/epa/index.html`))
         .pipe(gulp.dest('./dist/'));
@@ -1226,7 +1228,7 @@ function htmlMETA (cb) {
         collabLogo: metaFBData.Logo
       };
 
-      return gulp.src('./src/metaindex.hbs')
+      return gulp.src('./src/collabindex.hbs')
         .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
         .pipe(rename(`collab/meta/index.html`))
         .pipe(gulp.dest('./dist/'));
@@ -1260,7 +1262,7 @@ function htmlAI2 (cb) {
         collabLogo: ai2Data.Logo
       };
 
-      return gulp.src('./src/ai2index.hbs')
+      return gulp.src('./src/collabindex.hbs')
         .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
         .pipe(rename(`collab/ai2/index.html`))
         .pipe(gulp.dest('./dist/'));
@@ -1294,7 +1296,7 @@ function htmlNIH (cb) {
         collabLogo: nihData.Logo
       };
 
-      return gulp.src('./src/nihindex.hbs')
+      return gulp.src('./src/collabindex.hbs')
         .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
         .pipe(rename(`collab/nih/index.html`))
         .pipe(gulp.dest('./dist/'));
@@ -1328,7 +1330,7 @@ function htmlDEAFRICA (cb) {
         collabLogo: deafricaData.Logo
       };
 
-      return gulp.src('./src/deafricaindex.hbs')
+      return gulp.src('./src/collabindex.hbs')
         .pipe(hb({data: templateData, helpers: hbsHelpers, partials: ['./src/partials/*'], handlebars: handlebars}))
         .pipe(rename(`collab/deafrica/index.html`))
         .pipe(gulp.dest('./dist/'));
