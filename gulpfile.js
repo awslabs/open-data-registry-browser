@@ -417,7 +417,15 @@ const hbsHelpers = {
     let closeTags = subs.match(new RegExp(regexClose.source, 'g')) || [];
     let OpenTags = [];
     
+    // Void/self-closing HTML elements that should never get a closing tag
+    const voidElements = /^<(br|hr|img|input|meta|link|area|base|col|embed|source|track|wbr)[\s>\/]/i;
+
     openTags.forEach(item => {
+      // Skip void elements — they don't have closing tags
+      if (voidElements.test(item)) {
+        return;
+      }
+
       let trans = item.toString().match(regexAttribute)[0];
       trans = '</' + trans.substring(1, trans.length - 1);
       if (trans.charAt(trans.length-1) != '>') {
