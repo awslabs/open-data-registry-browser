@@ -1,6 +1,6 @@
-Title: "bi0hub"
+Title: "Chan Zuckerberg Biohub"
 Description: |
-  Amazon Web Services is collaborating with Biohub to share datasets in cell biology to help scientists study how cells operate, organize, and work as part of systems to understand why disease happens and how to correct it.
+  Amazon Web Services is collaborating with Chan Zuckerberg Biohub to share datasets in cell biology to help scientists study how cells operate, organize, and work as part of systems to understand why disease happens and how to correct it.
 Logo: chan-zuckerberg-biohub-logo.png
 Datasets:
   - czi-cellxgene-census
