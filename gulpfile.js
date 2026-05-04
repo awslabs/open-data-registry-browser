@@ -373,23 +373,35 @@ const hbsHelpers = {
     const regexClose = /<\/[^>]*>/;
     const regexAttribute = /<[^ ]*/;
 
+    // Truncate at the first heading tag (h3 or h4) if it appears before the length limit
+    const headingMatch = passedString.match(/<h[34][\s>]/i);
+    if (headingMatch) {
+      passedString = passedString.substring(0, headingMatch.index).replace(/(<br\s*\/?>|\s)+$/i, '') + '...';
+    }
+
     let necessaryCount = 0;
     if (passedString.replace(regexAllTags, "").length <= length) {
         return passedString;
     }
 
     const split = passedString.split(regexAllTags);
+    const tags = passedString.match(new RegExp(regexAllTags.source, 'g')) || [];
     let counter = '';
+    let originalPos = 0;
 
-    split.forEach(item => {
+    split.forEach((item, index) => {
        if (counter.length < length && counter.length + item.length >= length) {
-           necessaryCount = passedString.indexOf(item, counter.length)
+           necessaryCount = originalPos
            + item.substring(0, length - counter.length).length;
 
            return;
        }
 
        counter += item;
+       originalPos += item.length;
+       if (tags[index]) {
+         originalPos += tags[index].length;
+       }
     });
 
     if (necessaryCount == 0) {
@@ -401,10 +413,19 @@ const hbsHelpers = {
         necessaryCount = x.index + 1;
     }
     let subs = passedString.substring(0, necessaryCount);
-    let openTags = subs.match(regexOpen) || [];
-    let closeTags = subs.match(regexClose) || [];
+    let openTags = subs.match(new RegExp(regexOpen.source, 'g')) || [];
+    let closeTags = subs.match(new RegExp(regexClose.source, 'g')) || [];
     let OpenTags = [];
+    
+    // Void/self-closing HTML elements that should never get a closing tag
+    const voidElements = /^<(br|hr|img|input|meta|link|area|base|col|embed|source|track|wbr)[\s>\/]/i;
+
     openTags.forEach(item => {
+      // Skip void elements — they don't have closing tags
+      if (voidElements.test(item)) {
+        return;
+      }
+
       let trans = item.toString().match(regexAttribute)[0];
       trans = '</' + trans.substring(1, trans.length - 1);
       if (trans.charAt(trans.length-1) != '>') {
@@ -414,8 +435,11 @@ const hbsHelpers = {
       OpenTags.push(trans);
     });
 
-    closeTags.forEach((close, index) => {
-      OpenTags.splice(index, 1);
+    closeTags.forEach((close) => {
+      const idx = OpenTags.indexOf(close);
+      if (idx !== -1) {
+        OpenTags.splice(idx, 1);
+      }
     });
 
     for (var i = OpenTags.length - 1; i >= 0; i--) {
