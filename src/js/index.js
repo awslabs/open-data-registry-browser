@@ -5,7 +5,7 @@ var datasets = {{toJSON datasets}};
 
 // Function to set matching count number
 var setMatchingCount = function (count) {
-  $("#count-matching").text(count);
+  $("#count-matching").text(count.toLocaleString());
   if (count > 1) {
     $("#count-matching-text").text("datasets");
   } else {

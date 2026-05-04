@@ -14,10 +14,11 @@ Datasets:
   - noaa-cfs
   - noaa-climate-normals
   - noaa-coastal-lidar
+  - noaa-cris-hist
   - noaa-dcdb-bathymetry-pds
   - noaa-eri
-  - noaa-gefs-reforecast
   - noaa-gefs
+  - noaa-gefs-reforecast
   - noaa-gestofs
   - noaa-gfs-bdp-pds
   - noaa-ghcn
@@ -34,6 +35,7 @@ Datasets:
   - noaa-mrms-pds
   - noaa-nam
   - noaa-nbm
+  - noaa-nbm-parallel
   - noaa-nclimgrid
   - noaa-ncn
   - noaa-ndfd
@@ -61,7 +63,7 @@ Datasets:
   - noaa-rrfs
   - noaa-rtma
   - noaa-rtofs
-  - noaa-s102  
+  - noaa-s102
   - noaa-s111
   - noaa-space-weather
   - noaa-swdi
