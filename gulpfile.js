@@ -27,6 +27,7 @@ var path = require('path');
 var { marked } = require('marked');
 var renderer = new marked.Renderer();
 var fs = require('fs');
+var crypto = require('crypto');
 var _ = require('lodash');
 var reduce = require('object.reduce');
 var ndjson = require('ndjson');
@@ -529,6 +530,10 @@ function jsonOverview (cb) {
   // Save string to file
   fs.writeFileSync('./dist/index.ndjson', json);
 
+  // Create checksum for the ndjson content
+  const checksum = crypto.createHash('sha256').update(json).digest('hex');
+  fs.writeFileSync('./dist/index.ndjson.sha256', checksum + '  index.ndjson\n');
+
   // Make sure destination parent directory exists
   if (!fs.existsSync('./dist/roda/ndjson/')) {
     fs.mkdirSync('./dist/roda/');
@@ -537,6 +542,7 @@ function jsonOverview (cb) {
 
   // Also save to roda/ndjson/
   fs.writeFileSync('./dist/roda/ndjson/index.ndjson', json);
+  fs.writeFileSync('./dist/roda/ndjson/index.ndjson.sha256', checksum + '  index.ndjson\n');
 
   return cb();
 };

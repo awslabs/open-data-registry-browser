@@ -203,6 +203,8 @@ Datasets:
   - nasa-nca-ldas
   - nasa-neespi-nasa
   - nasa-news
+  - nasa-nex-dcp30-cmip6
+  - nasa-nex-hidcp-cmip6
   - nasa-nimbus
   - nasa-nimbus-7
   - nasa-nldas

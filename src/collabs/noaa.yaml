@@ -32,6 +32,7 @@ Datasets:
   - noaa-hrrr-pds
   - noaa-isd
   - noaa-jpss
+  - noaa-jscope
   - noaa-mrms-pds
   - noaa-nam
   - noaa-nbm
@@ -43,8 +44,10 @@ Datasets:
   - noaa-nexrad
   - noaa-nodd-kerchunk
   - noaa-nos-cora
+  - noaa-nos-eccofs
   - noaa-nos-scuba-icesat2-pds
   - noaa-nos-stofs3d
+  - noaa-nmme
   - noaa-nwm-pds
   - noaa-nws-aorc
   - noaa-nws-fourcastnetgfs
