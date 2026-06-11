@@ -1,0 +1,17 @@
+Title: Allen Institute
+Description: |
+  Amazon Web Services is collaborating with the [Allen Institute](https://alleninstitute.org/) to share open datasets to enable faster breakthroughs in human health.
+Logo: allen-institute-logo.png
+Datasets:
+  - allen-it-connectivity.yaml
+  - allen-nd-ephys-hybrid-evaluation
+  - allen-cell-imaging-collections
+  - allen-ivy-glioblastoma-atlas
+  - allen-mouse-brain-atlas
+  - allen-hmba-releases
+  - allen-synphys
+  - allen-nd-ephys-compression
+  - allen-nd-ephys-hybrid-evaluation
+  - allen-brain-observatory
+  - allen-nd-open-data
+  - allen-sea-ad-atlas
