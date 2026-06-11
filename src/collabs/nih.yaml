@@ -18,6 +18,7 @@ Datasets:
   - organoid-pancreatic
   - ncbi-pmc
   - ncbi-sra
+  - ncbi-sra-rnaseq
   - ncbi-covid-19
   - tcga
   - kids-first

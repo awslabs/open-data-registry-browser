@@ -5,6 +5,7 @@ Logo: chan-zuckerberg-biohub-logo.png
 Datasets:
   - biohub-benchmarking
   - biohub-cellxgene-census
+  - biohub-esm-atlas
   - biohub-imaging-bsd
   - biohub-imaging-mit
   - biohub-transcriptomics-mit
