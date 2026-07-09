@@ -27,6 +27,102 @@ var path = require('path');
 var { marked } = require('marked');
 var renderer = new marked.Renderer();
 var fs = require('fs');
+
+// --- HTML escaping / URL safety helpers -------------------------------------
+// marked@4 does NOT sanitize its output, and several fields (Description,
+// License, ManagedBy, ...) originate from dataset YAML that we treat as
+// untrusted. These helpers, together with the renderer overrides below,
+// prevent stored XSS by escaping raw HTML and rejecting dangerous URL schemes.
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// Returns the href unchanged if it uses a safe scheme, otherwise returns an
+// empty string. Control characters and whitespace are stripped before the
+// scheme check so they cannot be used to smuggle e.g. "java\tscript:".
+function safeUrl(href) {
+  if (!href) {
+    return '';
+  }
+  var cleaned = String(href).replace(/[\u0000-\u0020\u007F-\u00A0]+/g, '').toLowerCase();
+  if (/^(javascript|data|vbscript|file):/i.test(cleaned)) {
+    return '';
+  }
+  return href;
+}
+
+// A small allowlist of simple, attribute-less inline formatting tags that
+// dataset authors legitimately use in markdown fields. These are permitted to
+// pass through as real HTML; everything else is escaped. (Anchors are handled
+// separately below via a validated-href special case.)
+var ALLOWED_INLINE_TAGS = ['br', 'b', 'i', 'em', 'sub', 'sup', 'span', 'code'];
+
+// marked@4 does NOT sanitize its output. Raw HTML tokens (block and inline)
+// route through renderer.html. We allow only:
+//   1. bare, ATTRIBUTE-LESS inline tags from ALLOWED_INLINE_TAGS (e.g. <br>,
+//      <b>, </b>) — because they have no attributes there is no room for event
+//      handlers or javascript: URLs; and
+//   2. anchor tags, which are rebuilt with ONLY a scheme-validated, escaped
+//      href (all other attributes, e.g. onclick, are dropped).
+// Anything else — block-level HTML, tags bearing attributes, unknown tags — is
+// escaped so it renders as inert text and cannot inject active content.
+renderer.html = function (html) {
+  var trimmed = String(html).trim();
+
+  // 1. Bare attribute-less inline tag: opening, closing, or self-closing.
+  //    The regex forbids anything between the tag name and '>' (except '/'),
+  //    so attributes cannot appear.
+  var tag = /^<\/?\s*([a-zA-Z][a-zA-Z0-9]*)\s*\/?>$/.exec(trimmed);
+  if (tag && ALLOWED_INLINE_TAGS.indexOf(tag[1].toLowerCase()) !== -1) {
+    return trimmed;
+  }
+
+  // 2a. Bare closing anchor.
+  if (/^<\/a\s*>$/i.test(trimmed)) {
+    return '</a>';
+  }
+
+  // 2b. Opening anchor: rebuild with only a validated href, dropping every
+  //     other attribute. Unsafe or missing href -> drop the tag (the link
+  //     text that follows is preserved as plain text).
+  if (/^<a\b[^>]*>$/i.test(trimmed)) {
+    var hrefMatch = /\bhref\s*=\s*("([^"]*)"|'([^']*)'|([^\s"'>]+))/i.exec(trimmed);
+    var href = hrefMatch ? (hrefMatch[2] || hrefMatch[3] || hrefMatch[4] || '') : '';
+    var safe = safeUrl(href);
+    return safe ? `<a href="${escapeHtml(safe)}">` : '';
+  }
+
+  // 3. Everything else is escaped and rendered as inert text.
+  return escapeHtml(html);
+};
+
+// Rebuild links/images ourselves with a validated scheme and escaped
+// attributes. `text` is already-rendered inline HTML from marked, so it is
+// left as-is; raw HTML inside it has already been escaped by renderer.html.
+renderer.link = function (href, title, text) {
+  var url = safeUrl(href);
+  if (!url) {
+    return text;
+  }
+  var titleAttr = title ? ` title="${escapeHtml(title)}"` : '';
+  return `<a href="${escapeHtml(url)}"${titleAttr}>${text}</a>`;
+};
+
+renderer.image = function (href, title, text) {
+  var url = safeUrl(href);
+  var altAttr = ` alt="${escapeHtml(text || '')}"`;
+  if (!url) {
+    return escapeHtml(text || '');
+  }
+  var titleAttr = title ? ` title="${escapeHtml(title)}"` : '';
+  return `<img src="${escapeHtml(url)}"${altAttr}${titleAttr}>`;
+};
+// ---------------------------------------------------------------------------
 var crypto = require('crypto');
 var _ = require('lodash');
 var reduce = require('object.reduce');
@@ -277,7 +373,18 @@ const hbsHelpers = {
     }
     var res = marked(str, {renderer: renderer});
     if (escapeStr===true) {
-      res = res.replace(/\"/g, '\\\"');
+      // This value is embedded inside a JSON string within a
+      // <script type="application/ld+json"> block. JSON-encode it so quotes,
+      // backslashes, newlines and control characters are handled correctly,
+      // then drop the surrounding quotes added by JSON.stringify (the template
+      // supplies its own). Finally, escape '<', '>' and '&' as unicode escapes
+      // so the content cannot terminate the <script> element (e.g. "</script>")
+      // or otherwise break out of the script context.
+      res = JSON.stringify(res)
+        .slice(1, -1)
+        .replace(/</g, '\\u003c')
+        .replace(/>/g, '\\u003e')
+        .replace(/&/g, '\\u0026');
     }
     return res;
   },
@@ -306,10 +413,17 @@ const hbsHelpers = {
 
     // Check to see if we have a logo and render that if we do
     if (wantLogo && fs.existsSync(`src/${logoPath}`)) {
-      return `<a href="${managedByURL}"><img src="${logoPath}" class="managed-by-logo" alt="${managedByName}"></a>`;
+      // managedByURL and managedByName are extracted from the field via raw
+      // regex and concatenated into HTML attributes, so they must be escaped
+      // (and the URL scheme validated) to prevent attribute-breakout XSS.
+      const safeHref = escapeHtml(safeUrl(managedByURL));
+      const safeLogo = escapeHtml(logoPath);
+      const safeName = escapeHtml(managedByName || '');
+      return `<a href="${safeHref}"><img src="${safeLogo}" class="managed-by-logo" alt="${safeName}"></a>`;
     }
 
-    // No logo if we're here, just render markdown
+    // No logo if we're here, just render markdown (raw HTML is escaped by the
+    // hardened renderer configured above).
     return marked(str, {renderer: renderer});
   },
   toSMSL: function (url, services) {
