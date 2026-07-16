@@ -43,21 +43,28 @@ function escapeHtml(str) {
 }
 
 // Decodes HTML character references (named + numeric) to the literal string a
-// browser would resolve. Numeric refs are decoded before named ones so that a
-// deliberately double-encoded value such as "&amp;#115;" decodes to the inert
-// literal "&#115;" (matching a browser's single left-to-right pass) rather than
-// all the way to "s". Used so the URL scheme check below sees the URL the
-// browser will actually navigate to, defeating entity-encoded scheme smuggling
-// such as "java&#115;cript:".
+// browser would resolve. This is done in a SINGLE left-to-right pass via one
+// String.replace call: every reference is decoded exactly once and the text it
+// produces is never re-scanned for further entities. That is deliberate — it
+// both matches a browser's single-pass decoding and avoids the double-
+// unescaping hazard of chained replaces (where, e.g., decoding "&#38;lt;" to
+// "&lt;" and then decoding that "&lt;" again would wrongly yield "<"). Here
+// "&#38;lt;" decodes to the inert literal "&lt;", and a deliberately double-
+// encoded value such as "&amp;#115;" decodes to "&#115;" rather than "s".
+// Used so the URL scheme check below sees the URL the browser will actually
+// navigate to, defeating entity-encoded scheme smuggling such as
+// "java&#115;cript:", while still fully decoding the entity-mangled emails
+// marked emits (which is what keeps mailto: links working).
+var NAMED_ENTITIES = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" };
 function decodeEntities(str) {
-  return String(str)
-    .replace(/&#x([0-9a-fA-F]+);?/g, function (_, h) { return String.fromCodePoint(parseInt(h, 16)); })
-    .replace(/&#(\d+);?/g, function (_, d) { return String.fromCodePoint(parseInt(d, 10)); })
-    .replace(/&lt;/gi, '<')
-    .replace(/&gt;/gi, '>')
-    .replace(/&quot;/gi, '"')
-    .replace(/&(#39|apos);/gi, "'")
-    .replace(/&amp;/gi, '&');
+  return String(str).replace(
+    /&(?:#[xX]([0-9a-fA-F]+)|#(\d+)|(amp|lt|gt|quot|apos));?/g,
+    function (match, hex, dec, name) {
+      if (hex !== undefined) { return String.fromCodePoint(parseInt(hex, 16)); }
+      if (dec !== undefined) { return String.fromCodePoint(parseInt(dec, 10)); }
+      return NAMED_ENTITIES[name.toLowerCase()];
+    }
+  );
 }
 // Validates a URL's scheme and returns the DECODED, safe URL (or '' if unsafe).
 // The href is first entity-decoded and stripped of control characters and
