@@ -53,11 +53,11 @@ function decodeEntities(str) {
   return String(str)
     .replace(/&#x([0-9a-fA-F]+);?/g, function (_, h) { return String.fromCodePoint(parseInt(h, 16)); })
     .replace(/&#(\d+);?/g, function (_, d) { return String.fromCodePoint(parseInt(d, 10)); })
-    .replace(/&amp;/gi, '&')
     .replace(/&lt;/gi, '<')
     .replace(/&gt;/gi, '>')
     .replace(/&quot;/gi, '"')
-    .replace(/&(#39|apos);/gi, "'");
+    .replace(/&(#39|apos);/gi, "'")
+    .replace(/&amp;/gi, '&');
 }
 // Validates a URL's scheme and returns the DECODED, safe URL (or '' if unsafe).
 // The href is first entity-decoded and stripped of control characters and
