@@ -27,6 +27,153 @@ var path = require('path');
 var { marked } = require('marked');
 var renderer = new marked.Renderer();
 var fs = require('fs');
+
+// --- HTML escaping / URL safety helpers -------------------------------------
+// marked@4 does NOT sanitize its output, and several fields (Description,
+// License, ManagedBy, ...) originate from dataset YAML that we treat as
+// untrusted. These helpers, together with the renderer overrides below,
+// prevent stored XSS by escaping raw HTML and rejecting dangerous URL schemes.
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// Decodes HTML character references (named + numeric) to the literal string a
+// browser would resolve. This is done in a SINGLE left-to-right pass via one
+// String.replace call: every reference is decoded exactly once and the text it
+// produces is never re-scanned for further entities. That is deliberate — it
+// both matches a browser's single-pass decoding and avoids the double-
+// unescaping hazard of chained replaces (where, e.g., decoding "&#38;lt;" to
+// "&lt;" and then decoding that "&lt;" again would wrongly yield "<"). Here
+// "&#38;lt;" decodes to the inert literal "&lt;", and a deliberately double-
+// encoded value such as "&amp;#115;" decodes to "&#115;" rather than "s".
+// Used so the URL scheme check below sees the URL the browser will actually
+// navigate to, defeating entity-encoded scheme smuggling such as
+// "java&#115;cript:", while still fully decoding the entity-mangled emails
+// marked emits (which is what keeps mailto: links working).
+var NAMED_ENTITIES = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" };
+function decodeEntities(str) {
+  return String(str).replace(
+    /&(?:#[xX]([0-9a-fA-F]+)|#(\d+)|(amp|lt|gt|quot|apos));?/g,
+    function (match, hex, dec, name) {
+      if (hex !== undefined) { return String.fromCodePoint(parseInt(hex, 16)); }
+      if (dec !== undefined) { return String.fromCodePoint(parseInt(dec, 10)); }
+      return NAMED_ENTITIES[name.toLowerCase()];
+    }
+  );
+}
+// Validates a URL's scheme and returns the DECODED, safe URL (or '' if unsafe).
+// The href is first entity-decoded and stripped of control characters and
+// whitespace before the scheme check, so neither "java\tscript:" nor
+// "java&#115;cript:" can smuggle a dangerous scheme past the allowlist.
+// Returning the decoded form lets callers re-escape it once with escapeHtml()
+// without double-encoding entities that marked's email "mangle" already emitted
+// (which is what previously broke mailto: links).
+function safeUrl(href) {
+  if (!href) {
+    return '';
+  }
+  var decoded = decodeEntities(String(href));
+  var cleaned = decoded.replace(/[\u0000-\u0020\u007F-\u00A0]+/g, '').toLowerCase();
+  if (/^(javascript|data|vbscript|file):/i.test(cleaned)) {
+    return '';
+  }
+  return decoded;
+}
+
+// A small allowlist of simple, attribute-less inline formatting tags that
+// dataset authors legitimately use in markdown fields. These are permitted to
+// pass through as real HTML; everything else is escaped. (Anchors are handled
+// separately below via a validated-href special case.)
+var ALLOWED_INLINE_TAGS = ['br', 'b', 'i', 'em', 'sub', 'sup', 'span', 'code'];
+
+// Vets a SINGLE raw HTML tag and returns its safe rendering. We allow only:
+//   1. bare, ATTRIBUTE-LESS inline tags from ALLOWED_INLINE_TAGS (e.g. <br>,
+//      <b>, </b>) — because they have no attributes there is no room for event
+//      handlers or javascript: URLs; and
+//   2. anchor tags, which are rebuilt with ONLY a scheme-validated, escaped
+//      href (all other attributes, e.g. onclick, are dropped).
+// Anything else — block-level tags, tags bearing attributes, unknown tags,
+// <script>, <img>, etc. — is escaped so it renders as inert text.
+function sanitizeTag(tag) {
+  var trimmed = String(tag).trim();
+  // 1. Bare attribute-less inline tag: opening, closing, or self-closing.
+  //    The regex forbids anything between the tag name and '>' (except '/'),
+  //    so attributes cannot appear.
+  var m = /^<\/?\s*([a-zA-Z][a-zA-Z0-9]*)\s*\/?>$/.exec(trimmed);
+  if (m && ALLOWED_INLINE_TAGS.indexOf(m[1].toLowerCase()) !== -1) {
+    return trimmed;
+  }
+  // 2a. Bare closing anchor.
+  if (/^<\/a\s*>$/i.test(trimmed)) {
+    return '</a>';
+  }
+  // 2b. Opening anchor: rebuild with only a validated href, dropping every
+  //     other attribute. Unsafe or missing href -> drop the tag (the link
+  //     text that follows is preserved as plain text).
+  if (/^<a\b[^>]*>$/i.test(trimmed)) {
+    var hrefMatch = /\bhref\s*=\s*("([^"]*)"|'([^']*)'|([^\s"'>]+))/i.exec(trimmed);
+    var href = hrefMatch ? (hrefMatch[2] || hrefMatch[3] || hrefMatch[4] || '') : '';
+    var safe = safeUrl(href);
+    return safe ? `<a href="${escapeHtml(safe)}">` : '';
+  }
+  // 3. Everything else is escaped and rendered as inert text.
+  return escapeHtml(tag);
+}
+// marked@4 does NOT sanitize its output. Raw HTML routes through renderer.html
+// as tokens that can be either a single inline tag OR a multi-line block chunk
+// containing several tags and text (e.g. "<br/>\nSome text", or a whole
+// "<table>...</table>"). We therefore scan the token tag-by-tag: every tag is
+// vetted by sanitizeTag() (allowed inline tags kept, anchors rebuilt safely,
+// everything else escaped) and every run of text between tags is HTML-escaped.
+// This keeps legitimate inline formatting (notably <br>) working even when it
+// arrives inside a block token, while still neutralizing scripts, event
+// handlers and block-level HTML.
+renderer.html = function (html) {
+  var input = String(html);
+  var out = '';
+  var tagRe = /<\/?[a-zA-Z][^>]*>/g;
+  var lastIndex = 0;
+  var match;
+  while ((match = tagRe.exec(input)) !== null) {
+    if (match.index > lastIndex) {
+      out += escapeHtml(input.slice(lastIndex, match.index));
+    }
+    out += sanitizeTag(match[0]);
+    lastIndex = tagRe.lastIndex;
+  }
+  if (lastIndex < input.length) {
+    out += escapeHtml(input.slice(lastIndex));
+  }
+  return out;
+};
+
+// Rebuild links/images ourselves with a validated scheme and escaped
+// attributes. `text` is already-rendered inline HTML from marked, so it is
+// left as-is; raw HTML inside it has already been escaped by renderer.html.
+renderer.link = function (href, title, text) {
+  var url = safeUrl(href);
+  if (!url) {
+    return text;
+  }
+  var titleAttr = title ? ` title="${escapeHtml(title)}"` : '';
+  return `<a href="${escapeHtml(url)}"${titleAttr}>${text}</a>`;
+};
+
+renderer.image = function (href, title, text) {
+  var url = safeUrl(href);
+  var altAttr = ` alt="${escapeHtml(text || '')}"`;
+  if (!url) {
+    return escapeHtml(text || '');
+  }
+  var titleAttr = title ? ` title="${escapeHtml(title)}"` : '';
+  return `<img src="${escapeHtml(url)}"${altAttr}${titleAttr}>`;
+};
+// ---------------------------------------------------------------------------
 var crypto = require('crypto');
 var _ = require('lodash');
 var reduce = require('object.reduce');
@@ -277,7 +424,18 @@ const hbsHelpers = {
     }
     var res = marked(str, {renderer: renderer});
     if (escapeStr===true) {
-      res = res.replace(/\"/g, '\\\"');
+      // This value is embedded inside a JSON string within a
+      // <script type="application/ld+json"> block. JSON-encode it so quotes,
+      // backslashes, newlines and control characters are handled correctly,
+      // then drop the surrounding quotes added by JSON.stringify (the template
+      // supplies its own). Finally, escape '<', '>' and '&' as unicode escapes
+      // so the content cannot terminate the <script> element (e.g. "</script>")
+      // or otherwise break out of the script context.
+      res = JSON.stringify(res)
+        .slice(1, -1)
+        .replace(/</g, '\\u003c')
+        .replace(/>/g, '\\u003e')
+        .replace(/&/g, '\\u0026');
     }
     return res;
   },
@@ -306,10 +464,17 @@ const hbsHelpers = {
 
     // Check to see if we have a logo and render that if we do
     if (wantLogo && fs.existsSync(`src/${logoPath}`)) {
-      return `<a href="${managedByURL}"><img src="${logoPath}" class="managed-by-logo" alt="${managedByName}"></a>`;
+      // managedByURL and managedByName are extracted from the field via raw
+      // regex and concatenated into HTML attributes, so they must be escaped
+      // (and the URL scheme validated) to prevent attribute-breakout XSS.
+      const safeHref = escapeHtml(safeUrl(managedByURL));
+      const safeLogo = escapeHtml(logoPath);
+      const safeName = escapeHtml(managedByName || '');
+      return `<a href="${safeHref}"><img src="${safeLogo}" class="managed-by-logo" alt="${safeName}"></a>`;
     }
 
-    // No logo if we're here, just render markdown
+    // No logo if we're here, just render markdown (raw HTML is escaped by the
+    // hardened renderer configured above).
     return marked(str, {renderer: renderer});
   },
   toSMSL: function (url, services) {
