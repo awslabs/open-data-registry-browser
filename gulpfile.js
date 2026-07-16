@@ -42,18 +42,40 @@ function escapeHtml(str) {
     .replace(/'/g, '&#39;');
 }
 
-// Returns the href unchanged if it uses a safe scheme, otherwise returns an
-// empty string. Control characters and whitespace are stripped before the
-// scheme check so they cannot be used to smuggle e.g. "java\tscript:".
+// Decodes HTML character references (named + numeric) to the literal string a
+// browser would resolve. Numeric refs are decoded before named ones so that a
+// deliberately double-encoded value such as "&amp;#115;" decodes to the inert
+// literal "&#115;" (matching a browser's single left-to-right pass) rather than
+// all the way to "s". Used so the URL scheme check below sees the URL the
+// browser will actually navigate to, defeating entity-encoded scheme smuggling
+// such as "java&#115;cript:".
+function decodeEntities(str) {
+  return String(str)
+    .replace(/&#x([0-9a-fA-F]+);?/g, function (_, h) { return String.fromCodePoint(parseInt(h, 16)); })
+    .replace(/&#(\d+);?/g, function (_, d) { return String.fromCodePoint(parseInt(d, 10)); })
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&(#39|apos);/gi, "'");
+}
+// Validates a URL's scheme and returns the DECODED, safe URL (or '' if unsafe).
+// The href is first entity-decoded and stripped of control characters and
+// whitespace before the scheme check, so neither "java\tscript:" nor
+// "java&#115;cript:" can smuggle a dangerous scheme past the allowlist.
+// Returning the decoded form lets callers re-escape it once with escapeHtml()
+// without double-encoding entities that marked's email "mangle" already emitted
+// (which is what previously broke mailto: links).
 function safeUrl(href) {
   if (!href) {
     return '';
   }
-  var cleaned = String(href).replace(/[\u0000-\u0020\u007F-\u00A0]+/g, '').toLowerCase();
+  var decoded = decodeEntities(String(href));
+  var cleaned = decoded.replace(/[\u0000-\u0020\u007F-\u00A0]+/g, '').toLowerCase();
   if (/^(javascript|data|vbscript|file):/i.test(cleaned)) {
     return '';
   }
-  return href;
+  return decoded;
 }
 
 // A small allowlist of simple, attribute-less inline formatting tags that
@@ -62,31 +84,27 @@ function safeUrl(href) {
 // separately below via a validated-href special case.)
 var ALLOWED_INLINE_TAGS = ['br', 'b', 'i', 'em', 'sub', 'sup', 'span', 'code'];
 
-// marked@4 does NOT sanitize its output. Raw HTML tokens (block and inline)
-// route through renderer.html. We allow only:
+// Vets a SINGLE raw HTML tag and returns its safe rendering. We allow only:
 //   1. bare, ATTRIBUTE-LESS inline tags from ALLOWED_INLINE_TAGS (e.g. <br>,
 //      <b>, </b>) — because they have no attributes there is no room for event
 //      handlers or javascript: URLs; and
 //   2. anchor tags, which are rebuilt with ONLY a scheme-validated, escaped
 //      href (all other attributes, e.g. onclick, are dropped).
-// Anything else — block-level HTML, tags bearing attributes, unknown tags — is
-// escaped so it renders as inert text and cannot inject active content.
-renderer.html = function (html) {
-  var trimmed = String(html).trim();
-
+// Anything else — block-level tags, tags bearing attributes, unknown tags,
+// <script>, <img>, etc. — is escaped so it renders as inert text.
+function sanitizeTag(tag) {
+  var trimmed = String(tag).trim();
   // 1. Bare attribute-less inline tag: opening, closing, or self-closing.
   //    The regex forbids anything between the tag name and '>' (except '/'),
   //    so attributes cannot appear.
-  var tag = /^<\/?\s*([a-zA-Z][a-zA-Z0-9]*)\s*\/?>$/.exec(trimmed);
-  if (tag && ALLOWED_INLINE_TAGS.indexOf(tag[1].toLowerCase()) !== -1) {
+  var m = /^<\/?\s*([a-zA-Z][a-zA-Z0-9]*)\s*\/?>$/.exec(trimmed);
+  if (m && ALLOWED_INLINE_TAGS.indexOf(m[1].toLowerCase()) !== -1) {
     return trimmed;
   }
-
   // 2a. Bare closing anchor.
   if (/^<\/a\s*>$/i.test(trimmed)) {
     return '</a>';
   }
-
   // 2b. Opening anchor: rebuild with only a validated href, dropping every
   //     other attribute. Unsafe or missing href -> drop the tag (the link
   //     text that follows is preserved as plain text).
@@ -96,9 +114,35 @@ renderer.html = function (html) {
     var safe = safeUrl(href);
     return safe ? `<a href="${escapeHtml(safe)}">` : '';
   }
-
   // 3. Everything else is escaped and rendered as inert text.
-  return escapeHtml(html);
+  return escapeHtml(tag);
+}
+// marked@4 does NOT sanitize its output. Raw HTML routes through renderer.html
+// as tokens that can be either a single inline tag OR a multi-line block chunk
+// containing several tags and text (e.g. "<br/>\nSome text", or a whole
+// "<table>...</table>"). We therefore scan the token tag-by-tag: every tag is
+// vetted by sanitizeTag() (allowed inline tags kept, anchors rebuilt safely,
+// everything else escaped) and every run of text between tags is HTML-escaped.
+// This keeps legitimate inline formatting (notably <br>) working even when it
+// arrives inside a block token, while still neutralizing scripts, event
+// handlers and block-level HTML.
+renderer.html = function (html) {
+  var input = String(html);
+  var out = '';
+  var tagRe = /<\/?[a-zA-Z][^>]*>/g;
+  var lastIndex = 0;
+  var match;
+  while ((match = tagRe.exec(input)) !== null) {
+    if (match.index > lastIndex) {
+      out += escapeHtml(input.slice(lastIndex, match.index));
+    }
+    out += sanitizeTag(match[0]);
+    lastIndex = tagRe.lastIndex;
+  }
+  if (lastIndex < input.length) {
+    out += escapeHtml(input.slice(lastIndex));
+  }
+  return out;
 };
 
 // Rebuild links/images ourselves with a validated scheme and escaped
