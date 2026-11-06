@@ -50,8 +50,10 @@ Build the container with:
 
 Run the container with:
 
-`docker run --rm -p 3000:3000 -ti roda`
+`docker run --rm -p 127.0.0.1:3000:3000 -ti roda`
 
 Run the container with a local copy of the registry:
 
-`docker run --rm -p 3000:3000 -v `pwd`/open-data-registry:/app/data-sources/awslabs-open-data-registry -ti roda`
+`docker run --rm -p 127.0.0.1:3000:3000 -v `pwd`/open-data-registry:/app/data-sources/awslabs-open-data-registry -ti roda`
+
+The `127.0.0.1:` prefix keeps the dev server reachable only from your machine. Outside Docker, `npm run serve` listens on `127.0.0.1:3000` by default; set `HOST` to change the bind address.
