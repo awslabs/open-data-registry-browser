@@ -788,15 +788,13 @@ function rss () {
 
 // Copy font files to dist
 function fonts () {
-  // encoding: false keeps gulp 5 from decoding binary files as UTF-8
-  return gulp.src('./src/fonts/**/*', { encoding: false })
+  return gulp.src('./src/fonts/**/*')
     .pipe(gulp.dest('./dist/fonts/'));
 };
 
 // Copy images to dist
 function img () {
-  // encoding: false keeps gulp 5 from decoding binary files as UTF-8
-  return gulp.src('./src/img/**/*', { encoding: false })
+  return gulp.src('./src/img/**/*')
     .pipe(gulp.dest('./dist/img/'));
 };
 
@@ -1234,20 +1232,13 @@ function htmlProviders (cb) {
     .pipe(gulp.dest('./dist/'));
 };
 
-// Local dev server
+// Server with live reload
 exports.serve = gulp.series(clean, gulp.parallel(css, fonts, img, yamlConvert, yamlCopy), jsonMerge, gulp.parallel(yamlOverview, jsonOverview), yamlOverviewCopy, yamlTag, js, rss, gulp.parallel(htmlAdditions, htmlASDI, htmlCollab, htmlDetail, htmlOverview, htmlSitemap, htmlExamples, htmlTag, htmlTagUsage, htmlServiceUsage, htmlProviders), htmlRedirects, function () {
-  // Bind to loopback by default so the dev server is not reachable from other
-  // machines. The Docker image sets HOST=0.0.0.0 so the server is reachable
-  // through the container's port publish; publish it to 127.0.0.1 only (see
-  // README).
-  // livereload is off: nothing in this file calls gulp.watch() or
-  // connect.reload(), so it never reloaded anything, and gulp-connect always
-  // binds its livereload server (port 35729) to every interface.
   connect.server({
     root: ['./dist'],
     port: 3000,
-    host: process.env.HOST || '127.0.0.1',
-    livereload: false
+    host: '0.0.0.0',
+    livereload: true
   });
 });
 
