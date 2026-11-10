@@ -14,6 +14,5 @@ COPY . /app
 RUN npm test
 RUN npm run copy-data
 
-ENV HOST=0.0.0.0
 CMD BASE_URL=https://registry.opendata.aws npm run serve
 
