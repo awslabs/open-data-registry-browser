@@ -27,4 +27,5 @@ https://registry.opendata.aws/collab/meta/
 https://registry.opendata.aws/collab/nasa/
 https://registry.opendata.aws/collab/nih/
 https://registry.opendata.aws/collab/noaa/
+https://registry.opendata.aws/collab/physionet/
 https://registry.opendata.aws/collab/stsci/
